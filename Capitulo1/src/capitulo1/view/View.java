@@ -6,22 +6,18 @@ package capitulo1.view;
 
 import capitulo1.model.Model;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
-import javax.swing.SwingWorker;
 
 /**
  *
  * @author elsho
  */
-public class View extends JFrame implements PropertyChangeListener{
+public class View extends JFrame{
     
     private JComboBox picker;
     private JButton animateBut, stopBut;
@@ -30,9 +26,6 @@ public class View extends JFrame implements PropertyChangeListener{
     
     public View(){
         initComponents();
-//        Task task = new Task();
-//        task.addPropertyChangeListener(this);
-//        task.execute();
     }
     
     private void initComponents(){
@@ -58,31 +51,12 @@ public class View extends JFrame implements PropertyChangeListener{
         setLocationRelativeTo(null);
     }
     
-    class Task extends SwingWorker<Void, Void> {
-        /*
-         * Main task. Executed in background thread.
-         */
-        @Override
-        public Void doInBackground() {
-            Random random = new Random();
-            int progress = 0;
-            //Initialize progress property.
-            setProgress(0);
-            while (progress < 100) {
-                //Sleep for up to one second.
-                try {
-                    Thread.sleep(random.nextInt(1000));
-                } catch (InterruptedException ignore) {}
-                //Make random progress.
-                progress += random.nextInt(5);
-                setProgress(Math.min(progress, 100));
-            }
-            return null;
-        }
-    }
-    
     public void addAnimateListener(ActionListener listener){
         this.animateBut.addActionListener(listener);
+    }
+    
+    public void addStopListener(ActionListener listener){
+        this.stopBut.addActionListener(listener);
     }
     
     public String getChosenComplexity(){
@@ -94,12 +68,8 @@ public class View extends JFrame implements PropertyChangeListener{
         this.stopBut.setEnabled(running);
     }
     
-    @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("progress")) {
-            int progress = (Integer) evt.getNewValue();
-            progressBar.setValue(progress);
-        } 
+    public void setProgress(int progress){
+        this.progressBar.setValue(progress);
     }
     
     private void addComponents(){
@@ -137,8 +107,5 @@ public class View extends JFrame implements PropertyChangeListener{
         );
         pack();
     }
-    
-    public void test(int progress){
-        progressBar.setValue(progress);
-    }
+
 }
