@@ -141,8 +141,9 @@ public class View extends JFrame{
     }
     
     public void animate(int size, long time){
-        System.out.println("size: " + size + ", time: " + time);
-        int[] point = new int[]{size, (int) time/10000000};
+            System.out.println(time);
+        int tim = (int) (time/1000000000);
+        int[] point = new int[]{size, tim};
         this.animationPanel.animatePoint(point);
     }
     

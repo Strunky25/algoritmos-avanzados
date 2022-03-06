@@ -43,6 +43,7 @@ public class Controller {
         public void actionPerformed(ActionEvent e) {
             view.setRunning(true);
             String complexity = view.getChosenComplexity();
+            System.out.println("COMPLEXITY: " + complexity);
             task = model.new Task(complexity);
             task.addPropertyChangeListener(new ProgressListener());
             task.execute();
@@ -64,21 +65,24 @@ public class Controller {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            if (evt.getPropertyName().equals("progress")) {
-                int progress = (Integer) evt.getNewValue();
-                view.setProgress(progress);
-            } else if(evt.getPropertyName().equals("time")){
-                int size = (int) evt.getOldValue();
-                long time = (long) evt.getNewValue();
-                view.animate(size, time);
-            } else if(evt.getPropertyName().equals("state")){
-                String state = String.valueOf(evt.getNewValue());
-                if(state.equals("DONE")){
-                    view.setRunning(false);
-                }
+            switch (evt.getPropertyName()) {
+                case "progress":
+                    int progress = (Integer) evt.getNewValue();
+                    view.setProgress(progress);
+                    break;
+                case "time":
+                    int size = (int) evt.getOldValue();
+                    long time = (long) evt.getNewValue();
+                    view.animate(size, time);
+                    break;
+                case "state":
+                    String state = String.valueOf(evt.getNewValue());
+                    if(state.equals("DONE")){
+                        view.setRunning(false);
+                    }   
+                    break;
             }
         }
-        
     }
    
 }
