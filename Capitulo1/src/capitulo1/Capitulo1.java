@@ -1,7 +1,10 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
- */
+    Algoritmes Avançats - Capitulo 1
+    Autors:
+        Jonathan Salisbury Vega
+        Joan Sansó Pericàs
+        Joan Vilella Candia
+*/
 package capitulo1;
 
 import capitulo1.controller.Controller;
@@ -11,8 +14,7 @@ import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.SwingUtilities;
 
 /**
- *
- * @author elsho
+ * Main Class that starts the program
  */
 public class Capitulo1 implements Runnable{
 
@@ -25,7 +27,7 @@ public class Capitulo1 implements Runnable{
         model = new Model();
         view = new View();
         controller = new Controller(model, view);
-        view.setVisible(true);
+        controller.start();
     }
    
     

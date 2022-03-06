@@ -1,7 +1,10 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+    Algoritmes Avançats - Capitulo 1
+    Autors:
+        Jonathan Salisbury Vega
+        Joan Sansó Pericàs
+        Joan Vilella Candia
+*/
 package capitulo1.controller;
 
 import capitulo1.model.Model;
@@ -26,8 +29,12 @@ public class Controller {
     public Controller(Model model, View view){
         this.model = model;
         this.view = view;
+    }
+    
+    public void start(){
         this.view.addAnimateListener(new AnimateListener());
         this.view.addStopListener(new StopListener());
+        view.setVisible(true);
     }
     
     public class AnimateListener implements ActionListener{
@@ -39,6 +46,7 @@ public class Controller {
             task = model.new Task(complexity);
             task.addPropertyChangeListener(new ProgressListener());
             task.execute();
+            // view.setRunning(false); cuando acabe el worker
         } 
     }
     
@@ -59,6 +67,15 @@ public class Controller {
             if (evt.getPropertyName().equals("progress")) {
                 int progress = (Integer) evt.getNewValue();
                 view.setProgress(progress);
+            } else if(evt.getPropertyName().equals("time")){
+                int size = (int) evt.getOldValue();
+                long time = (long) evt.getNewValue();
+                view.animate(size, time);
+            } else if(evt.getPropertyName().equals("state")){
+                String state = String.valueOf(evt.getNewValue());
+                if(state.equals("DONE")){
+                    view.setRunning(false);
+                }
             }
         }
         
