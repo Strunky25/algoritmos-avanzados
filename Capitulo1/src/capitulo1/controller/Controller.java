@@ -16,71 +16,109 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 /**
- *
- * @author elsho
+ * Class that manages interaction between the Model and View classes, including
+ * user input.
  */
 public class Controller {
     
+    /* MVC Pattern */
     private final Model model;
     private final View view;
     
+    /* Variables */
     private Task task;
+    private String complexity;
     
     public Controller(Model model, View view){
         this.model = model;
         this.view = view;
     }
     
+    /**
+     * Method that configures  Listeners for the view, and sets it to visible
+     * waiting for user input.
+     */
     public void start(){
         this.view.addAnimateListener(new AnimateListener());
         this.view.addStopListener(new StopListener());
+        this.view.addClearListener(new ClearListener());
         view.setVisible(true);
     }
     
+    /**
+     * Nested Class to manage user interaction with the Animate Button.
+     */
     public class AnimateListener implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
             view.setRunning(true);
-            String complexity = view.getChosenComplexity();
-            System.out.println("COMPLEXITY: " + complexity);
+            complexity = view.getChosenComplexity();
+            
+            /* Create SwingWorker to simulate complexity */
             task = model.new Task(complexity);
             task.addPropertyChangeListener(new ProgressListener());
             task.execute();
-            // view.setRunning(false); cuando acabe el worker
         } 
     }
     
+    /**
+     * Nested Class to manage user interaction with the Stop Button.
+     */
     public class StopListener implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            task.cancel(true);
+            task.cancel(true); // Sends Cancel signal to SwingWorker
             view.setRunning(false);
             view.setProgress(0);
         } 
     } 
     
+    /**
+     * Nested Class to manage user interaction with the Clear Button.
+     */
+    public class ClearListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            view.clearAnimationPanel();
+        } 
+    }
+    
+    /**
+     * Nested Class to manage progress from the SwingWorker.
+     */
     public class ProgressListener implements PropertyChangeListener {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             switch (evt.getPropertyName()) {
-                case "progress":
+                /**
+                 * If Progress is updated, update the View.
+                 */
+                case "progress" -> {
                     int progress = (Integer) evt.getNewValue();
                     view.setProgress(progress);
-                    break;
-                case "time":
+                }
+                /**
+                 * If a new Coordinate is sent, update View.
+                 */
+                case "point" -> {
                     int size = (int) evt.getOldValue();
-                    long time = (long) evt.getNewValue();
+                    int time = (int) evt.getNewValue();
                     view.animate(size, time);
-                    break;
-                case "state":
+                }
+                /**
+                 * If the worker has ended
+                 */
+                case "state" -> {
                     String state = String.valueOf(evt.getNewValue());
                     if(state.equals("DONE")){
+                        view.drawlastPointText(complexity);
                         view.setRunning(false);
-                    }   
-                    break;
+                    }
+                }
             }
         }
     }

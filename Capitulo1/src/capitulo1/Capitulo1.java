@@ -18,6 +18,7 @@ import javax.swing.SwingUtilities;
  */
 public class Capitulo1 implements Runnable{
 
+    /* MVC Pattern */
     private Model model;
     private Controller controller;
     private View view;
@@ -30,7 +31,11 @@ public class Capitulo1 implements Runnable{
         controller.start();
     }
    
-    
+    /**
+     * Main method that configures the Look and Feel, and creates and runs
+     * an instance of the program.
+     * @param args not used
+     */
     public static void main(String[] args) {
         FlatLightLaf.setup();
         Capitulo1 prog = new Capitulo1();
