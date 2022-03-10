@@ -200,7 +200,6 @@ public class View extends JFrame{
      */
     public void animate(int x, int y){
         //this.animationPanel.animatePoint(point);
-        System.out.println("x: " + x + ", y: " + y);
         Graphics2D graph = (Graphics2D) animationPanel.getGraphics();
         graph.setColor(COLORS[color % COLORS.length]);
         graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
@@ -223,10 +222,9 @@ public class View extends JFrame{
     }
 
     /**
-     * Method that clears de plot panel.
+     * Method that clears the Animation panel.
      */
     public void clearAnimationPanel() {
-        System.out.println("clear");
         lastX = lastY = 0;
         this.color = 0;
         animationPanel.removeAll();
