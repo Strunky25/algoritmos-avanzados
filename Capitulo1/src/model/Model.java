@@ -5,7 +5,7 @@
         Joan Sansó Pericàs
         Joan Vilella Candia
 */
-package capitulo1.model;
+package model;
 
 import javax.swing.SwingWorker;
 
@@ -35,7 +35,10 @@ public class Model {
         @Override
         protected Void doInBackground() throws Exception {
             setProgress(0);
-            for(int n = 0; n < SIZES.length && !isCancelled(); n++){
+            for(int n = 0; n < SIZES.length; n++){
+                if(isCancelled()){
+                    return null;
+                }
                 switch (complexity) {
                     case LOG -> log(n);
                     case SQRT -> sqrt(n);
@@ -109,9 +112,7 @@ public class Model {
         private void sleep() {
             try {
                 Thread.sleep(40);
-            } catch (InterruptedException ignore) {
-                System.out.println("error");
-            }
+            } catch (InterruptedException ignore) {}
         }
 
     }

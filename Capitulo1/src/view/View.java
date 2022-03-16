@@ -7,7 +7,7 @@
 */
 package capitulo1.view;
 
-import capitulo1.model.Model;
+import model.Model;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

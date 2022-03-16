@@ -9,7 +9,7 @@ package capitulo1;
 
 import capitulo1.controller.Controller;
 import capitulo1.view.View;
-import capitulo1.model.Model;
+import model.Model;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.SwingUtilities;
 
