@@ -29,6 +29,7 @@ public class View extends JFrame{
     /* Constants */
     private static final int POINT_DIAMETER = 4;
     private static final int TEXT_PADDING = 5;
+    private static final int GRAPH_PADDING = 50;
     public static final int PANEL_HEIGHT = 350, PANEL_WIDTH = 350;
     
     private static final Color[] COLORS = new Color[]{
@@ -195,11 +196,11 @@ public class View extends JFrame{
     /**
      * Method that creates a new point at a given coordinate, and draws a line 
      * between the last point and the new one.
-     * @param x int X coordinate
+     * @param pos int X coordinate scaled to Sizes length.
      * @param y int Y coordinate
      */
-    public void animate(int x, int y){
-        //this.animationPanel.animatePoint(point);
+    public void animate(double pos, int y){
+        int x = (int)(pos*(PANEL_WIDTH - GRAPH_PADDING));
         Graphics2D graph = (Graphics2D) animationPanel.getGraphics();
         graph.setColor(COLORS[color % COLORS.length]);
         graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
@@ -222,7 +223,7 @@ public class View extends JFrame{
     }
 
     /**
-     * Method that clears the Animation panel.
+     * Method that clears the Animation panel and resets global variables.
      */
     public void clearAnimationPanel() {
         lastX = lastY = 0;

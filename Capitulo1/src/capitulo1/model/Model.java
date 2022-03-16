@@ -7,19 +7,22 @@
 */
 package capitulo1.model;
 
-import capitulo1.view.View;
 import javax.swing.SwingWorker;
 
 /**
- * Class that
+ * Class that contains the methods that simulate the various complexities.
  */
 public class Model {
-
+    
+    /* Constants */
     public static final String SQRT = "sqrt(n)", LOG = "log(n)", N = "n", NLOG = "n*log(n)", N2 = "n^2";
     public static final String[] COMPLEXITIES = {LOG, SQRT, N, NLOG, N2};
     
     public static final int[] SIZES = {2, 4, 6, 8, 10, 12};
     
+    /**
+     * Inner class that performs the simulations in another thread.
+     */
     public class Task extends SwingWorker<Void, Long> {
         
         private final String complexity;
@@ -40,8 +43,8 @@ public class Model {
                     case NLOG -> nlog(n);
                     case N2 -> n2(n);
                 }
-                int x = (n + 1) * (View.PANEL_WIDTH - 50)/SIZES.length;
-                int y = (int) ((end - start)/10000000);
+                double x = (double)(n + 1)/SIZES.length; // X escalada a tamaño de muestras
+                int y = (int) ((end - start)/10000000); // 10^7
                 firePropertyChange("point", x, y);
             }
             setProgress(100);

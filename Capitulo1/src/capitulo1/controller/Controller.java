@@ -105,9 +105,9 @@ public class Controller {
                  * If a new Coordinate is sent, update View.
                  */
                 case "point" -> {
-                    int size = (int) evt.getOldValue();
-                    int time = (int) evt.getNewValue();
-                    view.animate(size, time);
+                    double x = (double) evt.getOldValue();
+                    int y = (int) evt.getNewValue();
+                    view.animate(x, y);
                 }
                 /**
                  * If the worker has ended
