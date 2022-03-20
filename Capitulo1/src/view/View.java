@@ -196,8 +196,8 @@ public class View extends JFrame{
     /**
      * Method that creates a new point at a given coordinate, and draws a line 
      * between the last point and the new one.
-     * @param pos int X coordinate scaled to Sizes length.
-     * @param y int Y coordinate
+     * @param pos double X coordinate scaled to Sizes length.
+     * @param time double Y time coordinate.
      */
     public void animate(double pos, double time){
         int x = (int)(pos*(PANEL_WIDTH - GRAPH_PADDING));
