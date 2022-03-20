@@ -5,7 +5,7 @@
         Joan Sansó Pericàs
         Joan Vilella Candia
 */
-package capitulo1.view;
+package view;
 
 import model.Model;
 import java.awt.Color;
@@ -33,7 +33,7 @@ public class View extends JFrame{
     public static final int PANEL_HEIGHT = 350, PANEL_WIDTH = 350;
     
     private static final Color[] COLORS = new Color[]{
-                            Color.blue, Color.black, Color.red, Color.magenta, Color.darkGray};
+                            Color.red, Color.blue, Color.darkGray, Color.magenta, Color.black};
     
     /* Variables */
     private int color, lastX, lastY;
@@ -199,8 +199,10 @@ public class View extends JFrame{
      * @param pos int X coordinate scaled to Sizes length.
      * @param y int Y coordinate
      */
-    public void animate(double pos, int y){
+    public void animate(double pos, double time){
         int x = (int)(pos*(PANEL_WIDTH - GRAPH_PADDING));
+        int y = (int) time;
+        //System.out.println("time:" + time + ", y: " + y);
         Graphics2D graph = (Graphics2D) animationPanel.getGraphics();
         graph.setColor(COLORS[color % COLORS.length]);
         graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 

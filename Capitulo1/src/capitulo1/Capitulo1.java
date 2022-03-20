@@ -7,8 +7,8 @@
 */
 package capitulo1;
 
-import capitulo1.controller.Controller;
-import capitulo1.view.View;
+import controller.Controller;
+import view.View;
 import model.Model;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.SwingUtilities;

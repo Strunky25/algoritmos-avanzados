@@ -5,11 +5,11 @@
         Joan Sansó Pericàs
         Joan Vilella Candia
 */
-package capitulo1.controller;
+package controller;
 
 import model.Model;
 import model.Model.Task;
-import capitulo1.view.View;
+import view.View;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -108,7 +108,7 @@ public class Controller {
                 case "point" -> {
                     if(!task.isCancelled()){
                         double x = (double) evt.getOldValue();
-                        int y = (int) evt.getNewValue();
+                        double y = (double) evt.getNewValue();
                         view.animate(x, y);
                     }
                 }

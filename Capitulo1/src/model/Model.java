@@ -15,10 +15,10 @@ import javax.swing.SwingWorker;
 public class Model {
     
     /* Constants */
-    public static final String SQRT = "sqrt(n)", LOG = "log(n)", N = "n", NLOG = "n*log(n)", N2 = "n^2";
+    public static final String  LOG = "log(n)", SQRT = "sqrt(n)", N = "n", NLOG = "n*log(n)", N2 = "n^2";
     public static final String[] COMPLEXITIES = {LOG, SQRT, N, NLOG, N2};
     
-    public static final int[] SIZES = {2, 4, 6, 8, 10, 12};
+    public static final int[] SIZES = {1,2,3,4,5,6,7,8,9,10};//{2, 4, 6, 8, 10, 12};
     
     /**
      * Inner class that performs the simulations in another thread.
@@ -47,7 +47,8 @@ public class Model {
                     case N2 -> n2(n);
                 }
                 double x = (double)(n + 1)/SIZES.length; // X escalada a tamaño de muestras
-                int y = (int) ((end - start)/10000000); // 10^7
+                double y = ((end - start)/10000000); // 10^7
+               // System.out.println("time: " + y);
                 firePropertyChange("point", x, y);
             }
             setProgress(100);
@@ -56,20 +57,20 @@ public class Model {
 
         public void log(int n) {
             start = System.nanoTime();
-            int max = (int) Math.log(SIZES[n]);
+            double max = (Math.log(SIZES[n])/Math.log(2));
             for (int i = 0; i < max; i++) {
                 sleep();
-                setProgress(i*(100/SIZES.length)/max + n*(100/SIZES.length));
+                setProgress((int)(i*(100/SIZES.length)/max + n*(100/SIZES.length)));
             }
             end = System.nanoTime();
         }
         
         public void sqrt(int n) {
             start = System.nanoTime();
-            int max = (int) Math.sqrt(SIZES[n]);
+            double max = Math.sqrt(SIZES[n]);
             for (int i = 0; i < max; i++) {
                 sleep(); 
-                setProgress(i*(100/SIZES.length)/max + n*(100/SIZES.length));
+                setProgress((int)(i*(100/SIZES.length)/max + n*(100/SIZES.length)));
             }
             end = System.nanoTime();
         }
@@ -85,12 +86,12 @@ public class Model {
 
         public void nlog(int n) {
             start = System.nanoTime();
-            int log = (int) Math.log(SIZES[n]);
-            int max = (SIZES[n]*log);
+            double log = Math.log(SIZES[n])/Math.log(2);
+            int max = (int) (SIZES[n]*log);
             for (int i = 0; i < SIZES[n]; i++) {
                 for (int j = 0; j < log; j++) {
                     sleep();
-                    setProgress((i*log+j)*(100/SIZES.length)/max + n*(100/SIZES.length));
+                    setProgress((int)(i*log+j)*(100/SIZES.length)/max + n*(100/SIZES.length));
                 }
             }
             end = System.nanoTime();
