@@ -30,7 +30,8 @@ public abstract class Chesspiece {
         Knight,
         Pawn,
         Queen,
-        Rook;
+        Rook,
+        Bunny;
         
         public Chesspiece getInstance(){
             switch(this){
@@ -40,6 +41,7 @@ public abstract class Chesspiece {
                 case Pawn ->    {return new Pawn();}
                 case Queen ->   {return new Queen();}
                 case Rook ->    {return new Rook();}
+                case Bunny ->   {return new Bunny();}
                 default ->      {return null;}
             }
         }
