@@ -30,7 +30,7 @@ public class View extends JFrame{
      * Method that initializes swing components, and sets JFrame properties.
      */
     private void initComponents(){
-        setTitle("Capitulo 1");
+        setTitle("Capitulo X");
         setIconImage(new ImageIcon("resources/icon.png").getImage());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         

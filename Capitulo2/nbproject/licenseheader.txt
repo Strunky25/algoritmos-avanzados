@@ -1,0 +1,7 @@
+/*
+    Algoritmes Avançats - Capitulo 2
+    Autors:
+        Jonathan Salisbury Vega
+        Joan Sansó Pericàs
+        Joan Vilella Candia
+*/
