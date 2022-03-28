@@ -77,6 +77,8 @@ public class Model {
         return this.stop;
     }
     
+    public boolean hasSolution() { return this.solution;}
+    
     public double getTime(){
         return (end - start)/1000000000.0; // seconds
     }

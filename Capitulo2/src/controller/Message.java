@@ -19,6 +19,9 @@ public class Message {
     public static final String SOLUTION_FORMAT = "Solution found in %f seconds.";
     public static final String STOPPED = "Execution stopped.";
     public static final String NO_SOLUTION_FOUND = "No Solution was found.";
+    public static final String COMPUTE_FIRST = "Please Compute a solution before animating";
+    public static final String ANIMATING = "Animating solution...";
+    public static final String ANIMATION_STOPPED = "Animation stopped.";
     
     public enum Type {
         INFO,

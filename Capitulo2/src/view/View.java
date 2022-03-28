@@ -221,18 +221,16 @@ public class View extends JFrame{
         return selectedPiece;
     }
     
+    public void enableSpinner(boolean enabled) {
+        this.sizeSpinner.setEnabled(enabled);
+    }
+    
     public void setProgress(int progress){
         this.progressBar.setValue(progress);
     }
     
     public int getBoardSize(){
         return (int) sizeSpinner.getValue();
-    }
-    
-    public void setRunning(boolean running){
-        this.computeBut.setEnabled(!running);
-        this.progressBar.setIndeterminate(running);
-        this.stopBut.setEnabled(running);
     }
     
     public void paintBoardNumbers(int[][] board){
@@ -305,41 +303,5 @@ public class View extends JFrame{
             tile[pieceRow][pieceCol].setIcon(icon);
         }
         
-    }
-    
-    public class Animator extends SwingWorker<Void, Void> {
-        
-        private final int[][] board;
-        private final int max;
-        
-        public Animator(int[][] board){
-            this.board = board;
-            this.max = board.length * board.length;
-        }
-
-        @Override
-        protected Void doInBackground() throws Exception {
-            int num = 0;
-            int[] thisPoint = {pieceCol, pieceRow};
-            int[] nextPoint = findNumber(++num);
-            while(nextPoint != null){
-                paintLine(thisPoint[0], thisPoint[1], nextPoint[0], nextPoint[1]);
-                thisPoint = nextPoint;
-                nextPoint = findNumber(++num);
-                progressBar.setValue(num*100/max);
-                Thread.sleep(200);
-            }
-            //animateButton.setEnabled(false);
-            return null;
-        }
-        
-        private int[] findNumber(int num){
-            for (int i = 0; i < board.length; i++) {
-                for (int j = 0; j < board.length; j++) {
-                    if(board[i][j] == num) return new int[]{j, i};
-                }
-            }
-            return null;
-        }
     }
 }
