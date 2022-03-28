@@ -20,33 +20,19 @@ public class Model {
     private int[][] board;
     private int maxMoves, pieceMoves;
     private int[] pieceDx, pieceDy;
-    private boolean stop;
+    private boolean stop, solution;
+    private long start, end;
     
-    /* Methods */
-    public void setBoardSize(int size){
-        this.board = new int[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                board[i][j] = -1;
-            }
-        }
-        maxMoves = size * size;
-    }
-    
-    public int[][] getBoard(){
-        return this.board;
-    }
-    
-    public void stop(){
-        this.stop = true;
-    }
-    
+
     public boolean solve(Chesspiece piece, int x, int y){
         this.pieceDx = piece.getDx();
         this.pieceDy = piece.getDy();
         this.pieceMoves = pieceDx.length;
         this.board[x][y] = 0;
-        return recursiveSolve(x, y, 1);
+        start = System.nanoTime();
+        solution = recursiveSolve(x, y, 1);
+        end = System.nanoTime();
+        return solution;
     }
     
     private boolean recursiveSolve(int x, int y, int move){
@@ -67,5 +53,31 @@ public class Model {
     
     private boolean isPossibleMove(int x, int y){
         return (x >= 0 && x < board.length && y >= 0 && y < board.length && board[x][y] == -1);
+    }
+    
+    public void setBoardSize(int size){
+        this.board = new int[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                board[i][j] = -1;
+            }
+        }
+        maxMoves = size * size;
+    }
+    
+    public int[][] getBoard(){
+        return this.board;
+    }
+    
+    public void stop(){this.stop = true;}
+    
+    public void start(){this.stop = false;}
+
+    public boolean isStopped() {
+        return this.stop;
+    }
+    
+    public double getTime(){
+        return (end - start)/1000000000.0; // seconds
     }
 }

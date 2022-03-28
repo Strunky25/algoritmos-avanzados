@@ -7,11 +7,15 @@
 */
 package view;
 
+import controller.Message;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,6 +32,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import model.chesspieces.Chesspiece;
 
 /**
@@ -38,6 +43,7 @@ public class View extends JFrame{
     /* Constants */
     public static final int PANEL_SIZE = 500;
     public static final int INIT_SIZE = 8;
+    public static final Color GREEN = new Color(0, 153, 51);
     
     /* Variables */
     private Integer pieceCol, pieceRow;
@@ -117,7 +123,6 @@ public class View extends JFrame{
                 //tile[i][j].addMouseListener(new TileChooseAdapter());
                 tile[i][j].setBackground((i + j) % 2 == 0 ? Color.white: Color.black);
                 this.boardPanel.add(tile[i][j]);
-                //tiles[i][j].repaint();
             }
         }
     }
@@ -194,9 +199,6 @@ public class View extends JFrame{
         pack();
     }
 
-    
-    /* METHODS */
-    
     // Add Listeners
     public void addComputeListener(ActionListener listener){
         this.computeBut.addActionListener(listener);
@@ -204,6 +206,10 @@ public class View extends JFrame{
     
     public void addStopListener(ActionListener listener){
         this.stopBut.addActionListener(listener);
+    }
+    
+    public void addAnimateListener(ActionListener listener){
+        this.animateBut.addActionListener(listener);
     }
     
     public Integer[] getPiecePosition(){
@@ -214,21 +220,9 @@ public class View extends JFrame{
     public Chesspiece getSelectedPiece(){
         return selectedPiece;
     }
-
-    private void changeBoardSize() {
-        this.boardPanel.removeAll();
-        initBoardPanel((int) sizeSpinner.getValue());
-        this.boardPanel.updateUI();
-        this.boardPanel.repaint();
-        pieceRow = pieceCol = null;
-    }
     
     public void setProgress(int progress){
         this.progressBar.setValue(progress);
-    }
-    
-    private void selectChesspiece() {
-        selectedPiece = ((Chesspiece.Type) pieceCombo.getSelectedItem()).getInstance();
     }
     
     public int getBoardSize(){
@@ -255,20 +249,46 @@ public class View extends JFrame{
         }
     }
     
+    public void paintLine(int x1, int y1, int x2, int y2){
+        Graphics2D g = (Graphics2D) boardPanel.getGraphics();  
+        g.setColor(Color.red);
+        g.setStroke(new BasicStroke(2));
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); 
+        g.drawLine(x1*squareSize + squareSize/2, y1*squareSize + squareSize/2, x2*squareSize + squareSize/2, y2*squareSize + squareSize/2);
+    }
+    
     private void unpaintTile(int i, int j){
         tile[i][j].setIcon(null);
         tile[i][j].setText(null);
         tile[i][j].repaint();
     }
     
-    public void printMessagge(String message){
+    public void printMessagge(String message, Message.Type type){
+        switch(type){
+            case INFO -> {this.infoArea.setForeground(Color.black);}
+            case SUCCESS -> {this.infoArea.setForeground(GREEN);}
+            case ERROR -> {this.infoArea.setForeground(Color.red);}
+        }
         this.infoArea.setText(message);
+    }
+    
+    private void changeBoardSize() {
+        this.boardPanel.removeAll();
+        initBoardPanel((int) sizeSpinner.getValue());
+        this.boardPanel.updateUI();
+        this.boardPanel.repaint();
+        pieceRow = pieceCol = null;
+    }
+    
+    private void selectChesspiece() {
+        selectedPiece = ((Chesspiece.Type) pieceCombo.getSelectedItem()).getInstance();
     }
     
     private class TileChooseAdapter extends MouseAdapter{
 
         @Override
         public void mouseReleased(MouseEvent e) {
+            progressBar.setValue(0);
             if(painted){
                 for (int i = 0; i < tile.length; i++) {
                     for (int j = 0; j < tile.length; j++) {
@@ -285,5 +305,41 @@ public class View extends JFrame{
             tile[pieceRow][pieceCol].setIcon(icon);
         }
         
+    }
+    
+    public class Animator extends SwingWorker<Void, Void> {
+        
+        private final int[][] board;
+        private final int max;
+        
+        public Animator(int[][] board){
+            this.board = board;
+            this.max = board.length * board.length;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            int num = 0;
+            int[] thisPoint = {pieceCol, pieceRow};
+            int[] nextPoint = findNumber(++num);
+            while(nextPoint != null){
+                paintLine(thisPoint[0], thisPoint[1], nextPoint[0], nextPoint[1]);
+                thisPoint = nextPoint;
+                nextPoint = findNumber(++num);
+                progressBar.setValue(num*100/max);
+                Thread.sleep(200);
+            }
+            //animateButton.setEnabled(false);
+            return null;
+        }
+        
+        private int[] findNumber(int num){
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board.length; j++) {
+                    if(board[i][j] == num) return new int[]{j, i};
+                }
+            }
+            return null;
+        }
     }
 }

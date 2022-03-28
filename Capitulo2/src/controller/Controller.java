@@ -7,10 +7,10 @@
 */
 package controller;
 
-import java.util.Arrays;
 import model.Model;
 import model.chesspieces.Chesspiece;
 import view.View;
+import view.View.Animator;
 
 /**
  * Class that manages interaction between the Model and View classes, including
@@ -24,6 +24,7 @@ public class Controller implements Runnable{
     
     /* Variables */
     private Thread thread;
+    private Animator animator;
     
     public Controller(Model model, View view){
         this.model = model;
@@ -35,20 +36,22 @@ public class Controller implements Runnable{
      * waiting for user input.
      */
     public void start(){
-        /* Add Listeners */
-        //this.view.addComputeListener(new ComputeListener());
-        this.view.addComputeListener((e) -> ComputeActionPerformed());
+        this.view.addComputeListener((e) -> computeActionPerformed());
+        this.view.addAnimateListener((e) -> animateActionPerformed());
         this.view.addStopListener((e) -> stopActionPerformed());
-        view.setVisible(true);
+        this.view.printMessagge(Message.DEFAULT, Message.Type.INFO);
+        this.view.setVisible(true);
     }
     
-    /**
-     * Define Listeners...
-     */
-    public void ComputeActionPerformed() { // mencionar en docu
-        view.setRunning(true);
+    public void computeActionPerformed() { // mencionar en docu
+        model.start();
         thread = new Thread(this);
         thread.start();
+    }
+    
+    public void animateActionPerformed(){
+        this.animator = view.new Animator(model.getBoard());
+        this.animator.execute();
     }
     
     public void stopActionPerformed() { // mencionar en docu
@@ -59,17 +62,22 @@ public class Controller implements Runnable{
     public void run() {
         Integer[] coordinates = view.getPiecePosition();
         Chesspiece selectedPiece = view.getSelectedPiece();
-        if(coordinates != null || selectedPiece != null){
-            //System.out.println(selectedPiece.getType() + " at " + Arrays.toString(coordinates));
+        if(coordinates != null && selectedPiece != null){
+            view.setRunning(true);
+            view.printMessagge(Message.COMPUTING, Message.Type.INFO);
             model.setBoardSize(view.getBoardSize());
             if(model.solve(selectedPiece, coordinates[0], coordinates[1])){
                 view.paintBoardNumbers(model.getBoard());
-                view.printMessagge("Solution Found :)");
+                view.printMessagge(Message.solutionWithTime(model.getTime()), Message.Type.SUCCESS);
+            } else if(model.isStopped()){
+                this.view.printMessagge(Message.STOPPED, Message.Type.ERROR);
             } else {
-                view.printMessagge("No Solution Found :(");
-            }   
+                this.view.printMessagge(Message.NO_SOLUTION_FOUND, Message.Type.ERROR);
+            }
+            view.setRunning(false);
+            view.setProgress(100);
+        } else {
+            this.view.printMessagge(Message.DEFAULT, Message.Type.ERROR);
         }
-        view.setRunning(false);
-        view.setProgress(100);
     }
 }
