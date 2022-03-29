@@ -80,7 +80,7 @@ public class Controller implements Runnable{
         if(coordinates != null && selectedPiece != null){
             view.printMessagge(Message.COMPUTING, Message.Type.INFO);
             model.setBoardSize(view.getBoardSize());
-            model.solve(selectedPiece, coordinates[0], coordinates[1]);
+            model.solve(selectedPiece, coordinates[1], coordinates[0]);
             showResults(model.hasSolution());
         } else {
             this.view.printMessagge(Message.DEFAULT, Message.Type.ERROR);

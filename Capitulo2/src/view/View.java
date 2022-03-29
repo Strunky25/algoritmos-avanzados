@@ -214,7 +214,7 @@ public class View extends JFrame{
     
     public Integer[] getPiecePosition(){
         if(pieceRow == null) return null;
-        return new Integer[]{pieceRow, pieceCol};
+        return new Integer[]{pieceCol, pieceRow};
     }
     
     public Chesspiece getSelectedPiece(){
