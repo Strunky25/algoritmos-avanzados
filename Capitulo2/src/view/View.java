@@ -32,7 +32,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import model.chesspieces.Chesspiece;
 
 /**
@@ -112,7 +111,6 @@ public class View extends JFrame{
     private void initBoardPanel(int boardSize){
         this.boardPanel.setLayout(new GridLayout(boardSize, boardSize));
         this.boardPanel.addMouseListener(new TileChooseAdapter());
-        //int squareSize = (int) Math.ceil((float) PANEL_SIZE/boardSize);
         squareSize = PANEL_SIZE/boardSize;
         this.tile = new JLabel[boardSize][boardSize];
         for (int i = 0; i < boardSize; i++) {
@@ -120,7 +118,6 @@ public class View extends JFrame{
                 tile[i][j] = new JLabel();
                 tile[i][j].setOpaque(true);
                 tile[i][j].setSize(squareSize, squareSize);
-                //tile[i][j].addMouseListener(new TileChooseAdapter());
                 tile[i][j].setBackground((i + j) % 2 == 0 ? Color.white: Color.black);
                 this.boardPanel.add(tile[i][j]);
             }
