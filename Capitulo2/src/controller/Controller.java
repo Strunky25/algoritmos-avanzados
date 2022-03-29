@@ -7,10 +7,10 @@
 */
 package controller;
 
+import javax.swing.SwingWorker;
 import model.Model;
 import model.chesspieces.Chesspiece;
 import view.View;
-import view.View.Animator;
 
 /**
  * Class that manages interaction between the Model and View classes, including
@@ -25,6 +25,7 @@ public class Controller implements Runnable{
     /* Variables */
     private Thread thread;
     private Animator animator;
+    private boolean computed, animating;
     
     public Controller(Model model, View view){
         this.model = model;
@@ -44,18 +45,32 @@ public class Controller implements Runnable{
     }
     
     public void computeActionPerformed() { // mencionar en docu
-        model.start();
-        thread = new Thread(this);
-        thread.start();
+        if(!animating){
+            model.start();
+            thread = new Thread(this);
+            thread.start();
+        } else {
+            this.view.printMessagge(Message.ANIMATING, Message.Type.ERROR);
+        }
     }
     
     public void animateActionPerformed(){
-        this.animator = view.new Animator(model.getBoard());
-        this.animator.execute();
+        if(computed){
+            this.view.printMessagge(Message.ANIMATING, Message.Type.INFO);
+            this.animator = new Animator(model.getBoard());
+            this.animator.execute();
+        } else {
+            this.view.printMessagge(Message.COMPUTE_FIRST, Message.Type.ERROR);
+        }
     }
     
     public void stopActionPerformed() { // mencionar en docu
         model.stop();
+        if(animating) {
+            view.printMessagge(Message.ANIMATION_STOPPED, Message.Type.ERROR);
+            animator.cancel(true);
+            animating = false;
+        }
     }
 
     @Override
@@ -63,21 +78,60 @@ public class Controller implements Runnable{
         Integer[] coordinates = view.getPiecePosition();
         Chesspiece selectedPiece = view.getSelectedPiece();
         if(coordinates != null && selectedPiece != null){
-            view.setRunning(true);
             view.printMessagge(Message.COMPUTING, Message.Type.INFO);
             model.setBoardSize(view.getBoardSize());
-            if(model.solve(selectedPiece, coordinates[0], coordinates[1])){
-                view.paintBoardNumbers(model.getBoard());
-                view.printMessagge(Message.solutionWithTime(model.getTime()), Message.Type.SUCCESS);
-            } else if(model.isStopped()){
-                this.view.printMessagge(Message.STOPPED, Message.Type.ERROR);
-            } else {
-                this.view.printMessagge(Message.NO_SOLUTION_FOUND, Message.Type.ERROR);
-            }
-            view.setRunning(false);
-            view.setProgress(100);
+            model.solve(selectedPiece, coordinates[0], coordinates[1]);
+            showResults(model.hasSolution());
         } else {
             this.view.printMessagge(Message.DEFAULT, Message.Type.ERROR);
+        }
+    }
+    
+    private void showResults(boolean solved){
+        if(solved){
+            view.paintBoardNumbers(model.getBoard());
+            view.printMessagge(Message.solutionWithTime(model.getTime()), Message.Type.SUCCESS);
+            computed = true;
+        } else if(model.isStopped()){
+            this.view.printMessagge(Message.STOPPED, Message.Type.ERROR);
+        } else {
+            this.view.printMessagge(Message.NO_SOLUTION_FOUND, Message.Type.ERROR);
+        }
+        view.setProgress(100);
+    }
+    
+        public class Animator extends SwingWorker<Void, Void> {
+        
+        private final int[][] board;
+        
+        public Animator(int[][] board){
+            this.board = board;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            animating = true;
+            int num = 0, max = board.length * board.length;
+            Integer[] thisPoint = view.getPiecePosition();
+            Integer[] nextPoint = findNumber(++num);
+            while(nextPoint != null && !isCancelled()){
+                view.paintLine(thisPoint[0], thisPoint[1], nextPoint[0], nextPoint[1]);
+                thisPoint = nextPoint;
+                nextPoint = findNumber(++num);
+                view.setProgress(num*100/max);
+                Thread.sleep(200);
+            }
+            animating = false;
+            return null;
+        }
+        
+        private Integer[] findNumber(int num){
+            for (int i = 0; i < board.length; i++) {
+                for (int j = 0; j < board.length; j++) {
+                    if(board[i][j] == num) return new Integer[]{j, i};
+                }
+            }
+            return null;
         }
     }
 }
