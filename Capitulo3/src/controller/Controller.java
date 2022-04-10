@@ -7,7 +7,7 @@
 */
 package controller;
 
-import java.math.BigInteger;
+import java.awt.event.ActionEvent;
 import model.Model;
 import view.View;
 
@@ -32,21 +32,30 @@ public class Controller {
      */
     public void start() {
         /* Add Listeners */
-        view.addTraditionalListener((e) -> traditionalActionPerformed());
+        view.addButtonsListener((e) -> buttonActionPerformed(e));
         view.setVisible(true);
     }
 
     /**
      * Define Listeners...
      */
-    private void traditionalActionPerformed() {
+    private void buttonActionPerformed(ActionEvent e) {
         String first = view.getFirstNumber();
         String second = view.getSecondNumber();
         if (first != null && second != null) {
+            switch (e.getActionCommand()) {
+                case "Traditional":
+                    view.setResult(model.multiply(first, second));
+                    break;
+                case "Karatsuba":
+                    view.setResult(model.karatsuba(first, second));
+                    break;
+                case "Mixed":
+                    break;
+            }
             view.setResult(model.multiply(first, second));
         } else {
             System.out.println("Error");
         }
     }
-
 }
