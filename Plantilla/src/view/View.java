@@ -31,7 +31,7 @@ public class View extends JFrame{
      */
     private void initComponents(){
         setTitle("Capitulo X");
-        setIconImage(new ImageIcon("resources/icon.png").getImage());
+        //setIconImage(new ImageIcon("resources/icon.png").getImage());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         /* Init Components */
