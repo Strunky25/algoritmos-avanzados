@@ -155,25 +155,42 @@ public class Model {
 		return isNeg ? "-" + karatsubaRec(num1, num2) : karatsubaRec(num1, num2);
 	}
 
+	private boolean isZero(String num){
+		for(int i = 0; i < num.length(); i++)
+			if(num.charAt(i) != '0')
+				return false;
+		return true;
+	}
+
 	private String karatsubaRec(String num1, String num2) {
-		if (num1.length() < 2 || num2.length() < 2)
-			return Integer.parseInt(num1) * Integer.parseInt(num2) + "";
+		if (isZero(num1) || isZero(num2))
+			return "0";
+		if (num1.length() < 2 || num2.length() < 2){
+			System.out.println(num1 + " multiplyed by " + num2);
+			return multiply(num1, num2);
+		}
+		int n = Math.max(num1.length(), num2.length());
+		int splitPoint = (int) Math.ceil(n/2);
+		long diff = num1.length() - num2.length();
+		if(diff < 0) {
+			diff = -diff;
+			num1 = String.join("", Collections.nCopies((int)diff, "0")) + num1;
+		} else{
+			num2 = String.join("", Collections.nCopies((int)diff, "0")) + num2;
+		}
 
-		int min = Math.min(num1.length(), num2.length());
-		int splitPoint = (int) Math.floor(min / 2);
-
+		//Arreglar karatsuba. Funciona cuando uno de los numeros tiene un numero par de digitos
 		String high1 = num1.substring(0, splitPoint);
-		String low1 = num1.substring(splitPoint, num1.length());
+		String low1 = num1.substring(splitPoint);
 		String high2 = num2.substring(0, splitPoint);
-		String low2 = num2.substring(splitPoint, num2.length());
-		// System.out.println(high1 + " " + low1 + " " + high2 + " " + low2);
-
+		String low2 = num2.substring(splitPoint);
+		
 		String z0 = karatsubaRec(low1, low2);
 		String z1 = karatsubaRec(add(low1, high1), add(low2, high2));
 		String z2 = karatsubaRec(high1, high2);
 
-		String par1 = z2 + String.join("", Collections.nCopies(splitPoint * 2, "0"));
-		String par2 = sub(sub(z1, z2), z0) + String.join("", Collections.nCopies(splitPoint, "0"));
-		return add(add(par1, par2), z0);
+		String par1 = z2 + String.join("", Collections.nCopies(2 * splitPoint, "0"));
+		String par2 = sub(sub(z1,z2),z0) + String.join("", Collections.nCopies(splitPoint, "0"));
+		return add(add(par1,par2),z0);
 	}
 }
