@@ -22,6 +22,11 @@ public class Model {
 	/* Methods */
 
 	public String multiply(String num1, String num2) {
+		/*
+		Comprobaciones iniciales: si los numeros difieren en signo, significa que 
+		eñ resultado va a ser negativo, asi que guardamos esa informacion y quitamos
+		los signos negativos a los numeros si los tienen.
+		*/
 		boolean isNeg = false;
 		if (num1.charAt(0) == '-') {
 			if (num2.charAt(0) == '-') {
@@ -34,11 +39,15 @@ public class Model {
 			isNeg = true;
 			num2 = num2.substring(1);
 		}
+		//Guardamos en n1 el numero mayor (en longitud) y en n2 el menor
 		String n1 = num1.length() > num2.length() ? num1 : num2;
 		String n2 = num1.length() > num2.length() ? num2 : num1;
+		//Inicializamos el resultado parcial a 0
 		String result = "0";
+		//Invertimos los numeros para que sea mas facil multiplicar
 		n1 = new StringBuilder(n1).reverse().toString();
 		n2 = new StringBuilder(n2).reverse().toString();
+		//Hacemos la multiplicacion digito a digito
 		for (int i = 0; i < n2.length(); i++) {
 			int carry = 0;
 			int dig1 = Character.getNumericValue(n2.charAt(i));
@@ -50,10 +59,13 @@ public class Model {
 				aux = aux % 10;
 				partialRes = String.valueOf(aux) + partialRes;
 			}
+			//Hacemos la suma de este nivel, añadiendo "i" zeros como en
+			// la multiplicacion clasica
 			if (carry > 0)
 				partialRes = String.valueOf(carry) + partialRes;
 			result = add(result, partialRes + String.join("", Collections.nCopies(i, "0")));
 		}
+		//Si el resultado tenia que ser negativo, le añadimos el signo.
 		return isNeg ? "-" + result : result;
 	}
 
@@ -156,12 +168,16 @@ public class Model {
 	}
 
 	public String karatsuba(String num1, String num2) {
-		// addTest();
-		// subTest();
 		//Quitamos los zeros de delante por si el usuario escribe 001 o 0001
 		num1 = removeLeadingZeros(num1);
 		num2 = removeLeadingZeros(num2);
-
+		//Comprobamos si el resultado va a ser positivo o negativo dependiendo
+		//de si tienen el mismo signo o no.
+		//Si tienen el mismo signo, el resultado va a ser positivo
+		//Si no, el resultado va a ser negativo
+		//En el caso de que un numero sea negativo, le quitamos el signo para poder
+		//hacer la multiplicacion (haremos multiplicacion positiva siempre) y 
+		// asignaremos el signo al final
 		boolean isNeg = false;
 		if (num1.charAt(0) == '-') {
 			if (num2.charAt(0) == '-') {
@@ -174,18 +190,20 @@ public class Model {
 			isNeg = true;
 			num2 = num2.substring(1);
 		}
+		//Usamos la libreria BigInteger para comprobar si el resultado
+		//es correcto
 		BigInteger n1 = new BigInteger(num1);
 		BigInteger n2 = new BigInteger(num2);
-		BigInteger result = n1.multiply(n2);
+		BigInteger expected = n1.multiply(n2);
 		if (isNeg)
-			result = result.negate();
-		System.out.println("Expected: "+result);
+			expected = expected.negate();
+		System.out.println("Expected: "+expected);
 
 		//Fix para que funcione para numeros de distintas longitudes:
 		/*
 		Básicamente añadimos ceros a la derecha para que sean dos numeros del mismo tamaño
 		Al final, despues de hacer la multiplicacion, eliminamos la misma cantidad de ceros
-		que habiamos añadido al principio para que el resultado sea el esperado.
+		que habiamos añadido para que el resultado sea el esperado.
 		*/
 		int diff = num1.length() - num2.length();
 		if (diff > 0) {
@@ -193,15 +211,23 @@ public class Model {
 		} else if (diff < 0) {
 			num1 = num1 + String.join("", Collections.nCopies(-diff, "0"));
 		}
-		String res = isNeg ? "-" + karatsubaRec(num1, num2) : karatsubaRec(num1, num2);
-		res = res.substring(0,res.length()-Math.abs(diff));
-		System.out.println("Result: "+res);
-		if(res.equals(result.toString()))
+		//Si los numeros diferian en signo, ponemos el signo negativo en el resultado, sino, no
+		String resultado = isNeg ? "-" + karatsubaRec(num1, num2) : karatsubaRec(num1, num2);
+		//Quitamos los zeros que habiamos añadido a la derecha al principio (operandos tuviesen
+		//la misma longitud)
+		resultado = resultado.substring(0,resultado.length()-Math.abs(diff));
+		System.out.println("Result: "+resultado);
+		//Comprobamos que el resultado es el esperado
+		if(resultado.equals(expected.toString()))
 			System.out.println("Karatsuba: Test passed");
-		return res;
+		else
+			System.out.println("Karatsuba: Test failed");
+		return resultado;
 	}
 
 	private boolean isZero(String num){
+		if(num.charAt(0)=='-')
+			num = num.substring(1);
 		for(int i = 0; i < num.length(); i++)
 			if(num.charAt(i) != '0')
 				return false;
