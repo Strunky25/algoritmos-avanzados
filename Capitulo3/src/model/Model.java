@@ -138,8 +138,30 @@ public class Model {
 		}
 		return flipped ? "-" + result : result;
 	}
+	//remove leading zeros: possible formats: 0000025 or -000005894
+	private String removeLeadingZeros(String num){
+		boolean neg = false;
+		if(num.charAt(0) == '-'){
+			num = num.substring(1);
+			neg = true;
+		}
+		int i = 0;
+		while(i < num.length() && num.charAt(i) == '0'){
+			i++;
+		}
+		if(i == num.length()){
+			return "0";
+		}
+		return neg ? "-" + num.substring(i) : num.substring(i);
+	}
 
 	public String karatsuba(String num1, String num2) {
+		// addTest();
+		// subTest();
+		//Quitamos los zeros de delante por si el usuario escribe 001 o 0001
+		num1 = removeLeadingZeros(num1);
+		num2 = removeLeadingZeros(num2);
+
 		boolean isNeg = false;
 		if (num1.charAt(0) == '-') {
 			if (num2.charAt(0) == '-') {
@@ -152,7 +174,31 @@ public class Model {
 			isNeg = true;
 			num2 = num2.substring(1);
 		}
-		return isNeg ? "-" + karatsubaRec(num1, num2) : karatsubaRec(num1, num2);
+		BigInteger n1 = new BigInteger(num1);
+		BigInteger n2 = new BigInteger(num2);
+		BigInteger result = n1.multiply(n2);
+		if (isNeg)
+			result = result.negate();
+		System.out.println("Expected: "+result);
+
+		//Fix para que funcione para numeros de distintas longitudes:
+		/*
+		Básicamente añadimos ceros a la derecha para que sean dos numeros del mismo tamaño
+		Al final, despues de hacer la multiplicacion, eliminamos la misma cantidad de ceros
+		que habiamos añadido al principio para que el resultado sea el esperado.
+		*/
+		int diff = num1.length() - num2.length();
+		if (diff > 0) {
+			num2 = num2 + String.join("", Collections.nCopies(diff, "0"));
+		} else if (diff < 0) {
+			num1 = num1 + String.join("", Collections.nCopies(-diff, "0"));
+		}
+		String res = isNeg ? "-" + karatsubaRec(num1, num2) : karatsubaRec(num1, num2);
+		res = res.substring(0,res.length()-Math.abs(diff));
+		System.out.println("Result: "+res);
+		if(res.equals(result.toString()))
+			System.out.println("Karatsuba: Test passed");
+		return res;
 	}
 
 	private boolean isZero(String num){
@@ -166,31 +212,28 @@ public class Model {
 		if (isZero(num1) || isZero(num2))
 			return "0";
 		if (num1.length() < 2 || num2.length() < 2){
-			System.out.println(num1 + " multiplyed by " + num2);
-			return multiply(num1, num2);
+			return Integer.parseInt(num1) * Integer.parseInt(num2) + "";
 		}
-		int n = Math.max(num1.length(), num2.length());
-		int splitPoint = (int) Math.ceil(n/2);
-		long diff = num1.length() - num2.length();
-		if(diff < 0) {
-			diff = -diff;
-			num1 = String.join("", Collections.nCopies((int)diff, "0")) + num1;
-		} else{
-			num2 = String.join("", Collections.nCopies((int)diff, "0")) + num2;
-		}
+		int num1Size = num1.length();
+		int num2Size = num2.length();
+		int splitPoint = Math.max(num1Size,num2Size) /2;
+		int splitNum1 = num1Size - splitPoint;
+		int splitNum2 = num2Size - splitPoint;
 
 		//Arreglar karatsuba. Funciona cuando uno de los numeros tiene un numero par de digitos
-		String high1 = num1.substring(0, splitPoint);
-		String low1 = num1.substring(splitPoint);
-		String high2 = num2.substring(0, splitPoint);
-		String low2 = num2.substring(splitPoint);
+		String a = num1.substring(0, splitNum1);
+		String b = num1.substring(splitNum1);
+		String c = num2.substring(0, splitNum2);
+		String d = num2.substring(splitNum2);
 		
-		String z0 = karatsubaRec(low1, low2);
-		String z1 = karatsubaRec(add(low1, high1), add(low2, high2));
-		String z2 = karatsubaRec(high1, high2);
-
-		String par1 = z2 + String.join("", Collections.nCopies(2 * splitPoint, "0"));
-		String par2 = sub(sub(z1,z2),z0) + String.join("", Collections.nCopies(splitPoint, "0"));
-		return add(add(par1,par2),z0);
+		String ac = karatsubaRec(a, c);
+		String bd = karatsubaRec(b, d);
+		String adbc = karatsubaRec(add(a, b), add(c, d));
+		String adbc_ = sub(adbc, ac);
+		String adbc__ = sub(adbc_, bd);
+		String part1 = ac + String.join("", Collections.nCopies(splitPoint*2, "0"));
+		String part2 = adbc__ + String.join("", Collections.nCopies(splitPoint, "0"));
+		part2 = add(part2, bd);
+		return add(part1, part2);
 	}
 }
