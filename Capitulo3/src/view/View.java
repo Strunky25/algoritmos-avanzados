@@ -8,12 +8,11 @@
 package view;
 
 import java.awt.event.ActionListener;
-import java.math.BigInteger;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * Class that contains the Swing GUI for the project.
@@ -25,9 +24,10 @@ public class View extends JFrame {
     /* Variables */
 
     /* Swing Components */
-    private JLabel firstNumLbl, secNumLbl, resLbl, mulLbl, eqLbl;
-    private JTextField firstNumFld, secNumFld, resFld;
-    private JButton tradBtn, karaBtn, mixBtn;
+    private JLabel num1Lbl, num2Lbl, resLbl;
+    private JTextArea num1TxtArea, num2TxtArea, resTxtArea;
+    private JScrollPane num1Scroll, num2Scroll, resScroll;
+    private JButton tradBtn, karaBtn, mixBtn, cmpBtn;
 
     public View() {
         initComponents();
@@ -42,19 +42,23 @@ public class View extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         /* Init Components */
-        firstNumLbl = new JLabel("First Number");
-        secNumLbl = new JLabel("Second Number");
+        num1Lbl = new JLabel("First Number");
+        num2Lbl = new JLabel("Second Number");
         resLbl = new JLabel("Result");
-        mulLbl = new JLabel("X");
-        eqLbl = new JLabel("=");
 
-        firstNumFld = new JTextField();
-        secNumFld = new JTextField();
-        resFld = new JTextField();
+        num1TxtArea = new JTextArea(5, 5);
+        num1Scroll = new JScrollPane(num1TxtArea);
+        
+        num2TxtArea = new JTextArea(5, 5);
+        num2Scroll = new JScrollPane(num2TxtArea);
+        
+        resTxtArea = new JTextArea(5, 20);
+        resScroll = new JScrollPane(resTxtArea);
 
         tradBtn = new JButton("Traditional");
         karaBtn = new JButton("Karatsuba");
         mixBtn = new JButton("Mixed");
+        cmpBtn = new JButton("Comparison");
 
         addComponents();
         setResizable(false);
@@ -69,78 +73,70 @@ public class View extends JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(50, 50, 50)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(firstNumLbl)
-                                                .addComponent(firstNumFld, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(tradBtn))
-                                .addGap(16, 16, 16)
-                                .addComponent(mulLbl)
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(secNumLbl)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(secNumFld, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(eqLbl))
-                                        .addComponent(karaBtn))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(resLbl)
-                                        .addComponent(resFld, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(mixBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 70,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(50, Short.MAX_VALUE)));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(52, 52, 52)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(resScroll)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(tradBtn)
+                        .addGap(75, 75, 75)
+                        .addComponent(karaBtn)
+                        .addGap(75, 75, 75)
+                        .addComponent(mixBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(resLbl)
+                            .addComponent(num1Lbl)
+                            .addComponent(num1Scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(num2Scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(num2Lbl))))
+                .addContainerGap(50, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(cmpBtn)
+                .addGap(185, 185, 185))
+        );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(40, 40, 40)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(firstNumLbl)
-                                        .addComponent(secNumLbl)
-                                        .addComponent(resLbl))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(firstNumFld, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(secNumFld, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(mulLbl)
-                                        .addComponent(eqLbl)
-                                        .addComponent(resFld, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(48, 48, 48)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(karaBtn)
-                                        .addComponent(mixBtn)
-                                        .addComponent(tradBtn))
-                                .addContainerGap(40, Short.MAX_VALUE)));
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(num1Lbl)
+                    .addComponent(num2Lbl))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(num1Scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(num2Scroll, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(resLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(resScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(karaBtn)
+                    .addComponent(mixBtn)
+                    .addComponent(tradBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cmpBtn)
+                .addContainerGap(28, Short.MAX_VALUE))
+        );
         pack();
     }
 
     /* METHODS */
     public String getFirstNumber() {
-        return firstNumFld.getText();
+        return num1TxtArea.getText();
     }
 
     public String getSecondNumber() {
-        return secNumFld.getText();
+        return num2TxtArea.getText();
     }
 
     public void setResult(String value) {
-        this.resFld.setText(value);
+        this.resTxtArea.setText(value);
     }
 
     // Add Listeners
@@ -148,5 +144,6 @@ public class View extends JFrame {
         this.tradBtn.addActionListener(listener);
         this.karaBtn.addActionListener(listener);
         this.mixBtn.addActionListener(listener);
+        this.cmpBtn.addActionListener(listener);
     }
 }
