@@ -60,9 +60,15 @@ public class Controller implements Runnable {
                 res = model.multiply(num1, num2);
                 break;
             case "Karatsuba":
-                res = model.karatsuba(num1, num2);
+                res = model.karatsuba(num1, num2, false);
                 break;
             case "Mixed":
+                if(Model.testDone)
+                    res = model.karatsuba(num1,num2, true);
+                else {
+                    model.calculateN();
+                    res = model.karatsuba(num1,num2, true);
+                }
                 break;
         }
         view.setResult(res);
