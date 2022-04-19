@@ -26,6 +26,10 @@ public class Model {
     private long startTime, endTime;
 
     /* Methods */
+    public void setNMix(int nMix) {
+        this.nMix = nMix;
+    }
+    
     public String multiply(String num1, String num2) {
         /*
         * Comprobaciones iniciales: si los numeros difieren en signo, significa que
@@ -313,7 +317,7 @@ public class Model {
         String resMix = multiply(num1, num2);
         timeMix = System.nanoTime() - timeMix;
         
-        return new long[]{timeTrad, timeKara, timeMix};
+        return new long[]{timeKara, timeTrad, timeMix};
     }
     
     public double getTime(){

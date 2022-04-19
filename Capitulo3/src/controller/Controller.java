@@ -89,17 +89,44 @@ public class Controller implements Runnable {
         System.out.println(event.getActionCommand());
         switch(event.getActionCommand()){
             case "Start" -> {
+                
                 compareThrd = new Thread(() -> {
                     int size = compare.getTestSize();
-                    for (int i = 1; i < size; i++) {
+                    long[] classic = new long[size];
+                    long[] karatsuba = new long[size];
+                    for (int i = 1; i < size+1; i++) {
                         try {
                             long[] times = model.calculateN(i);
+                            classic[i-1] = times[1];
+                            karatsuba[i-1] = times[0];
                             compare.animate(i, times);
                             Thread.sleep(10);
                             compare.setProgress(i*100/size);
                         } catch (InterruptedException ignore) { return; }
                     }
                     compare.drawlastPointTexts();
+                    //normalize values in the arrays
+                    double[] classicNormalized = new double[size];
+                    double[] karatsubaNormalized = new double[size];
+                    for (int i = 0; i < classic.length; i++) {
+                        classicNormalized[i] = classic[i]/(double)classic[classic.length-1];
+                        karatsubaNormalized[i] = karatsuba[i]/(double)karatsuba[classic.length-1];
+                    }
+                    //find intersection in the arrays
+                    int intersection = 0;
+                    int number = 0;
+                    for (int i = 0; i < classic.length-1; i++) {
+                        if(Math.abs(classicNormalized[i] - karatsubaNormalized[i]) < 0.004){
+                            if(i > 100){
+                                number++;
+                                intersection += i;
+                                System.out.println("One Intersection found: "+i);
+                            }
+                        }
+                    }
+                    intersection = intersection/number;
+                    model.setNMix(intersection);
+                    System.out.println("Final Intersection: "+intersection);
                 });
                 compareThrd.start();
             }
