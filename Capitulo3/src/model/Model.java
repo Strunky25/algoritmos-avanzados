@@ -306,18 +306,18 @@ public class Model {
         String num2 = generateNumber(n);
 
         timeTrad = System.nanoTime();
-        String resTrad = karatsuba(num1, num2, false);
+        String resTrad = multiply(num1,num2);
         timeTrad = System.nanoTime() - timeTrad;
 
         timeKara = System.nanoTime();
-        String resKara = multiply(num1, num2);
+        String resKara = karatsuba(num1, num2, false);
         timeKara = System.nanoTime() - timeKara;
         
         timeMix = System.nanoTime();
-        String resMix = multiply(num1, num2);
+        String resMix = karatsuba(num1,num2,true);
         timeMix = System.nanoTime() - timeMix;
         
-        return new long[]{timeKara, timeTrad, timeMix};
+        return new long[]{timeTrad, timeKara, timeMix};
     }
     
     public double getTime(){

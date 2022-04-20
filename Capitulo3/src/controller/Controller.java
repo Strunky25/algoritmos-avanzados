@@ -14,7 +14,9 @@ import javax.swing.SwingUtilities;
 import model.Model;
 import view.CompareFrame;
 import view.View;
-
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 /**
  * Class that manages interaction between the Model and View classes, including
  * user input.
@@ -65,11 +67,11 @@ public class Controller implements Runnable {
             case "Traditional" -> res = model.multiply(num1, num2);
             case "Karatsuba" -> res = model.karatsuba(num1, num2, false);
             case "Mixed" -> {
-                if(Model.tested)
-                    res = model.karatsuba(num1,num2, true);
+                if (Model.tested)
+                    res = model.karatsuba(num1, num2, true);
                 else {
-                    //model.calculateN();
-                    res = model.karatsuba(num1,num2, true);
+                    // model.calculateN();
+                    res = model.karatsuba(num1, num2, true);
                 }
             }
             case "Comparison" -> {
@@ -82,51 +84,53 @@ public class Controller implements Runnable {
                 return;
             }
         }
-        view.setResult(method + " solution found in " + model.getTime() + "s :\n" + res); 
+        view.setResult(method + " solution found in " + model.getTime() + "s :\n" + res);
     }
-    
-    private void compareActionPerformed(ActionEvent event){
+
+    private void compareActionPerformed(ActionEvent event) {
         System.out.println(event.getActionCommand());
-        switch(event.getActionCommand()){
+        switch (event.getActionCommand()) {
             case "Start" -> {
-                
                 compareThrd = new Thread(() -> {
                     int size = compare.getTestSize();
                     long[] classic = new long[size];
                     long[] karatsuba = new long[size];
-                    for (int i = 1; i < size+1; i++) {
+                    for (int i = 1; i < size + 1; i++) {
                         try {
                             long[] times = model.calculateN(i);
-                            classic[i-1] = times[1];
-                            karatsuba[i-1] = times[0];
+                            classic[i - 1] = times[0];
+                            karatsuba[i - 1] = times[1];
                             compare.animate(i, times);
                             Thread.sleep(10);
-                            compare.setProgress(i*100/size);
-                        } catch (InterruptedException ignore) { return; }
-                    }
-                    compare.drawlastPointTexts();
-                    //normalize values in the arrays
-                    double[] classicNormalized = new double[size];
-                    double[] karatsubaNormalized = new double[size];
-                    for (int i = 0; i < classic.length; i++) {
-                        classicNormalized[i] = classic[i]/(double)classic[classic.length-1];
-                        karatsubaNormalized[i] = karatsuba[i]/(double)karatsuba[classic.length-1];
-                    }
-                    //find intersection in the arrays
-                    int intersection = 0;
-                    int number = 0;
-                    for (int i = 0; i < classic.length-1; i++) {
-                        if(Math.abs(classicNormalized[i] - karatsubaNormalized[i]) < 0.004){
-                            if(i > 100){
-                                number++;
-                                intersection += i;
-                                System.out.println("One Intersection found: "+i);
-                            }
+                            compare.setProgress(i * 100 / size);
+                        } catch (InterruptedException ignore) {
+                            return;
                         }
                     }
-                    intersection = intersection/number;
-                    model.setNMix(intersection);
-                    System.out.println("Final Intersection: "+intersection);
+                    compare.drawlastPointTexts();
+                    int N = 0;
+                    int counter = 0;
+                    try{
+                    BufferedWriter bwc = new BufferedWriter(new FileWriter("classic.txt"));
+                    BufferedWriter bwk = new BufferedWriter(new FileWriter("karatsuba.txt"));
+                    for(int i = 0; i < size; i++){
+                        if(classic[i] > karatsuba[i]){
+                            counter++;
+                        }
+                        if(counter == 20){
+                            N = i-counter/2; 
+                            counter++;
+                        }
+                        bwc.write(String.valueOf(classic[i])+",");
+                        bwk.write(String.valueOf(karatsuba[i])+",");
+                    }
+                    bwc.close();
+                    bwk.close();
+                } catch(IOException e){
+                    System.out.println("Error writing to file: "+e.getMessage());
+                }
+                    model.setNMix(N);
+                    System.out.println("N = " + N);
                 });
                 compareThrd.start();
             }
