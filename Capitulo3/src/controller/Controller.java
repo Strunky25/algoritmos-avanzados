@@ -134,27 +134,34 @@ public class Controller implements Runnable {
             classic[i - 1] = times[0];
             karatsuba[i - 1] = times[1];
         }
-        int N = 0;
-        int counter = 0;
+        
         try {
             BufferedWriter bwc = new BufferedWriter(new FileWriter("classic.txt"));
             BufferedWriter bwk = new BufferedWriter(new FileWriter("karatsuba.txt"));
             for (int i = 0; i < Model.N_TESTS; i++) {
-                if (classic[i] > karatsuba[i]) {
-                    counter++;
-                }
-                if (counter == 20) {
-                    N = i - counter / 2;
-                    counter++;
-                }
                 bwc.write(String.valueOf(classic[i]) + ",");
                 bwk.write(String.valueOf(karatsuba[i]) + ",");
             }
             bwc.close();
             bwk.close();
+
+            
         } catch (IOException e) {
+            
             System.out.println("Error writing to file: " + e.getMessage());
         }
+        int N = 0;
+        int counter = 0;
+        for(int i = Model.N_TESTS - 1; i >= 0; i--) {
+            if(classic[i] < karatsuba[i]) {
+                counter++;
+            }
+            if (counter==10){
+                N = i-10;
+                break;
+            }
+        }
+        
         model.setNMix(N);
         System.out.println("N = " + N);
         compare.dispose();
