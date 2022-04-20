@@ -125,7 +125,7 @@ public class Controller implements Runnable {
                 long[] times = model.calculateN(i);
                 // System.out.println("doing it");
                 compare.animate(i, times);
-                try{Thread.sleep(1);} catch(InterruptedException ignore){return;}
+                //try{Thread.sleep(1);} catch(InterruptedException ignore){return;}
                 compare.setProgress(i * 100 / Model.N_TESTS);
                 classic[i - 1] = times[0];
                 karatsuba[i - 1] = times[1];

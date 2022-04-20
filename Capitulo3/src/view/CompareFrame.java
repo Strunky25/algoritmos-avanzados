@@ -107,7 +107,7 @@ public class CompareFrame extends JFrame {
         int x = n * (animationPanel.getWidth() / size);
         int y1 = (int) times[0] / 100000;
         int y2 = (int) times[1] / 100000;
-        int y3 = (int) times[1] / 100000;
+        int y3 = (int) times[2] / 100000;
         //System.out.println("x:" + x + ", y1: " + y1 + ", y2: " + y2);
         Graphics2D graph = (Graphics2D) animationPanel.getGraphics();
         graph.setColor(Color.blue);
