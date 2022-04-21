@@ -162,7 +162,6 @@ public class Model {
      *
      */
     public String karatsuba(String num1, String num2, boolean mixed) {
-        startTime = System.nanoTime();
         // Quitamos los zeros de delante por si el usuario escribe 001 o 0001
         num1 = removeLeadingZeros(num1);
         num2 = removeLeadingZeros(num2);
@@ -185,36 +184,13 @@ public class Model {
             isNeg = true;
             num2 = num2.substring(1);
         }
-        // // Fix para que funcione para numeros de distintas longitudes:
-        // /*
-        //  * Básicamente añadimos ceros a la derecha para que sean dos numeros del mismo
-        //  * tamaño
-        //  * Al final, despues de hacer la multiplicacion, eliminamos la misma cantidad de
-        //  * ceros
-        //  * que habiamos añadido para que el resultado sea el esperado.
-        //  */
-        // int diff = num1.length() - num2.length();
-        // if (diff > 0) {
-        //     num2 = num2 + String.join("", Collections.nCopies(diff, "0"));
-        // } else if (diff < 0) {
-        //     num1 = num1 + String.join("", Collections.nCopies(-diff, "0"));
-        // }
         // Si los numeros diferian en signo, ponemos el signo negativo en el resultado,
         // sino, no
         String resultado = isNeg ? "-" + karatsubaRec(num1, num2, mixed) : karatsubaRec(num1, num2, mixed);
-        // Quitamos los zeros que habiamos añadido a la derecha al principio (operandos
-        // tuviesen
-        // la misma longitud)
-        // resultado = resultado.substring(0, resultado.length() - Math.abs(diff));
-        //remove leading zeros
-        endTime = System.nanoTime();
         return resultado;
     }
 
     private String karatsubaRec(String num1, String num2, boolean mixed) {
-        // if (isZero(num1) || isZero(num2)) {
-        //     return isZero(num1) ? num1 : num2;
-        // }
         if (mixed && (num1.length() < nMix || num2.length() < nMix)) {
             return multiply(num1, num2);
         } else if (num1.length() < 2 || num2.length() < 2) {
@@ -239,9 +215,9 @@ public class Model {
 
         String ac = karatsubaRec(a, c, mixed);
         String bd = karatsubaRec(b, d, mixed);
-        String carro = sub(sub(karatsubaRec(add(a,b),add(c,d),mixed),ac),bd);
+        String abcd_ac_bd = sub(sub(karatsubaRec(add(a,b),add(c,d),mixed),ac),bd);
         String part1 = ac + String.join("", Collections.nCopies(2*splitPoint, "0"));
-        String part2 = carro + String.join("", Collections.nCopies(splitPoint, "0"));
+        String part2 = abcd_ac_bd + String.join("", Collections.nCopies(splitPoint, "0"));
         String res = add(add(part1,part2),bd);
         res = removeLeadingZeros(res);
         return res;
