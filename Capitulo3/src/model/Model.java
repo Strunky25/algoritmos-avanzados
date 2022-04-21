@@ -17,7 +17,7 @@ public class Model {
 
     /* Constants */
     public static final int N_TESTS = 450;
-    public static final int cache  = 0; //quitar o poner si al cambiar NTESTS y recompilar no actualiza
+    public static final int cache = 0; // quitar o poner si al cambiar NTESTS y recompilar no actualiza
     private static final Random random = new Random();
 
     /* Variables */
@@ -30,13 +30,13 @@ public class Model {
     public void setNMix(int nMix) {
         this.nMix = nMix;
     }
-    
+
     public String multiply(String num1, String num2) {
         /*
-        * Comprobaciones iniciales: si los numeros difieren en signo, significa que
-        * eñ resultado va a ser negativo, asi que guardamos esa informacion y quitamos
-        * los signos negativos a los numeros si los tienen.
-        */
+         * Comprobaciones iniciales: si los numeros difieren en signo, significa que
+         * eñ resultado va a ser negativo, asi que guardamos esa informacion y quitamos
+         * los signos negativos a los numeros si los tienen.
+         */
         startTime = System.nanoTime();
         boolean isNeg = false;
         if (num1.charAt(0) == '-') {
@@ -154,10 +154,10 @@ public class Model {
 
     /**
      *
-     * @param num1 a string representing a number
-     * @param num2 a string representing a number
+     * @param num1  a string representing a number
+     * @param num2  a string representing a number
      * @param mixed if true, will use classic multiplication when its more
-     * efficient to do so
+     *              efficient to do so
      * @return the product of num1 and num2
      *
      */
@@ -185,35 +185,36 @@ public class Model {
             isNeg = true;
             num2 = num2.substring(1);
         }
-        // Fix para que funcione para numeros de distintas longitudes:
-        /*
-		 * Básicamente añadimos ceros a la derecha para que sean dos numeros del mismo
-		 * tamaño
-		 * Al final, despues de hacer la multiplicacion, eliminamos la misma cantidad de
-		 * ceros
-		 * que habiamos añadido para que el resultado sea el esperado.
-         */
-        int diff = num1.length() - num2.length();
-        if (diff > 0) {
-            num2 = num2 + String.join("", Collections.nCopies(diff, "0"));
-        } else if (diff < 0) {
-            num1 = num1 + String.join("", Collections.nCopies(-diff, "0"));
-        }
+        // // Fix para que funcione para numeros de distintas longitudes:
+        // /*
+        //  * Básicamente añadimos ceros a la derecha para que sean dos numeros del mismo
+        //  * tamaño
+        //  * Al final, despues de hacer la multiplicacion, eliminamos la misma cantidad de
+        //  * ceros
+        //  * que habiamos añadido para que el resultado sea el esperado.
+        //  */
+        // int diff = num1.length() - num2.length();
+        // if (diff > 0) {
+        //     num2 = num2 + String.join("", Collections.nCopies(diff, "0"));
+        // } else if (diff < 0) {
+        //     num1 = num1 + String.join("", Collections.nCopies(-diff, "0"));
+        // }
         // Si los numeros diferian en signo, ponemos el signo negativo en el resultado,
         // sino, no
         String resultado = isNeg ? "-" + karatsubaRec(num1, num2, mixed) : karatsubaRec(num1, num2, mixed);
         // Quitamos los zeros que habiamos añadido a la derecha al principio (operandos
         // tuviesen
         // la misma longitud)
-        resultado = resultado.substring(0, resultado.length() - Math.abs(diff));
+        // resultado = resultado.substring(0, resultado.length() - Math.abs(diff));
+        //remove leading zeros
         endTime = System.nanoTime();
         return resultado;
     }
 
     private String karatsubaRec(String num1, String num2, boolean mixed) {
-        if (isZero(num1) || isZero(num2)) {
-            return "0";
-        }
+        // if (isZero(num1) || isZero(num2)) {
+        //     return isZero(num1) ? num1 : num2;
+        // }
         if (mixed && (num1.length() < nMix || num2.length() < nMix)) {
             return multiply(num1, num2);
         } else if (num1.length() < 2 || num2.length() < 2) {
@@ -222,28 +223,30 @@ public class Model {
 
         int num1Size = num1.length();
         int num2Size = num2.length();
-        int splitPoint = Math.max(num1Size, num2Size) / 2;
-        int splitNum1 = num1Size - splitPoint;
-        int splitNum2 = num2Size - splitPoint;
+        int max = Math.max(num1Size, num2Size);
+        int splitPoint = max / 2;
+        if(splitPoint*2 != max){
+            splitPoint++;
+        }
+        num1 = String.join("", Collections.nCopies(2*splitPoint-num1Size, "0")) + num1;
+        num2 = String.join("", Collections.nCopies(2*splitPoint-num2Size, "0")) + num2;
 
-        // Arreglar karatsuba. Funciona cuando uno de los numeros tiene un numero par de
-        // digitos
-        String a = num1.substring(0, splitNum1);
-        String b = num1.substring(splitNum1);
-        String c = num2.substring(0, splitNum2);
-        String d = num2.substring(splitNum2);
+
+        String a = num1.substring(0, splitPoint);
+        String b = num1.substring(splitPoint);
+        String c = num2.substring(0, splitPoint);
+        String d = num2.substring(splitPoint);
 
         String ac = karatsubaRec(a, c, mixed);
         String bd = karatsubaRec(b, d, mixed);
-        String adbc = karatsubaRec(add(a, b), add(c, d), mixed);
-        String adbc_ = sub(adbc, ac);
-        String adbc__ = sub(adbc_, bd);
-        String part1 = ac + String.join("", Collections.nCopies(splitPoint * 2, "0"));
-        String part2 = adbc__ + String.join("", Collections.nCopies(splitPoint, "0"));
-        part2 = add(part2, bd);
-        return add(part1, part2);
+        String carro = sub(sub(karatsubaRec(add(a,b),add(c,d),mixed),ac),bd);
+        String part1 = ac + String.join("", Collections.nCopies(2*splitPoint, "0"));
+        String part2 = carro + String.join("", Collections.nCopies(splitPoint, "0"));
+        String res = add(add(part1,part2),bd);
+        res = removeLeadingZeros(res);
+        return res;
     }
-    
+
     public boolean isSmaller(String num1, String num2) {
         int n1 = num1.length(), n2 = num2.length();
         if (n1 < n2) {
@@ -262,7 +265,7 @@ public class Model {
         }
         return false;
     }
-    
+
     // remove leading zeros: possible formats: 0000025 or -000005894
     private String removeLeadingZeros(String num) {
         boolean neg = false;
@@ -279,7 +282,7 @@ public class Model {
         }
         return neg ? "-" + num.substring(i) : num.substring(i);
     }
-    
+
     private boolean isZero(String num) {
         if (num.charAt(0) == '-') {
             num = num.substring(1);
@@ -291,7 +294,7 @@ public class Model {
         }
         return true;
     }
-    
+
     public String generateNumber(int lenght) {
         String num = "";
         num += (random.nextInt(9) + 1) + "";
@@ -307,21 +310,25 @@ public class Model {
         String num2 = generateNumber(n);
 
         timeTrad = System.nanoTime();
-        String resTrad = multiply(num1,num2);
+        String resTrad = multiply(num1, num2);
         timeTrad = System.nanoTime() - timeTrad;
 
+        num1 = generateNumber(n);
+        num2 = generateNumber(n);
         timeKara = System.nanoTime();
         String resKara = karatsuba(num1, num2, false);
         timeKara = System.nanoTime() - timeKara;
-        
+
+        num1 = generateNumber(n);
+        num2 = generateNumber(n);
         timeMix = System.nanoTime();
-        String resMix = karatsuba(num1,num2,true);
+        String resMix = karatsuba(num1, num2, true);
         timeMix = System.nanoTime() - timeMix;
-        
-        return new long[]{timeTrad, timeKara, timeMix};
+
+        return new long[] { timeTrad, timeKara, timeMix };
     }
-    
-    public double getTime(){
-        return (endTime - startTime)/1000000000.0;
+
+    public double getTime() {
+        return (endTime - startTime) / 1000000000.0;
     }
 }
