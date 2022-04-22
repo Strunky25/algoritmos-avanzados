@@ -12,9 +12,8 @@ import javax.swing.SwingUtilities;
 import model.Model;
 import view.CompareFrame;
 import view.View;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
+import javax.swing.JFrame;
 
 /**
  * Class that manages interaction between the Model and View classes, including
@@ -43,7 +42,7 @@ public class Controller implements Runnable {
         findMixedIntersection();
         /* Add Listeners */
         view.addButtonsListener((e) -> viewActionPerformed(e));
-        // view.setVisible(true); if algo??
+        //view.setVisible(true); //if algo??
     }
 
     /**
@@ -88,20 +87,18 @@ public class Controller implements Runnable {
     }
 
     private void compareActionPerformed(ActionEvent event) {
-        System.out.println(event.getActionCommand());
         switch (event.getActionCommand()) {
             case "Start" -> {
                 compareThrd = new Thread(() -> {
                     int size = compare.getTestSize();
+                    long max = model.calculateN(size)[0];
                     for (int i = 1; i < size + 1; i++) {
                         try {
                             long[] times = model.calculateN(i);
-                            compare.animate(i, times);
+                            compare.animate(i, times, max);
                             Thread.sleep(10);
                             compare.setProgress(i * 100 / size);
-                        } catch (InterruptedException ignore) {
-                            return;
-                        }
+                        } catch (InterruptedException ignore) { return;}
                     }
                     compare.drawlastPointTexts();
                 });
@@ -114,54 +111,54 @@ public class Controller implements Runnable {
     }
 
     private void findMixedIntersection() {
-
         compare = new CompareFrame();
+        compare.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         compare.setTitle("Finding best intersection for mixed algorithm");
         compare.setVisible(true);
         Thread back = new Thread(() -> {
             long[] classic = new long[Model.N_TESTS];
             long[] karatsuba = new long[Model.N_TESTS];
+            ArrayList<long[]> results = new ArrayList<>();
             for (int i = 1; i < Model.N_TESTS + 1; i++) {
                 long[] times = model.calculateN(i);
-                // System.out.println("doing it");
-                compare.animate(i, times);
-                // try{Thread.sleep(1);} catch(InterruptedException ignore){return;}
-                compare.setProgress(i * 100 / Model.N_TESTS);
+                results.add(times);
                 classic[i - 1] = times[0];
                 karatsuba[i - 1] = times[1];
             }
-            try {
-                BufferedWriter bwc = new BufferedWriter(new FileWriter("classic.txt"));
-                BufferedWriter bwk = new BufferedWriter(new FileWriter("karatsuba.txt"));
-                for (int i = 0; i < Model.N_TESTS; i++) {
-                    bwc.write(String.valueOf(classic[i]) + ",");
-                    bwk.write(String.valueOf(karatsuba[i]) + ",");
-                }
-                bwc.close();
-                bwk.close();
-
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
+            for(int i = 0; i < results.size(); i++){
+                compare.animate(i, results.get(i), results.get(results.size() -1)[0]);
+                try { Thread.sleep(10); } catch (InterruptedException ignore) {return;};
+                compare.setProgress(i * 100 / Model.N_TESTS);
             }
+    //        try {
+    //            BufferedWriter bwc = new BufferedWriter(new FileWriter("classic.txt"));
+    //            BufferedWriter bwk = new BufferedWriter(new FileWriter("karatsuba.txt"));
+    //            for (int i = 0; i < Model.N_TESTS; i++) {
+    //                bwc.write(String.valueOf(classic[i]) + ",");
+    //                bwk.write(String.valueOf(karatsuba[i]) + ",");
+    //            }
+    //            bwc.close();
+    //            bwk.close();
+    //
+    //        } catch (IOException e) {System.out.println(e.getMessage());}
             int N = 0;
             int counter = 0;
-            for (int i = Model.N_TESTS - 1; i >= 0; i--) {
-                if (classic[i] < karatsuba[i]) {
+            for(int i = Model.N_TESTS - 1; i >= 0; i--) {
+                if(classic[i] < karatsuba[i]) {
                     counter++;
                 }
-                if (counter == 10) {
-                    N = i - 10;
+                if (counter==10){
+                    N = i-10;
                     break;
                 }
             }
             model.setNMix(N);
             compare.showIntersectionResult(N);
-            System.out.println("N = " + N);
             compare.dispose();
             view.setVisible(true);
         });
         compare.addActionListener((e) -> {
-            if ("Stop".equals(e.getActionCommand())) {
+            if("Stop".equals(e.getActionCommand())){
                 back.interrupt();
                 compare.dispose();
                 view.setVisible(true);

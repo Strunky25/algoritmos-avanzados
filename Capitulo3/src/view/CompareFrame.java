@@ -53,6 +53,7 @@ public class CompareFrame extends JFrame {
         progressBar = new JProgressBar();
 
         addComponents();
+        drawLines();
         setResizable(false);
         setLocationRelativeTo(null);
     }
@@ -103,12 +104,14 @@ public class CompareFrame extends JFrame {
         pack();
     }
 
-    public void animate(int n, long[] times) {
-        int x = n * (animationPanel.getWidth() / size);
-        int y1 = (int) times[0] / 100000;
-        int y2 = (int) times[1] / 100000;
-        int y3 = (int) times[2] / 100000;
-        //System.out.println("x:" + x + ", y1: " + y1 + ", y2: " + y2);
+    public void animate(int n, long[] times, long max) {
+        //System.out.println("t: " + times[0] + ", max: " + max + ", div: " + (double) times[0]/max);
+        //System.out.println((double) times[0] / max * animationPanel.getHeight()*0.9);
+        int x = (int)((double) animationPanel.getWidth()*0.9 / size*n);
+        int y1 = (int) ((double) times[0] / max * animationPanel.getHeight()*0.8);
+        int y2 = (int) ((double) times[1] / max * animationPanel.getHeight()*0.8);
+        int y3 = (int) ((double) times[2] / max * animationPanel.getHeight()*0.8);
+        //System.out.println("x:" + x + ", y1: " + y1 + ", y2: " + y2 + ", y3: " + y3);
         Graphics2D graph = (Graphics2D) animationPanel.getGraphics();
         graph.setColor(Color.blue);
         graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -150,6 +153,7 @@ public class CompareFrame extends JFrame {
             return false;
         }
         this.size = (int) spin.getValue();
+        drawLines();
         return true;
     }
 
@@ -168,5 +172,15 @@ public class CompareFrame extends JFrame {
 
     public void showIntersectionResult(int n) {
         JOptionPane.showMessageDialog(this, "The best intersection point found is: " + n, "Result", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void drawLines() {
+        Graphics2D graph = (Graphics2D) animationPanel.getGraphics();
+        int height = animationPanel.getHeight();
+        graph.setColor(Color.black);
+        for (int i = 50; i < this.size; i += 50) {
+            graph.drawLine(25, 25, 50, 50);
+        }
+        animationPanel.repaint();
     }
 }
