@@ -16,7 +16,7 @@ import java.util.Random;
 public class Model {
 
     /* Constants */
-    public static final int N_TESTS = 1000;
+    public static final int N_TESTS = 900;
     public static final int cache = 0; // quitar o poner si al cambiar NTESTS y recompilar no actualiza
     private static final Random random = new Random();
 

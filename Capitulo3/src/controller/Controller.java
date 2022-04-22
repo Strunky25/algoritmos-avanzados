@@ -77,7 +77,7 @@ public class Controller implements Runnable {
                 SwingUtilities.invokeLater(() -> {
                     compare = new CompareFrame();
                     compare.addActionListener((e) -> compareActionPerformed(e));
-                    compare.getInputSize();
+                    compare.getInputSize();              
                     compare.setVisible(true);
                 });
                 return;
@@ -89,10 +89,13 @@ public class Controller implements Runnable {
     private void compareActionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
             case "Start" -> {
+                if(compareThrd != null) compareThrd.interrupt();
+                compare.cleanPanel();
+                compare.drawLines();
                 compareThrd = new Thread(() -> {
                     int size = compare.getTestSize();
                     long max = model.calculateN(size)[0];
-                    for (int i = 1; i < size + 1; i++) {
+                    for (int i = 1; i < size + 1; i += 2) {
                         try {
                             long[] times = model.calculateN(i);
                             compare.animate(i, times, max);
@@ -114,19 +117,22 @@ public class Controller implements Runnable {
         compare = new CompareFrame();
         compare.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         compare.setTitle("Finding best intersection for mixed algorithm");
+        compare.drawLines();
         compare.setVisible(true);
         Thread back = new Thread(() -> {
             long[] classic = new long[Model.N_TESTS];
             long[] karatsuba = new long[Model.N_TESTS];
             ArrayList<long[]> results = new ArrayList<>();
-            for (int i = 1; i < Model.N_TESTS + 1; i++) {
+            for (int i = 1; i < Model.N_TESTS + 1; i += 2) {
                 long[] times = model.calculateN(i);
                 results.add(times);
                 classic[i - 1] = times[0];
                 karatsuba[i - 1] = times[1];
-                if(i%4 == 0) compare.setProgress(i * 100 / Model.N_TESTS);
+                if((i-1)%4 == 0){ 
+                    compare.setProgress(i * 100 / Model.N_TESTS);
+                }
             }
-            for(int i = 0; i < results.size(); i++){
+            for(int i = 0; i < results.size(); i += 2){
                 compare.animate(i, results.get(i), results.get(results.size()-1)[0]);
                 try { Thread.sleep(10); } catch (InterruptedException ignore) {return;};
                 if(i%4 == 0) compare.setProgress(i * 100 / Model.N_TESTS);

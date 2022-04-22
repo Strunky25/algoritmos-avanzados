@@ -53,7 +53,6 @@ public class CompareFrame extends JFrame {
         progressBar = new JProgressBar();
 
         addComponents();
-        drawLines();
         setResizable(false);
         setLocationRelativeTo(null);
     }
@@ -143,7 +142,7 @@ public class CompareFrame extends JFrame {
     }
 
     public boolean getInputSize() {
-        JSpinner spin = new JSpinner(new SpinnerNumberModel(200, 0, 1000, 50));
+        JSpinner spin = new JSpinner(new SpinnerNumberModel(400, 400, 2000, 100));
         JPanel content = new JPanel();
         content.add(new JLabel("Test different algorithms with numbers up to N digits:"));
         content.add(spin);
@@ -153,7 +152,6 @@ public class CompareFrame extends JFrame {
             return false;
         }
         this.size = (int) spin.getValue();
-        drawLines();
         return true;
     }
 
@@ -174,13 +172,22 @@ public class CompareFrame extends JFrame {
         JOptionPane.showMessageDialog(this, "The best intersection point found is: " + n, "Result", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    private void drawLines() {
+    public void drawLines() {
         Graphics2D graph = (Graphics2D) animationPanel.getGraphics();
-        int height = animationPanel.getHeight();
         graph.setColor(Color.black);
-        for (int i = 50; i < this.size; i += 50) {
-            graph.drawLine(25, 25, 50, 50);
+        graph.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int height = animationPanel.getHeight();
+        for (int i = 100; i <= this.size; i += 100) {
+            int x = (int)((double) animationPanel.getWidth()*0.9 / size*i);
+            graph.drawLine(x, 0, x, height);
+            graph.drawString("N = " + i, x+2, TEXT_PADDING*2);
         }
-        animationPanel.repaint();
+        //animationPanel.repaint();
+    }
+    
+    public void cleanPanel(){
+        lastX = lastY1 = lastY2 = lastY3 = 0;
+        animationPanel.removeAll();
+        //animationPanel.repaint();
     }
 }
