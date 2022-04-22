@@ -16,7 +16,7 @@ import java.util.Random;
 public class Model {
 
     /* Constants */
-    public static final int N_TESTS = 450;
+    public static final int N_TESTS = 1000;
     public static final int cache = 0; // quitar o poner si al cambiar NTESTS y recompilar no actualiza
     private static final Random random = new Random();
 
@@ -32,12 +32,12 @@ public class Model {
     }
 
     public String multiply(String num1, String num2) {
+        startTime = System.nanoTime();
         /*
          * Comprobaciones iniciales: si los numeros difieren en signo, significa que
          * eñ resultado va a ser negativo, asi que guardamos esa informacion y quitamos
          * los signos negativos a los numeros si los tienen.
          */
-        startTime = System.nanoTime();
         boolean isNeg = false;
         if (num1.charAt(0) == '-') {
             if (num2.charAt(0) == '-') {
@@ -79,8 +79,9 @@ public class Model {
             result = add(result, partialRes + String.join("", Collections.nCopies(i, "0")));
         }
         // Si el resultado tenia que ser negativo, le añadimos el signo.
+        String res = isNeg ? "-" + result : result;
         endTime = System.nanoTime();
-        return isNeg ? "-" + result : result;
+        return res;
     }
 
     public String add(String num1, String num2) {
@@ -162,6 +163,7 @@ public class Model {
      *
      */
     public String karatsuba(String num1, String num2, boolean mixed) {
+        startTime = System.nanoTime();
         // Quitamos los zeros de delante por si el usuario escribe 001 o 0001
         num1 = removeLeadingZeros(num1);
         num2 = removeLeadingZeros(num2);
@@ -187,6 +189,7 @@ public class Model {
         // Si los numeros diferian en signo, ponemos el signo negativo en el resultado,
         // sino, no
         String resultado = isNeg ? "-" + karatsubaRec(num1, num2, mixed) : karatsubaRec(num1, num2, mixed);
+        endTime = System.nanoTime();
         return resultado;
     }
 
@@ -194,7 +197,7 @@ public class Model {
         if (mixed && (num1.length() < nMix || num2.length() < nMix)) {
             return multiply(num1, num2);
         } else if (num1.length() < 2 || num2.length() < 2) {
-            return Integer.parseInt(num1) * Integer.parseInt(num2) + "";
+            return multiply(num1,num2);
         }
 
         int num1Size = num1.length();
@@ -204,21 +207,24 @@ public class Model {
         if(splitPoint*2 != max){
             splitPoint++;
         }
+        //Rellenamos de zeros para que tengan la misma longitud
         num1 = String.join("", Collections.nCopies(2*splitPoint-num1Size, "0")) + num1;
         num2 = String.join("", Collections.nCopies(2*splitPoint-num2Size, "0")) + num2;
 
-
+        //Partimos los numeros en dos partes
         String a = num1.substring(0, splitPoint);
         String b = num1.substring(splitPoint);
         String c = num2.substring(0, splitPoint);
         String d = num2.substring(splitPoint);
-
+        //Hacemos las multiplicaciones de karatsuba
         String ac = karatsubaRec(a, c, mixed);
         String bd = karatsubaRec(b, d, mixed);
+        //Juntando soluciones y añadiendo los zeros a las partes que van a la parte alta del numero
         String abcd_ac_bd = sub(sub(karatsubaRec(add(a,b),add(c,d),mixed),ac),bd);
         String part1 = ac + String.join("", Collections.nCopies(2*splitPoint, "0"));
         String part2 = abcd_ac_bd + String.join("", Collections.nCopies(splitPoint, "0"));
         String res = add(add(part1,part2),bd);
+        //Quitamos los zeros de delante que se habian añadido
         res = removeLeadingZeros(res);
         return res;
     }
