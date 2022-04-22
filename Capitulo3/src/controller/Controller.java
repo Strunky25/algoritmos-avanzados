@@ -124,12 +124,12 @@ public class Controller implements Runnable {
                 results.add(times);
                 classic[i - 1] = times[0];
                 karatsuba[i - 1] = times[1];
-                compare.setProgress(i * 100 / Model.N_TESTS);
+                if(i%4 == 0) compare.setProgress(i * 100 / Model.N_TESTS);
             }
             for(int i = 0; i < results.size(); i++){
                 compare.animate(i, results.get(i), results.get(results.size()-1)[0]);
                 try { Thread.sleep(10); } catch (InterruptedException ignore) {return;};
-                compare.setProgress(i * 100 / Model.N_TESTS);
+                if(i%4 == 0) compare.setProgress(i * 100 / Model.N_TESTS);
             }
     //        try {
     //            BufferedWriter bwc = new BufferedWriter(new FileWriter("classic.txt"));
