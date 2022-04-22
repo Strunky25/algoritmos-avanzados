@@ -22,8 +22,7 @@ public class Model {
 
     /* Variables */
     public static boolean tested = false;
-    public static int[] classic = new int[N_TESTS - 1];
-    private static int nMix = 350;
+    private static int nMix = 700;
     private long startTime, endTime;
 
     /* Methods */

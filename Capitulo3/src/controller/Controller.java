@@ -8,6 +8,10 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javax.swing.SwingUtilities;
 import model.Model;
 import view.CompareFrame;
@@ -42,7 +46,7 @@ public class Controller implements Runnable {
         findMixedIntersection();
         /* Add Listeners */
         view.addButtonsListener((e) -> viewActionPerformed(e));
-        //view.setVisible(true); //if algo??
+        // view.setVisible(true); //if algo??
     }
 
     /**
@@ -77,7 +81,7 @@ public class Controller implements Runnable {
                 SwingUtilities.invokeLater(() -> {
                     compare = new CompareFrame();
                     compare.addActionListener((e) -> compareActionPerformed(e));
-                    compare.getInputSize();              
+                    compare.getInputSize();
                     compare.setVisible(true);
                 });
                 return;
@@ -89,19 +93,43 @@ public class Controller implements Runnable {
     private void compareActionPerformed(ActionEvent event) {
         switch (event.getActionCommand()) {
             case "Start" -> {
-                if(compareThrd != null) compareThrd.interrupt();
+                if (compareThrd != null)
+                    compareThrd.interrupt();
                 compare.cleanPanel();
                 compare.drawLines();
                 compareThrd = new Thread(() -> {
                     int size = compare.getTestSize();
+                    long[] classic = new long[size/2];
+                    long[] karatsuba = new long[size/2];
+                    long[] mixed = new long[size/2];
                     long max = model.calculateN(size)[0];
                     for (int i = 1; i < size + 1; i += 2) {
-                        try {
+                        // try {
                             long[] times = model.calculateN(i);
+                            classic[(i-1)/2] = times[0];
+                            karatsuba[(i-1)/2] = times[1];
+                            mixed[(i-1)/2] = times[2];
                             compare.animate(i, times, max);
-                            Thread.sleep(10);
+                            // Thread.sleep(10);
                             compare.setProgress(i * 100 / size);
-                        } catch (InterruptedException ignore) { return;}
+                        // } catch (InterruptedException ignore) {
+                        //     return;
+                        // }
+                    }
+                    try {
+                        BufferedWriter bwc = new BufferedWriter(new FileWriter("classic.txt"));
+                        BufferedWriter bwk = new BufferedWriter(new FileWriter("karatsuba.txt"));
+                        BufferedWriter bwm = new BufferedWriter(new FileWriter("mixed.txt"));
+                        for (int i = 0; i < classic.length; i++) {
+                            bwc.write(String.valueOf(classic[i]) + ",");
+                            bwk.write(String.valueOf(karatsuba[i]) + ",");
+                            bwm.write(String.valueOf(mixed[i]) + ",");
+                        }
+                        bwc.close();
+                        bwk.close();
+                        bwm.close();
+                    } catch (IOException e) {
+                        System.out.println(e.getMessage());
                     }
                     compare.drawlastPointTexts();
                 });
@@ -120,52 +148,95 @@ public class Controller implements Runnable {
         compare.drawLines();
         compare.setVisible(true);
         Thread back = new Thread(() -> {
-            long[] classic = new long[Model.N_TESTS];
-            long[] karatsuba = new long[Model.N_TESTS];
+            long[] classic = new long[Model.N_TESTS/2];
+            long[] karatsuba = new long[Model.N_TESTS/2];
+            long[] mixed = new long[Model.N_TESTS/2];
             ArrayList<long[]> results = new ArrayList<>();
             for (int i = 1; i < Model.N_TESTS + 1; i += 2) {
                 long[] times = model.calculateN(i);
                 results.add(times);
-                classic[i - 1] = times[0];
-                karatsuba[i - 1] = times[1];
-                if((i-1)%4 == 0){ 
+                classic[(i - 1)/2] = times[0];
+                karatsuba[(i-1)/2] = times[1];
+                mixed[(i-1)/2] = times[2];
+                if ((i - 1) % 4 == 0) {
                     compare.setProgress(i * 100 / Model.N_TESTS);
                 }
             }
-            for(int i = 0; i < results.size(); i += 2){
-                compare.animate(i, results.get(i), results.get(results.size()-1)[0]);
-                try { Thread.sleep(10); } catch (InterruptedException ignore) {return;};
-                if(i%4 == 0) compare.setProgress(i * 100 / Model.N_TESTS);
+            for (int i = 0; i < results.size(); i += 2) {
+                compare.animate(i*2, results.get(i), results.get(results.size() - 1)[0]);
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ignore) {
+                    return;
+                }
+                ;
+                if (i % 4 == 0)
+                    compare.setProgress(i * 100 / Model.N_TESTS);
             }
-    //        try {
-    //            BufferedWriter bwc = new BufferedWriter(new FileWriter("classic.txt"));
-    //            BufferedWriter bwk = new BufferedWriter(new FileWriter("karatsuba.txt"));
-    //            for (int i = 0; i < Model.N_TESTS; i++) {
-    //                bwc.write(String.valueOf(classic[i]) + ",");
-    //                bwk.write(String.valueOf(karatsuba[i]) + ",");
-    //            }
-    //            bwc.close();
-    //            bwk.close();
-    //
-    //        } catch (IOException e) {System.out.println(e.getMessage());}
+            try {
+                BufferedWriter bwc = new BufferedWriter(new FileWriter("classic.txt"));
+                BufferedWriter bwk = new BufferedWriter(new FileWriter("karatsuba.txt"));
+                BufferedWriter bwm = new BufferedWriter(new FileWriter("mixed.txt"));
+                for (int i = 0; i < Model.N_TESTS/2; i++) {
+                    bwc.write(String.valueOf(classic[i]) + ",");
+                    bwk.write(String.valueOf(karatsuba[i]) + ",");
+                    bwm.write(String.valueOf(mixed[i]) + ",");
+                }
+                bwc.close();
+                bwk.close();
+                bwm.close();
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
             int N = 0;
             int counter = 0;
-            for(int i = Model.N_TESTS - 1; i >= 0; i--) {
-                if(classic[i] < karatsuba[i]) {
+            for (int i = (Model.N_TESTS/2) - 1; i >= 0; i--) {
+                if (classic[i] < karatsuba[i]) {
                     counter++;
+                } else{
+                    counter = 0;
                 }
-                if (counter==10){
-                    N = i-10;
+                if (counter == 10) {
+                    N = i - 10;
                     break;
                 }
             }
-            model.setNMix(N);
-            compare.showIntersectionResult(N);
+            model.setNMix(N*2);
+            compare.showIntersectionResult(N*2);
             compare.dispose();
             view.setVisible(true);
         });
+        //TODO: NO BORRAR!!!!!!!!!!!!!
+        // Thread back = new Thread(()->{
+        //     int NMAX = 300;
+        //     long[] mixed = new long[NMAX];
+        //     for(int i = 1; i < NMAX+1; i ++){
+        //         String num1 = model.generateNumber(500);
+        //         String num2 = model.generateNumber(500);
+        //         model.setNMix(i);
+        //         long time = System.nanoTime();
+        //         model.karatsuba(num1, num2, true);
+        //         time = System.nanoTime() - time;
+        //         mixed[i-1] = time;
+        //     }
+        //     //find min value of mixed array
+        //     long min = mixed[0];
+        //     int index = 0;
+        //     for(int i = 1; i < mixed.length; i++){
+        //         if(mixed[i] < min){
+        //             min = mixed[i];
+        //             index = i;
+        //         }
+        //     }
+        //     System.out.println(index*2);
+        //     model.setNMix(index*2);
+        //     compare.showIntersectionResult(index*2);
+        //     compare.dispose();
+        //     view.setVisible(true);
+        // });
+        
         compare.addActionListener((e) -> {
-            if("Stop".equals(e.getActionCommand())){
+            if ("Stop".equals(e.getActionCommand())) {
                 back.interrupt();
                 compare.dispose();
                 view.setVisible(true);
