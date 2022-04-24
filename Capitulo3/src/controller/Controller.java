@@ -206,7 +206,7 @@ public class Controller implements Runnable {
             compare.dispose();
             view.setVisible(true);
         });
-        //TODO: NO BORRAR!!!!!!!!!!!!!
+        //Segunda manera de encontrar el mejor umbral
         // Thread back = new Thread(()->{
         //     int NMAX = 300;
         //     long[] mixed = new long[NMAX];
@@ -228,9 +228,9 @@ public class Controller implements Runnable {
         //             index = i;
         //         }
         //     }
-        //     System.out.println(index*2);
-        //     model.setNMix(index*2);
-        //     compare.showIntersectionResult(index*2);
+        //     System.out.println(index);
+        //     model.setNMix(index);
+        //     compare.showIntersectionResult(index);
         //     compare.dispose();
         //     view.setVisible(true);
         // });
