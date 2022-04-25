@@ -196,7 +196,7 @@ public class Model {
         if (mixed && (num1.length() < nMix || num2.length() < nMix)) {
             return multiply(num1, num2);
         } else if (num1.length() < 2 || num2.length() < 2) {
-            return multiply(num1,num2);
+            return multiply(num1, num2);
         }
 
         int num1Size = num1.length();
@@ -264,18 +264,6 @@ public class Model {
         return neg ? "-" + num.substring(i) : num.substring(i);
     }
 
-    private boolean isZero(String num) {
-        if (num.charAt(0) == '-') {
-            num = num.substring(1);
-        }
-        for (int i = 0; i < num.length(); i++) {
-            if (num.charAt(i) != '0') {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public String generateNumber(int lenght) {
         String num = "";
         num += (random.nextInt(9) + 1) + "";
@@ -291,21 +279,20 @@ public class Model {
         String num2 = generateNumber(n);
 
         timeTrad = System.nanoTime();
-        String resTrad = multiply(num1, num2);
+        multiply(num1, num2);
         timeTrad = System.nanoTime() - timeTrad;
 
         num1 = generateNumber(n);
         num2 = generateNumber(n);
         timeKara = System.nanoTime();
-        String resKara = karatsuba(num1, num2, false);
+        karatsuba(num1, num2, false);
         timeKara = System.nanoTime() - timeKara;
 
         num1 = generateNumber(n);
         num2 = generateNumber(n);
         timeMix = System.nanoTime();
-        String resMix = karatsuba(num1, num2, true);
+        karatsuba(num1, num2, true);
         timeMix = System.nanoTime() - timeMix;
-
         return new long[] { timeTrad, timeKara, timeMix };
     }
 
