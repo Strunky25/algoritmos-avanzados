@@ -8,10 +8,10 @@
 package capitulo4;
 
 import controller.Controller;
-import view.View;
 import model.Model;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.SwingUtilities;
+import view.View;
 
 /**
  * Main Class that starts the program

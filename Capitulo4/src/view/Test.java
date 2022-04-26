@@ -4,6 +4,8 @@
  */
 package view;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author elsho
@@ -27,63 +29,162 @@ public class Test extends javax.swing.JFrame {
     private void initComponents() {
 
         jButton3 = new javax.swing.JButton();
-        fileBtn = new javax.swing.JButton();
-        compresBtn = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        fileNameLbl1 = new javax.swing.JLabel();
+        compressBtn = new javax.swing.JButton();
         decompressBtn = new javax.swing.JButton();
         progressBar = new javax.swing.JProgressBar();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        infoArea = new javax.swing.JTextArea();
+        dndPanel = new javax.swing.JPanel();
+        iconLbl = new javax.swing.JLabel();
+        dndInfoLbl = new javax.swing.JLabel();
+        dndOrLbl = new javax.swing.JLabel();
+        browseBtn = new javax.swing.JButton();
+        filePanel = new javax.swing.JPanel();
+        fileIconLbl = new javax.swing.JLabel();
+        fileNameLbl = new javax.swing.JLabel();
+        fileSizeLbl = new javax.swing.JLabel();
 
         jButton3.setText("jButton3");
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
+        jLabel1.setText("jLabel1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        fileBtn.setText("Choose File");
-
-        compresBtn.setText("Compress");
+        compressBtn.setText("Compress");
 
         decompressBtn.setText("Decompress");
 
-        infoArea.setColumns(20);
-        infoArea.setRows(5);
-        infoArea.setText("Program that compresses or decompresses a choosen file \nwith Huffman Coding.\n\nSelect a File to Continue");
-        jScrollPane1.setViewportView(infoArea);
+        dndPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        dndPanel.setPreferredSize(new java.awt.Dimension(400, 400));
+
+        iconLbl.setIcon(new ImageIcon(new ImageIcon("resources/file.png").getImage().getScaledInstance(50, 50,  java.awt.Image.SCALE_SMOOTH)));
+
+        dndInfoLbl.setText("Drag & Drop files here");
+
+        dndOrLbl.setText("or");
+
+        browseBtn.setText("Browse Files");
+        browseBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                browseBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout dndPanelLayout = new javax.swing.GroupLayout(dndPanel);
+        dndPanel.setLayout(dndPanelLayout);
+        dndPanelLayout.setHorizontalGroup(
+            dndPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dndPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(dndPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dndPanelLayout.createSequentialGroup()
+                        .addComponent(dndOrLbl)
+                        .addGap(192, 192, 192))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dndPanelLayout.createSequentialGroup()
+                        .addComponent(dndInfoLbl)
+                        .addGap(138, 138, 138))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dndPanelLayout.createSequentialGroup()
+                        .addComponent(browseBtn)
+                        .addGap(153, 153, 153))))
+            .addGroup(dndPanelLayout.createSequentialGroup()
+                .addGap(173, 173, 173)
+                .addComponent(iconLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        dndPanelLayout.setVerticalGroup(
+            dndPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dndPanelLayout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(iconLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dndInfoLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(dndOrLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(browseBtn)
+                .addGap(50, 50, 50))
+        );
+
+        javax.swing.GroupLayout filePanelLayout = new javax.swing.GroupLayout(filePanel);
+        filePanel.setLayout(filePanelLayout);
+        filePanelLayout.setHorizontalGroup(
+            filePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(filePanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(fileIconLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(fileNameLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(fileSizeLbl, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                .addGap(20, 20, 20))
+        );
+        filePanelLayout.setVerticalGroup(
+            filePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(filePanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(filePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(filePanelLayout.createSequentialGroup()
+                        .addComponent(fileSizeLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(fileNameLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fileIconLbl, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(66, 66, 66)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(fileBtn)
-                            .addGap(85, 85, 85)
-                            .addComponent(compresBtn)
-                            .addGap(77, 77, 77)
-                            .addComponent(decompressBtn))))
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addGap(50, 50, 50)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addComponent(compressBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                        .addComponent(decompressBtn)
+                        .addGap(100, 100, 100))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(filePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dndPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(fileBtn)
-                    .addComponent(compresBtn)
-                    .addComponent(decompressBtn))
                 .addGap(30, 30, 30)
+                .addComponent(dndPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(filePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(compressBtn)
+                    .addComponent(decompressBtn))
+                .addGap(25, 25, 25)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47))
+                .addGap(30, 30, 30))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void browseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseBtnActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_browseBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -121,12 +222,21 @@ public class Test extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton compresBtn;
+    private javax.swing.JButton browseBtn;
+    private javax.swing.JButton compressBtn;
     private javax.swing.JButton decompressBtn;
-    private javax.swing.JButton fileBtn;
-    private javax.swing.JTextArea infoArea;
+    private javax.swing.JLabel dndInfoLbl;
+    private javax.swing.JLabel dndOrLbl;
+    private javax.swing.JPanel dndPanel;
+    private javax.swing.JLabel fileIconLbl;
+    private javax.swing.JLabel fileNameLbl;
+    private javax.swing.JLabel fileNameLbl1;
+    private javax.swing.JPanel filePanel;
+    private javax.swing.JLabel fileSizeLbl;
+    private javax.swing.JLabel iconLbl;
     private javax.swing.JButton jButton3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JProgressBar progressBar;
     // End of variables declaration//GEN-END:variables
 }

@@ -44,7 +44,6 @@ public class Controller {
     private void actionPerformed(ActionEvent evt) {
         File selectedFile = view.getSelectedFile();
         if (selectedFile == null) {
-            view.setInfoArea("Please select a file");
             return;
         }
         Thread thread = new Thread(() -> {
