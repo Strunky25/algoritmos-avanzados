@@ -111,6 +111,10 @@ public class View extends JFrame {
     /* METHODS */
     private void chooseFile() {
         FileSelectorFrame fsFrame = new FileSelectorFrame();
+        fsFrame.addConfirmListener((e) -> {
+            selectedFile = fsFrame.getSelectedFile();
+            infoArea.setText("File Selected: " + selectedFile.getName());
+        });
         fsFrame.setVisible(true);
     }
 

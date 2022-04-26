@@ -6,6 +6,7 @@ package view;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.event.ActionListener;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -141,6 +142,14 @@ public class FileSelectorFrame extends JFrame{
     private void confirmSelection(){
         if(selectedFile == null) return;
         this.dispose();
+    }
+
+    public void addConfirmListener(ActionListener listener){
+        confirmBtn.addActionListener(listener);
+    }
+
+    public File getSelectedFile() {
+        return selectedFile;
     }
 
     private class DragDropListener implements DropTargetListener {
