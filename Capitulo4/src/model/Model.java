@@ -153,16 +153,21 @@ public class Model {
                     wData[i] = parseBits(aux.substring(i * 8, (i + 1) * 8));
                 }
                 writeStream.write(wData);
-                if(retValue == -1) {
-                    while(buffer.length() % 8 != 0) {
+                if(retValue == -1 && buffer.length() != 0) {
+                    //pad the last byte with 0's and count the number of bits
+                    int bits = buffer.length();
+                    while(bits % 8 != 0) {
                         buffer += "0";
                     }
                     byte lastByte = parseBits(buffer);
                     writeStream.write(lastByte);
+                    writeStream.close();
+                    writeStream = new FileOutputStream(path,false);
                 }
             }
             readStream.close();
             writeStream.close();
+            //Now we write the actual
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
