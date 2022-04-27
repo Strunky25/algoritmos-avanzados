@@ -7,7 +7,6 @@
 */
 package model;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -43,14 +42,12 @@ public class Model {
      */
     private HashMap<Byte, Integer> getFrequencies(File f) {
         HashMap<Byte, Integer> frequencies = new HashMap<>();
-        // read file with readbtyes
-        byte[] buffer = new byte[BUFFER_SIZE];
-        InputStream stream;
-        try {
-            stream = new FileInputStream(f);
+        byte[] buffer = new byte[BUFFER_SIZE];  
+        try (InputStream stream = new FileInputStream(f)){
             int readBytes = stream.read(buffer, 0, BUFFER_SIZE);
             while (readBytes != -1) {
                 for (int i = 0; i < readBytes; i++) {
+                    //frequencies.put(buffer[i], frequencies.containsKey(buffer[i]) ? frequencies.get(buffer[i]) + 1 : 1);
                     if (frequencies.containsKey(buffer[i])) {
                         frequencies.put(buffer[i], frequencies.get(buffer[i]) + 1);
                     } else {
@@ -59,15 +56,14 @@ public class Model {
                 }
                 readBytes = stream.read(buffer, 0, BUFFER_SIZE);
             }
-            stream.close();
-        } catch (IOException e) {
-            // System.out.println(e.getMessage());
-        }
+            //stream.close();
+        } catch (IOException e) { System.out.println(e.getMessage());}
         return frequencies;
     }
 
     private PriorityQueue<Node> createHeap(HashMap<Byte, Integer> frequencies) {
         PriorityQueue<Node> queue = new PriorityQueue<Node>();
+        //frequencies.forEach((k, v) -> queue.add(new Node(k, v)));
         for (Byte key : frequencies.keySet()) {
             queue.add(new Node(key, frequencies.get(key)));
         }
@@ -76,10 +72,10 @@ public class Model {
 
     private Node createTree(PriorityQueue<Node> queue) {
         while (queue.size() > 1) {
-            Node node1 = (Node) queue.poll();
-            Node node2 = (Node) queue.poll();
-            Node node3 = new Node(node1, node2);
-            queue.add(node3);
+            Node left = (Node) queue.poll();
+            Node right = (Node) queue.poll();
+            Node parent = new Node(left, right);
+            queue.add(parent);
         }
         return (Node) queue.poll();
     }
