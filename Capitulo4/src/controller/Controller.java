@@ -43,9 +43,6 @@ public class Controller {
      */
     private void actionPerformed(ActionEvent evt) {
         File selectedFile = view.getSelectedFile();
-        if (selectedFile == null) {
-            return;
-        }
         Thread thread = new Thread(() -> {
             switch (evt.getActionCommand()) {
                 case "Compress" -> model.compress(selectedFile);

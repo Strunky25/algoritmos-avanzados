@@ -1,10 +1,14 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+    Algoritmes Avançats - Capitulo 4
+    Autors:
+        Jonathan Salisbury Vega
+        Joan Sansó Pericàs
+        Joan Vilella Candia
+*/
 package view;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -29,8 +33,7 @@ import javax.swing.JProgressBar;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
- *
- * @author elsho
+ * Class that contains the Swing GUI for the project.
  */
 public class View extends JFrame {
     
@@ -43,10 +46,16 @@ public class View extends JFrame {
     private JButton browseBtn, compressBtn, decompressBtn;
     private JProgressBar progressBar;
 
+    /**
+     * Constructor
+     */
     public View() {
         initComponents();
     }
     
+    /**
+     * Method that initializes all Swing Components
+     */
     private void initComponents(){
         setTitle("Capitulo 4");
         setIconImage(new ImageIcon("resources/icon.png").getImage());
@@ -54,6 +63,7 @@ public class View extends JFrame {
 
         /* Init Components */
         dndPanel = new JPanel();
+        dndPanel.setBackground(Color.white);
         dndPanel.setBorder(BorderFactory.createDashedBorder(
                 Color.blue, 1.5f, 4, 4, false));
         DragDropListener dragListener = new DragDropListener();
@@ -63,11 +73,14 @@ public class View extends JFrame {
  
         iconLbl = new JLabel();
         iconLbl.setIcon(new ImageIcon(new ImageIcon("resources/upload.png").getImage().getScaledInstance(50, 50,  java.awt.Image.SCALE_SMOOTH)));
-        dndInfoLbl = new JLabel("Drag & Drop files here");
+        
+        dndInfoLbl = new JLabel("Drag & Drop file here");
         dndOrLbl = new JLabel("or");
+        
         fileIconLbl = new JLabel();
         fileNameLbl = new JLabel();
         fileNameLbl.setVerticalTextPosition(JLabel.CENTER);
+        
         fileSizeLbl = new JLabel();
         fileSizeLbl.setHorizontalAlignment(JLabel.RIGHT);
         fileSizeLbl.setVerticalTextPosition(JLabel.CENTER);
@@ -87,7 +100,10 @@ public class View extends JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
     }
-     
+    
+    /**
+     * Method that sets the layout of the frame adding all components
+     */
     private void addComponents(){
         javax.swing.GroupLayout dndPanelLayout = new javax.swing.GroupLayout(dndPanel);
         dndPanel.setLayout(dndPanelLayout);
@@ -98,7 +114,7 @@ public class View extends JFrame {
                 .addGroup(dndPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dndPanelLayout.createSequentialGroup()
                         .addComponent(dndOrLbl)
-                        .addGap(192, 192, 192))
+                        .addGap(195, 195, 195))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dndPanelLayout.createSequentialGroup()
                         .addComponent(dndInfoLbl)
                         .addGap(138, 138, 138))
@@ -160,7 +176,7 @@ public class View extends JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(50, 50, 50)
                         .addComponent(compressBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(decompressBtn)
                         .addGap(100, 100, 100))
                     .addGroup(layout.createSequentialGroup()
@@ -168,7 +184,7 @@ public class View extends JFrame {
                             .addComponent(filePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(dndPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(50, 50, 50))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -188,6 +204,9 @@ public class View extends JFrame {
         pack();
     }
     
+    /**
+     * Method that shows the user a file selection panel.
+     */
     private void browseFile(){
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -197,26 +216,49 @@ public class View extends JFrame {
         }
     }
     
+    /**
+     * Method that shows the current selected file on the frame.
+     */
     private void showFilePanel(){
         fileNameLbl.setText(selectedFile.getName());
         fileIconLbl.setIcon(new ImageIcon(new ImageIcon("resources/file.png").getImage().getScaledInstance(30, 30,  java.awt.Image.SCALE_SMOOTH)));
         fileSizeLbl.setText(selectedFile.length() > 1000000 ? selectedFile.length()/1000000 + " mB": selectedFile.length()/1000 + " kB");
+        dndPanel.setBackground(Color.white);
+        filePanel.setBackground(Color.white);
         filePanel.setBorder(BorderFactory.createDashedBorder(
                 Color.blue, 1.5f, 4, 4, false));
         compressBtn.setEnabled(true);
         decompressBtn.setEnabled(true);
     }
     
+    /**
+     * Method that returns the file selected by the user.
+     * @return File current selected file.
+     */
     public File getSelectedFile() {
         return selectedFile;
     }
 
-    // Add Listeners
+    /**
+     * Method that adds a listener to the GUI Buttons.
+     * @param listener ActionListener to add.
+     */
     public void addListeners(ActionListener listener) {
         compressBtn.addActionListener(listener);
         decompressBtn.addActionListener(listener);
     }
     
+    /**
+     * Method that updates the progress bar value.
+     * @param progress int value to set on progress bar.
+     */
+    public void setProgress(int progress){
+        progressBar.setValue(progress);
+    }
+    
+    /**
+     * Nested class to implement drag and drop functionality.
+     */
     private class DragDropListener implements DropTargetListener {
 
         @Override
@@ -224,7 +266,7 @@ public class View extends JFrame {
 
         @Override
         public void dragOver(DropTargetDragEvent dtde) {
-            dndPanel.setBackground(new Color(184, 212, 214));
+            dndPanel.setBackground(new Color(225, 247, 246));
         }
 
         @Override
@@ -244,7 +286,14 @@ public class View extends JFrame {
                 try {
                     if (flavor.isFlavorJavaFileListType()) {
                         List files = (List) transferable.getTransferData(flavor); 
-                        selectedFile = (File) files.get(0);
+                        File file = (File) files.get(0);
+                        if(file.isDirectory()){
+                            dndPanel.setBackground(Color.white);
+                            Runnable sound = (Runnable) Toolkit.getDefaultToolkit().getDesktopProperty("win.sound.default");
+                            if(sound != null) sound.run();
+                            return;
+                        }
+                        selectedFile = file;
                         showFilePanel();
                     }
                 } catch (UnsupportedFlavorException | IOException e) {

@@ -7,7 +7,6 @@
 */
 package model;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,9 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 /**
@@ -27,6 +23,7 @@ public class Model {
 
     /* Constants */
     private static final int BUFFER_SIZE = 1024;
+    
     /* Variables */
     private HashMap frequencies;
 
@@ -44,25 +41,20 @@ public class Model {
     private int[] getFrequencies(File f) {
         int[] frequencies = new int[256];
         // read file with readbtyes
-        byte[] data = new byte[BUFFER_SIZE];
-        InputStream stream = null;
+        byte[] buffer = new byte[BUFFER_SIZE];
+        InputStream stream;
         try{
             stream = new FileInputStream(f);
-        } catch (IOException e) {
-            System.out.println("Error reading file");
-        }
-        try {
-            int retValue = stream.read(data, 0, BUFFER_SIZE);
-            while (retValue != -1) {
-                for (int i = 0; i < retValue; i++) {
-                    frequencies[(Byte.valueOf(data[i])).intValue()+127]++;
+            int readBytes = stream.read(buffer, 0, BUFFER_SIZE);
+            while (readBytes != -1) {
+                for (int i = 0; i < readBytes; i++) {
+                    frequencies[(Byte.valueOf(buffer[i])).intValue() + 127]++;
                 }
-                retValue = stream.read(data, 0, BUFFER_SIZE);
+                readBytes = stream.read(buffer, 0, BUFFER_SIZE);
             }
             stream.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return frequencies;
     }
