@@ -57,7 +57,7 @@ public class Node implements Comparable<Node>, Serializable {
 
     @Override
     public String toString() {
-        return "TreeNode [value=" + (char)value + ", frecuency=" + frecuency + ", isLeaf=" + isLeaf + "]";
+        return "TreeNode [value=" + (char)value + "("+value+"), frecuency=" + frecuency + ", isLeaf=" + isLeaf + "]";
     }
 
     public String inorderTraversal() {
