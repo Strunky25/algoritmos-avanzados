@@ -3,7 +3,7 @@ package model;
 import java.io.Serializable;
 
 public class Node implements Comparable<Node>, Serializable {
-    int value;
+    byte value;
     int frecuency;
     boolean isLeaf;
     Node left;
@@ -17,17 +17,17 @@ public class Node implements Comparable<Node>, Serializable {
         this.isLeaf = false;
     }
 
-    public Node(int value, int frecuency) {
+    public Node(byte value, int frecuency) {
         this.value = value;
         this.frecuency = frecuency;
         this.isLeaf = true;
     }
 
-    public int getValue() {
+    public byte getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(byte value) {
         this.value = value;
     }
 
@@ -57,7 +57,7 @@ public class Node implements Comparable<Node>, Serializable {
 
     @Override
     public String toString() {
-        return "TreeNode [value=" + value + ", frecuency=" + frecuency + "]";
+        return "TreeNode [value=" + (char)value + ", frecuency=" + frecuency + ", isLeaf=" + isLeaf + "]";
     }
 
     public String inorderTraversal() {
@@ -78,7 +78,7 @@ public class Node implements Comparable<Node>, Serializable {
     public String preordenTraversal() {
         String result = "";
         if (this.isLeaf) {
-            result += "'"+value+"'" + ",";
+            result += this.toString();
         }
         result += frecuency + " ";
         if (left != null) {
