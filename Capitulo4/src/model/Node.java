@@ -1,7 +1,9 @@
 package model;
 
-public class Node implements Comparable<Node> {
-    byte value;
+import java.io.Serializable;
+
+public class Node implements Comparable<Node>, Serializable {
+    int value;
     int frecuency;
     boolean isLeaf;
     Node left;
@@ -15,17 +17,17 @@ public class Node implements Comparable<Node> {
         this.isLeaf = false;
     }
 
-    public Node(byte value, int frecuency) {
+    public Node(int value, int frecuency) {
         this.value = value;
         this.frecuency = frecuency;
         this.isLeaf = true;
     }
 
-    public byte getValue() {
+    public int getValue() {
         return value;
     }
 
-    public void setValue(byte value) {
+    public void setValue(int value) {
         this.value = value;
     }
 
@@ -64,8 +66,7 @@ public class Node implements Comparable<Node> {
             result += left.inorderTraversal();
         }
         if (this.isLeaf) {
-            char v = (char) (value & 0xFF);
-            result += v + ",";
+            result += "'"+value+"'" + ",";
         }
         result += frecuency + " ";
         if (right != null) {
@@ -77,8 +78,7 @@ public class Node implements Comparable<Node> {
     public String preordenTraversal() {
         String result = "";
         if (this.isLeaf) {
-            char v = (char) (value & 0xFF);
-            result += v + ",";
+            result += "'"+value+"'" + ",";
         }
         result += frecuency + " ";
         if (left != null) {
