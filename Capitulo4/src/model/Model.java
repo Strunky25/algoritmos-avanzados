@@ -176,7 +176,63 @@ public class Model {
         writeCompressedFile(selectedFile, root);
     }
 
-    public void decompress(File selectedFile) {
+    //parse byte array to string of bits
+    private String parseByte(byte b) {
+        String bits = "";
+        for(int i = 0; i < 8; i++) {
+            bits += (b & (1 << (7 - i))) != 0 ? "1" : "0";
+        }
+        return bits;
+    }
 
+    public void decompress(File selectedFile) {
+        try (InputStream fi = new FileInputStream(selectedFile)) {
+            byte lastByteOffset = fi.readNBytes(1)[0];
+            System.out.println("read offset byte");
+            ObjectInputStream oi = new ObjectInputStream(fi);
+            Node root = (Node) oi.readObject();
+            System.out.println("read huffman tree object");
+            //reading bytes after the object works, you dont have to close the oi stream
+            String path = selectedFile.getAbsolutePath();
+            path = path.substring(0, path.length() - 5);
+            path = path.replace(path.substring(path.lastIndexOf(".")),"DECOMPRESSED"+path.substring(path.lastIndexOf(".")));
+            System.out.println("decompressed file path: " + path);
+            OutputStream fo = new FileOutputStream(path);
+            byte[] data = new byte[BUFFER_SIZE];
+            int retValue = fi.read(data, 0, BUFFER_SIZE);
+            while (retValue != -1) {
+                String buffer = "";
+                for(int i = 0; i < retValue; i++) {
+                    buffer += parseByte(data[i]);
+                }
+                retValue = fi.read(data, 0, BUFFER_SIZE);
+                //decode the string with the huffman tree
+                if(retValue < BUFFER_SIZE){
+                    System.out.println("lastByteOffset: " + lastByteOffset);
+                    buffer = buffer.substring(0,buffer.length() - lastByteOffset);
+                }
+                while(buffer.length() > 0) {
+                    Node node = root;
+                    while(!node.isLeaf) {
+                        if(buffer.charAt(0) == '0') {
+                            node = node.left;
+                        } else {
+                            node = node.right;
+                        }
+                        try{
+                            buffer = buffer.substring(1);
+                        } catch(StringIndexOutOfBoundsException e){
+                            
+                        }
+                    }
+                    fo.write((byte)node.value);
+                }
+            }
+            fo.close();
+            fi.close();
+        } catch (IOException | ClassNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }
