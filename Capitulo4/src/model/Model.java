@@ -36,12 +36,37 @@ public class Model {
 
     public void compress(File input) {
         HashMap<Byte, Integer> frequencies = getFrequencies(input);
+        double entropy = calculateEntropy(frequencies);
+        System.out.println("Entropy: " + entropy);
         PriorityQueue<Node> heap = createHeap(frequencies);
         Node treeRoot = createTree(heap);
         // System.out.println(root.preordenTraversal());
         createCodes(treeRoot);
+        double expectedSize = calculateExpectedSize(frequencies);
+        System.out.println("Expected size: (bytes)" + expectedSize);
+        System.out.println("Expected compression ratio: " + (1 - (expectedSize / input.length())));
         writeCompressedFile(input, treeRoot);
     }
+
+    private double calculateEntropy(HashMap<Byte,Integer> freq){
+        double entropy = 0;
+        for(Byte b : freq.keySet()){
+            double prob = (double)freq.get(b)/(double)freq.size();
+            entropy += prob * (Math.log(prob)/Math.log(2));
+        }
+        return -entropy;
+    }
+
+    private double calculateExpectedSize(HashMap<Byte,Integer> freq){
+        double expectedSize = 0;
+        for(Byte b : freq.keySet()){
+            int freqB = freq.get(b);
+            expectedSize += freqB * (huffmanCodes.get(b).length()/8);
+        }
+        return expectedSize;
+    }
+
+
     
     /**
      * Method that returns the frequencies of the characters in the text.
