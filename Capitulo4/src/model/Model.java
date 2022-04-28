@@ -27,6 +27,7 @@ public class Model {
 
     /* Constants */
     private static final int BUFFER_SIZE = 512;
+    private static final int BYTE_SIZE = 8;
 
     /* Variables */
     private HashMap<Byte, String> huffmanCodes;
@@ -36,37 +37,19 @@ public class Model {
 
     public void compress(File input) {
         HashMap<Byte, Integer> frequencies = getFrequencies(input);
-        double entropy = calculateEntropy(frequencies);
-        System.out.println("Entropy: " + entropy);
         PriorityQueue<Node> heap = createHeap(frequencies);
         Node treeRoot = createTree(heap);
-        // System.out.println(root.preordenTraversal());
         createCodes(treeRoot);
+        
+        double entropy = calculateEntropy(frequencies);
         double expectedSize = calculateExpectedSize(frequencies);
         System.out.println("Expected size: (bytes)" + expectedSize);
         System.out.println("Expected compression ratio: " + (1 - (expectedSize / input.length())));
-        writeCompressedFile(input, treeRoot);
+        System.out.println("Entropy: " + entropy);
+        
+        File output = new File(input.getPath() + ".huff");
+        writeCompressedFile(input, output, treeRoot);
     }
-
-    private double calculateEntropy(HashMap<Byte,Integer> freq){
-        double entropy = 0;
-        for(Byte b : freq.keySet()){
-            double prob = (double)freq.get(b)/(double)freq.size();
-            entropy += prob * (Math.log(prob)/Math.log(2));
-        }
-        return -entropy;
-    }
-
-    private double calculateExpectedSize(HashMap<Byte,Integer> freq){
-        double expectedSize = 0;
-        for(Byte b : freq.keySet()){
-            int freqB = freq.get(b);
-            expectedSize += freqB * (huffmanCodes.get(b).length()/8);
-        }
-        return expectedSize;
-    }
-
-
     
     /**
      * Method that returns the frequencies of the characters in the text.
@@ -90,7 +73,7 @@ public class Model {
     }
 
     private PriorityQueue<Node> createHeap(HashMap<Byte, Integer> frequencies) {
-        PriorityQueue<Node> queue = new PriorityQueue<Node>();
+        PriorityQueue<Node> queue = new PriorityQueue<>();
         frequencies.forEach((k, v) -> queue.add(new Node(k, v)));
         return queue;
     }
@@ -103,9 +86,9 @@ public class Model {
         return (Node) queue.poll();
     }
 
-    // traverse the huffman tree and generate the codes
+    // Cambiar a Iterativo??
     private void createCodes(Node root) {
-        huffmanCodes = new HashMap<Byte, String>();
+        huffmanCodes = new HashMap<>();
         addNode(root, "");
     }
 
@@ -118,79 +101,78 @@ public class Model {
         }
     }
     
-        private void writeCompressedFile(File output, Node root) {
-        String path = output.getAbsolutePath() + ".huff";
-        byte[] buffer = new byte[BUFFER_SIZE];
-        try {
-            FileInputStream readStream = new FileInputStream(output);
-            
+    private double calculateEntropy(HashMap<Byte,Integer> freq){
+        double entropy = 0;
+        for(Byte key : freq.keySet()){
+            double prob = (double) freq.get(key)/freq.size();
+            entropy += prob * (Math.log(prob) /Math.log(2));
+        }
+        return -entropy;
+    }
+    
+    private double calculateExpectedSize(HashMap<Byte,Integer> freq){
+        double expectedSize = 0;
+        for(Byte key : freq.keySet()){
+            expectedSize += freq.get(key) * (huffmanCodes.get(key).length()/BYTE_SIZE);
+        }
+        return expectedSize;
+    }
+    
+    private void writeCompressedFile(File input, File output, Node treeRoot) {
+        try (FileInputStream reader = new FileInputStream(input);
+                FileOutputStream writer = new FileOutputStream(output);){ 
             /* Reserve space for the offset, will be overwritten after */
-            FileOutputStream writeStream = new FileOutputStream(path);
-            writeStream.write(0);
-            writeStream.close();
-            
+            writer.write(0);
+
             /* Write Huffman Tree Object */
-            ObjectOutputStream objStr = new ObjectOutputStream(new FileOutputStream(path, true));
-            objStr.writeObject(root);
-            objStr.close();
-            
+            ObjectOutputStream objStr = new ObjectOutputStream(writer);
+            objStr.writeObject(treeRoot);
+
             String strBuffer = "";
-            writeStream = new FileOutputStream(path, true);
-            int readBytes = readStream.read(buffer, 0, BUFFER_SIZE);
+            byte[] bufferIn = new byte[BUFFER_SIZE], bufferOut;
+            int readBytes = reader.read(bufferIn, 0, BUFFER_SIZE);
             while (readBytes != -1) {
                 for (int i = 0; i < readBytes; i++) {
-                    strBuffer += huffmanCodes.get(buffer[i]);
+                    strBuffer += huffmanCodes.get(bufferIn[i]);
                 }
-                // "101010101 10101101 01101010101 01010101 0101" //revisar si +1 o -1 en uno de
-                // los dos strings
-                // // System.out.println("buffer: " + buffer);
-                String aux = strBuffer.substring(0, strBuffer.length() - (strBuffer.length() % 8));
-                if (strBuffer.length() % 8 != 0) {
-                    strBuffer = strBuffer.substring(strBuffer.length() - strBuffer.length() % 8);
-                } else {
-                    strBuffer = "";
+                int nBytes = strBuffer.length() / BYTE_SIZE * BYTE_SIZE;
+                String aux = strBuffer.substring(0, nBytes);
+                bufferOut = new byte[aux.length() / BYTE_SIZE];
+                for (int i = 0; i < bufferOut.length; i++) {
+                    bufferOut[i] = parseByte(aux.substring(i * BYTE_SIZE, (i + 1) * BYTE_SIZE));
                 }
-                byte[] wData = new byte[aux.length() / 8];
-                for (int i = 0; i < aux.length() / 8; i++) {
-                    wData[i] = parseBits(aux.substring(i * 8, (i + 1) * 8));
-                    // System.out.print(aux.substring(i * 8, (i + 1) * 8)+" ");
-                }
-                writeStream.write(wData);
-                // // System.out.println("written compressed data");
-                readBytes = readStream.read(buffer, 0, BUFFER_SIZE);
+                writer.write(bufferOut);
+                strBuffer = strBuffer.substring(nBytes);
+                readBytes = reader.read(bufferIn, 0, BUFFER_SIZE);
             }
-            if (strBuffer.length() != 0) {
-                // System.out.println("buffer length final: " + buffer.length());
-                // 101
-                int bits = 8 - strBuffer.length();
-                strBuffer += String.join("", Collections.nCopies(bits, "0"));
-                byte lastByte = parseBits(strBuffer);
-                writeStream.write(lastByte);
-                // System.out.println("written last byte");
-                writeStream.flush();
-                writeStream.close();
-                RandomAccessFile ra = new RandomAccessFile(path, "rw");
-                ra.write((byte) bits);
-                // System.out.println("written offset byte at start of file: " + bits + " bits");
-                ra.close();
-            }
-            readStream.close();
-            writeStream.close();
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+            if (strBuffer.length() != 0) writeLastByte(strBuffer, output, writer);
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+    
+    private void writeLastByte(String buffer, File output, FileOutputStream writer){
+        int nBits = BYTE_SIZE - buffer.length();
+        buffer += String.join("", Collections.nCopies(nBits, "0"));
+        byte lastByte = parseByte(buffer);
+        try (RandomAccessFile ra = new RandomAccessFile(output, "rw");){
+            writer.write(lastByte);
+            ra.write((byte) nBits);
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
         }
     }
 
     // Function to parse a String of bits into a byte
-    private byte parseBits(String bits) {
-        Integer aux = Integer.parseInt(bits, 2);
+    private byte parseByte(String byteStr) {
+        Integer aux = Integer.parseInt(byteStr, 2);
         return aux.byteValue();
     }
 
     // parse byte array to string of bits
     private String byteToBinaryString(byte b) {
         String bits = "";
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < BYTE_SIZE; i++) {
             bits += (b & (1 << (7 - i))) != 0 ? "1" : "0";
         }
         return bits;
@@ -212,7 +194,7 @@ public class Model {
             String path = selectedFile.getAbsolutePath();
             path = path.substring(0, path.length() - 5);
             path = path.replace(path.substring(path.lastIndexOf(".")),
-                    "DECOMPRESSED" + path.substring(path.lastIndexOf(".")));
+                    "_decompressed" + path.substring(path.lastIndexOf(".")));
             // System.out.println("decompressed file path: " + path);
             OutputStream fo = new FileOutputStream(path);
             byte[] data = new byte[BUFFER_SIZE];
@@ -284,4 +266,5 @@ public class Model {
             e.printStackTrace();
         }
     }
+    
 }

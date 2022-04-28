@@ -1,12 +1,8 @@
-/Plantilla - Copy/nbproject/private/
-/Capitulo2/build/
-/Capitulo2/dist/
-Capitulo1/nbproject/private/private.properties
-/Capitulo3/nbproject/private/
-/Capitulo3/build/
-/Capitulo3/dist/
-/Plantilla/build/
-/Plantilla/dist/
-Capitulo3/Cap 3.mp4
-Capitulo3.zip
-/Capitulo4/dist/
+**/build
+**/dist
+**/nbroject
+*.mp4
+*.class
+*.class
+*.class
+*.properties
