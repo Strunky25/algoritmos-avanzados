@@ -3,12 +3,14 @@ package model;
 import java.io.Serializable;
 
 public class Node implements Comparable<Node>, Serializable {
-    byte value;
-    int frecuency;
-    boolean isLeaf;
-    Node left;
-    Node right;
+    
+    /* Variables */
+    private byte value;
+    private int frecuency;
+    private boolean isLeaf;
+    private Node left, right;
 
+    
     public Node(Node left, Node right) {
         this.left = left;
         this.right = right;
@@ -54,10 +56,13 @@ public class Node implements Comparable<Node>, Serializable {
     public void setRight(Node right) {
         this.right = right;
     }
-
-    @Override
-    public String toString() {
-        return "TreeNode [value=" + (char)value + "("+value+"), frecuency=" + frecuency + ", isLeaf=" + isLeaf + "]";
+    
+    public boolean isLeaf(){
+        return this.isLeaf;
+    }
+    
+    public void setLeaf(boolean isLeaf){
+        this.isLeaf = isLeaf;
     }
 
     public String inorderTraversal() {
@@ -91,14 +96,17 @@ public class Node implements Comparable<Node>, Serializable {
     }
 
     @Override
-    public int compareTo(Node o) {
-        if (this.frecuency < o.frecuency) {
+    public int compareTo(Node node) {
+        if (this.frecuency < node.frecuency) {
             return -1;
-        }
-        if (this.frecuency > o.frecuency) {
+        } else if (this.frecuency > node.frecuency) {
             return 1;
         }
         return 0;
     }
 
+    @Override
+    public String toString() {
+        return "TreeNode [value=" + (char)value + "("+value+"), frecuency=" + frecuency + ", isLeaf=" + isLeaf + "]";
+    }
 }

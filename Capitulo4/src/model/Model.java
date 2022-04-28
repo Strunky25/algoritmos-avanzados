@@ -29,120 +29,101 @@ public class Model {
     private static final int BUFFER_SIZE = 512;
 
     /* Variables */
+    private HashMap<Byte, String> huffmanCodes;
 
     /* Methods */
-    public Model() {
-    }
+    public Model() {}
 
+    public void compress(File input) {
+        HashMap<Byte, Integer> frequencies = getFrequencies(input);
+        PriorityQueue<Node> heap = createHeap(frequencies);
+        Node treeRoot = createTree(heap);
+        // System.out.println(root.preordenTraversal());
+        createCodes(treeRoot);
+        writeCompressedFile(input, treeRoot);
+    }
+    
     /**
      * Method that returns the frequencies of the characters in the text.
      * 
      * @param text Text to be analyzed.
      * @return HashMap with the frequencies of the characters.
      */
-    private HashMap<Byte, Integer> getFrequencies(File f) {
+    private HashMap<Byte, Integer> getFrequencies(File input) {
         HashMap<Byte, Integer> frequencies = new HashMap<>();
         byte[] buffer = new byte[BUFFER_SIZE];  
-        try (InputStream stream = new FileInputStream(f)){
+        try (InputStream stream = new FileInputStream(input)){
             int readBytes = stream.read(buffer, 0, BUFFER_SIZE);
             while (readBytes != -1) {
                 for (int i = 0; i < readBytes; i++) {
-                    //frequencies.put(buffer[i], frequencies.containsKey(buffer[i]) ? frequencies.get(buffer[i]) + 1 : 1);
-                    if (frequencies.containsKey(buffer[i])) {
-                        frequencies.put(buffer[i], frequencies.get(buffer[i]) + 1);
-                    } else {
-                        frequencies.put(buffer[i], 1);
-                    }
+                    frequencies.put(buffer[i], frequencies.containsKey(buffer[i]) ? frequencies.get(buffer[i]) + 1 : 1);
                 }
                 readBytes = stream.read(buffer, 0, BUFFER_SIZE);
             }
-            //stream.close();
         } catch (IOException e) { System.out.println(e.getMessage());}
         return frequencies;
     }
 
     private PriorityQueue<Node> createHeap(HashMap<Byte, Integer> frequencies) {
         PriorityQueue<Node> queue = new PriorityQueue<Node>();
-        //frequencies.forEach((k, v) -> queue.add(new Node(k, v)));
-        for (Byte key : frequencies.keySet()) {
-            queue.add(new Node(key, frequencies.get(key)));
-        }
+        frequencies.forEach((k, v) -> queue.add(new Node(k, v)));
         return queue;
     }
 
     private Node createTree(PriorityQueue<Node> queue) {
         while (queue.size() > 1) {
-            Node left = (Node) queue.poll();
-            Node right = (Node) queue.poll();
-            Node parent = new Node(left, right);
+            Node parent = new Node((Node) queue.poll(), (Node) queue.poll());
             queue.add(parent);
         }
         return (Node) queue.poll();
     }
 
-    HashMap<Byte, String> codes;
-
     // traverse the huffman tree and generate the codes
     private void createCodes(Node root) {
-        codes = new HashMap<Byte, String>();
+        huffmanCodes = new HashMap<Byte, String>();
         addNode(root, "");
     }
 
     private void addNode(Node node, String code) {
-        if (node.isLeaf) {
-            codes.put(node.value, code);
+        if (node.isLeaf()) {
+            huffmanCodes.put(node.getValue(), code);
         } else {
-            addNode(node.left, code + "0");
-            addNode(node.right, code + "1");
+            addNode(node.getLeft(), code + "0");
+            addNode(node.getRight(), code + "1");
         }
     }
-
-    // Function to parse a String of bits into a byte
-    private byte parseBits(String bits) {
-        Integer aux = Integer.parseInt(bits, 2);
-        return aux.byteValue();
-    }
-
-    private void writeCompressedFile(File f, Node root) {
-        String path = f.getAbsolutePath();
-        path += ".huff";
-        byte[] data = new byte[BUFFER_SIZE];
-        InputStream readStream = null;
-        OutputStream writeStream = null;
+    
+        private void writeCompressedFile(File output, Node root) {
+        String path = output.getAbsolutePath() + ".huff";
+        byte[] buffer = new byte[BUFFER_SIZE];
         try {
-            readStream = new FileInputStream(f);
-            writeStream = new java.io.FileOutputStream(path);
-        } catch (IOException e) {
-            // System.out.println("Error reading file");
-        }
-        try {
-            // We write one byte to reserve space for the offste of the last byte,
-            // which we will replace at the end for the correct value
+            FileInputStream readStream = new FileInputStream(output);
+            
+            /* Reserve space for the offset, will be overwritten after */
+            FileOutputStream writeStream = new FileOutputStream(path);
             writeStream.write(0);
-            // System.out.println("written dummy byte");
-            // then we write the huffman tree
             writeStream.close();
-            ObjectOutputStream objStr = new ObjectOutputStream(new java.io.FileOutputStream(path, true));
+            
+            /* Write Huffman Tree Object */
+            ObjectOutputStream objStr = new ObjectOutputStream(new FileOutputStream(path, true));
             objStr.writeObject(root);
-            // System.out.println("written huffman tree object");
             objStr.close();
+            
+            String strBuffer = "";
             writeStream = new FileOutputStream(path, true);
-            int retValue = readStream.read(data, 0, BUFFER_SIZE);
-            String buffer = "";
-            boolean first = true;
-            // System.out.println();
-            while (retValue != -1) {
-                for (int i = 0; i < retValue; i++) {
-                    buffer += codes.get(Byte.valueOf(data[i]));
+            int readBytes = readStream.read(buffer, 0, BUFFER_SIZE);
+            while (readBytes != -1) {
+                for (int i = 0; i < readBytes; i++) {
+                    strBuffer += huffmanCodes.get(buffer[i]);
                 }
                 // "101010101 10101101 01101010101 01010101 0101" //revisar si +1 o -1 en uno de
                 // los dos strings
                 // // System.out.println("buffer: " + buffer);
-                String aux = buffer.substring(0, buffer.length() - (buffer.length() % 8));
-                if (buffer.length() % 8 != 0) {
-                    buffer = buffer.substring(buffer.length() - buffer.length() % 8);
+                String aux = strBuffer.substring(0, strBuffer.length() - (strBuffer.length() % 8));
+                if (strBuffer.length() % 8 != 0) {
+                    strBuffer = strBuffer.substring(strBuffer.length() - strBuffer.length() % 8);
                 } else {
-                    buffer = "";
+                    strBuffer = "";
                 }
                 byte[] wData = new byte[aux.length() / 8];
                 for (int i = 0; i < aux.length() / 8; i++) {
@@ -151,14 +132,14 @@ public class Model {
                 }
                 writeStream.write(wData);
                 // // System.out.println("written compressed data");
-                retValue = readStream.read(data, 0, BUFFER_SIZE);
+                readBytes = readStream.read(buffer, 0, BUFFER_SIZE);
             }
-            if (buffer.length() != 0) {
+            if (strBuffer.length() != 0) {
                 // System.out.println("buffer length final: " + buffer.length());
                 // 101
-                int bits = 8 - buffer.length();
-                buffer += String.join("", Collections.nCopies(bits, "0"));
-                byte lastByte = parseBits(buffer);
+                int bits = 8 - strBuffer.length();
+                strBuffer += String.join("", Collections.nCopies(bits, "0"));
+                byte lastByte = parseBits(strBuffer);
                 writeStream.write(lastByte);
                 // System.out.println("written last byte");
                 writeStream.flush();
@@ -169,25 +150,16 @@ public class Model {
                 ra.close();
             }
             readStream.close();
-            try {
-                writeStream.close();
-            } catch (IOException ignore) {
-            }
-            // Now we write the actual
+            writeStream.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
-
-    public void compress(File selectedFile) {
-        HashMap<Byte, Integer> frequencies = getFrequencies(selectedFile);
-        PriorityQueue<Node> heap = createHeap(frequencies);
-        Node root = createTree(heap);
-        // System.out.println(root.preordenTraversal());
-        createCodes(root);
-        writeCompressedFile(selectedFile, root);
+    // Function to parse a String of bits into a byte
+    private byte parseBits(String bits) {
+        Integer aux = Integer.parseInt(bits, 2);
+        return aux.byteValue();
     }
 
     // parse byte array to string of bits
@@ -258,13 +230,13 @@ public class Model {
                 for (int i = 0; i < buffer.length(); i++) {
                     currentSubstring += buffer.charAt(i);
                     if (buffer.charAt(i) == '0') {
-                        current = current.left;
+                        current = current.getLeft();
                     } else {
-                        current = current.right;
+                        current = current.getRight();
                     }
-                    if (current.isLeaf) {
+                    if (current.isLeaf()) {
                         // System.out.print(current.value + " ");
-                        fo.write(current.value);
+                        fo.write(current.getValue());
                         current = root;
                         currentSubstring = "";
                     }
