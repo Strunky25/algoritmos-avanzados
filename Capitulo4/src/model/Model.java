@@ -42,16 +42,18 @@ public class Model {
         PriorityQueue<Node> heap = createHeap(frequencies);
         Node treeRoot = createTree(heap);
         createCodes(treeRoot);
-        
-        double entropy = calculateEntropy(frequencies);
+        File output = new File(input.getPath() + ".huff");
+        writeCompressedFile(input, output, treeRoot);
+
+        double entropy = calculateTheoreticalEntropy(frequencies);
         double expectedSize = calculateExpectedSize(frequencies);
         System.out.println("Expected size: (bytes)" + expectedSize);
         System.out.println("Original size: (bytes)" + input.length());
         System.out.println("Expected compression ratio: " + expectedSize / input.length());
-        System.out.println("Entropy: " + entropy);
+        System.out.println("Theoretical Entropy: " + entropy);
+        System.out.println("Actual Entropy: " + calculateActualEntropy(frequencies,output));
         
-        File output = new File(input.getPath() + ".huff");
-        writeCompressedFile(input, output, treeRoot);
+        
     }
     
     /**
@@ -118,11 +120,22 @@ public class Model {
         }
     }
     
-    private double calculateEntropy(HashMap<Byte,Integer> freq){
+    private double calculateTheoreticalEntropy(HashMap<Byte,Integer> freq){
         double entropy = 0;
         //Calculate the entropy of the file, summing the entropy of each byte.
         for(Byte key : freq.keySet()){
             double prob = (double) freq.get(key)/nbytes;
+            entropy += prob * (Math.log(prob) /Math.log(2));
+        }
+        return -entropy;
+    }
+
+    private double calculateActualEntropy(HashMap<Byte,Integer> freq, File out){
+        double entropy = 0;
+        double filesize = out.length();
+        //Calculate the entropy of the file, summing the entropy of each byte.
+        for(Byte key : freq.keySet()){
+            double prob = (double) freq.get(key)/filesize;
             entropy += prob * (Math.log(prob) /Math.log(2));
         }
         return -entropy;
