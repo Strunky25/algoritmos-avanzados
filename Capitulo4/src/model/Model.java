@@ -47,7 +47,7 @@ public class Model {
         double expectedSize = calculateExpectedSize(frequencies);
         System.out.println("Expected size: (bytes)" + expectedSize);
         System.out.println("Original size: (bytes)" + input.length());
-        System.out.println("Expected compression ratio: " + input.length()/expectedSize);
+        System.out.println("Expected compression ratio: " + expectedSize / input.length());
         System.out.println("Entropy: " + entropy);
         
         File output = new File(input.getPath() + ".huff");
@@ -133,7 +133,7 @@ public class Model {
         // so just the compressed data.
         double expectedSize = 0;
         for(Byte key : freq.keySet()){
-            expectedSize += freq.get(key) * (huffmanCodes.get(key).length()/BYTE_SIZE);
+            expectedSize += freq.get(key) * (huffmanCodes.get(key).length()/8.0); //must be a double
         }
         return expectedSize;
     }
