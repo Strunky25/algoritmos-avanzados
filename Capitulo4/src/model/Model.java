@@ -39,6 +39,7 @@ public class Model {
 
     public void compress(File input) {
         HashMap<Byte, Integer> frequencies = getFrequencies(input);
+<<<<<<< HEAD
         Huffman huffman = new Huffman();
         huffman.createTree(frequencies);
         huffmanCodes = huffman.generateCodes();
@@ -46,13 +47,27 @@ public class Model {
         File output = new File(input.getPath() + ".huff");
         compressAndWriteFile(input, output, root);
         
+=======
+        PriorityQueue<Node> heap = createHeap(frequencies);
+        Node treeRoot = createTree(heap);
+        createCodes(treeRoot);
+        File output = new File(input.getPath() + ".huff");
+        writeCompressedFile(input, output, treeRoot);
+
+>>>>>>> 9d44cb37c55d3bb2a6d6a582c4ac655df3c02ad9
         double entropy = calculateTheoreticalEntropy(frequencies, input);
         double expectedSize = calculateExpectedSize(frequencies);
         System.out.println("Expected size: (bytes)" + expectedSize);
         System.out.println("Original size: (bytes)" + input.length());
         System.out.println("Expected compression ratio: " + expectedSize / input.length());
         System.out.println("Theoretical Entropy: " + entropy);
+<<<<<<< HEAD
         System.out.println("Actual Entropy: " + calculateActualEntropy(frequencies, output));
+=======
+        System.out.println("Actual Entropy: " + calculateActualEntropy(frequencies,output));
+        
+        
+>>>>>>> 9d44cb37c55d3bb2a6d6a582c4ac655df3c02ad9
     }
 
     /**
@@ -90,12 +105,32 @@ public class Model {
         return -entropy;
     }
     
+<<<<<<< HEAD
     private double calculateActualEntropy(HashMap<Byte, Integer> freqs, File output) {
         double entropy = 0;
         double filesize = output.length();
         //Calculate the entropy of the file, summing the entropy of each byte.
         for(Byte key : freqs.keySet()){
             double prob = (double) freqs.get(key)/filesize;
+=======
+    private double calculateTheoreticalEntropy(HashMap<Byte,Integer> freq, File input){
+        double entropy = 0;
+        double size = input.length();
+        //Calculate the entropy of the file, summing the entropy of each byte.
+        for(Byte key : freq.keySet()){
+            double prob = (double) freq.get(key)/size;
+            entropy += prob * (Math.log(prob) /Math.log(2));
+        }
+        return -entropy;
+    }
+
+    private double calculateActualEntropy(HashMap<Byte,Integer> freq, File out){
+        double entropy = 0;
+        double filesize = out.length();
+        //Calculate the entropy of the file, summing the entropy of each byte.
+        for(Byte key : freq.keySet()){
+            double prob = (double) freq.get(key)/filesize;
+>>>>>>> 9d44cb37c55d3bb2a6d6a582c4ac655df3c02ad9
             entropy += prob * (Math.log(prob) /Math.log(2));
         }
         return -entropy;
@@ -106,7 +141,11 @@ public class Model {
         // so just the compressed data.
         double expectedSize = 0;
         for(Byte key : freq.keySet()){
+<<<<<<< HEAD
             expectedSize += freq.get(key) * (huffmanCodes.get(key).length()/(double)BYTE_SIZE);
+=======
+            expectedSize += freq.get(key) * (huffmanCodes.get(key).length()/8.0); //must be a double
+>>>>>>> 9d44cb37c55d3bb2a6d6a582c4ac655df3c02ad9
         }
         return expectedSize;
     }
