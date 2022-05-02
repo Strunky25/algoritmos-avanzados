@@ -31,13 +31,11 @@ public class Model {
 
     /* Variables */
     private HashMap<Byte, String> huffmanCodes;
-    private long nbytes = 0;
 
     /* Methods */
     public Model() {}
 
     public void compress(File input) {
-        nbytes = 0;
         HashMap<Byte, Integer> frequencies = getFrequencies(input);
         PriorityQueue<Node> heap = createHeap(frequencies);
         Node treeRoot = createTree(heap);
@@ -45,7 +43,7 @@ public class Model {
         File output = new File(input.getPath() + ".huff");
         writeCompressedFile(input, output, treeRoot);
 
-        double entropy = calculateTheoreticalEntropy(frequencies);
+        double entropy = calculateTheoreticalEntropy(frequencies, input);
         double expectedSize = calculateExpectedSize(frequencies);
         System.out.println("Expected size: (bytes)" + expectedSize);
         System.out.println("Original size: (bytes)" + input.length());
@@ -74,7 +72,6 @@ public class Model {
                 for (int i = 0; i < readBytes; i++) {
                     //If the byte is not in the HashMap, add it with a frequency of 1.
                     //If it is, increment the frequency.
-                    nbytes++;
                     frequencies.put(buffer[i], frequencies.containsKey(buffer[i]) ? frequencies.get(buffer[i]) + 1 : 1);
                 }
                 readBytes = stream.read(buffer, 0, BUFFER_SIZE);
@@ -120,11 +117,12 @@ public class Model {
         }
     }
     
-    private double calculateTheoreticalEntropy(HashMap<Byte,Integer> freq){
+    private double calculateTheoreticalEntropy(HashMap<Byte,Integer> freq, File input){
         double entropy = 0;
+        double size = input.length();
         //Calculate the entropy of the file, summing the entropy of each byte.
         for(Byte key : freq.keySet()){
-            double prob = (double) freq.get(key)/nbytes;
+            double prob = (double) freq.get(key)/size;
             entropy += prob * (Math.log(prob) /Math.log(2));
         }
         return -entropy;
