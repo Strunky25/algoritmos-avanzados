@@ -35,6 +35,10 @@ public class Huffman {
         }
         treeRoot = queue.poll();
     }
+    
+    public Node getTree() {
+        return treeRoot;
+    }
 
     /**
      * Method that creates the Huffman codes for each byte.
@@ -43,10 +47,6 @@ public class Huffman {
     public HashMap<Byte, String> generateCodes() {
         generateCode(treeRoot, "");
         return codes;
-    }
-
-    public Node getTree() {
-        return treeRoot;
     }
 
     /**

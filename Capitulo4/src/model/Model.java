@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,7 +21,7 @@ import java.util.HashMap;
 /**
  * Class that contains the methods that simulate the various complexities.
  */
-public class Model {
+public class Model extends AbstractModel{
 
     /* Constants */
     private static final int BUFFER_SIZE = 512;
@@ -30,6 +29,7 @@ public class Model {
 
     /* Variables */
     private HashMap<Byte, String> huffmanCodes;
+    private HashMap<Byte, Integer> frequencies;
     private final byte[] buffer;
 
     /* Methods */
@@ -37,22 +37,20 @@ public class Model {
         buffer = new byte[BUFFER_SIZE];
     }
 
-    public void compress(File input) {
-        HashMap<Byte, Integer> frequencies = getFrequencies(input);
+    public File compress(File input) {
+        getFrequencies(input);
         Huffman huffman = new Huffman();
         huffman.createTree(frequencies);
         huffmanCodes = huffman.generateCodes();
         Huffman.Node root = huffman.getTree();
         File output = new File(input.getPath() + ".huff");
         compressAndWriteFile(input, output, root);
-        
-        double entropy = calculateTheoreticalEntropy(frequencies, input);
-        double expectedSize = calculateExpectedSize(frequencies);
-        System.out.println("Expected size: (bytes)" + expectedSize);
-        System.out.println("Original size: (bytes)" + input.length());
-        System.out.println("Expected compression ratio: " + expectedSize / input.length());
-        System.out.println("Theoretical Entropy: " + entropy);
-        System.out.println("Actual Entropy: " + calculateActualEntropy(frequencies, output));
+        return output;
+    }
+    
+    public void decompress(File input) {
+        File output = new File(input.getParent() + "\\" + getDecompName(input.getName()));     
+        readAndDecompressFile(input, output);
     }
 
     /**
@@ -61,13 +59,16 @@ public class Model {
      * @param input File to be analyzed.
      * @return HashMap with the frequencies of the btyes.
      */
-    private HashMap<Byte, Integer> getFrequencies(File input) {
+    private void getFrequencies(File input) {
         //Create the HashMap for the frequencies
-        HashMap<Byte, Integer> frequencies = new HashMap<>();
+        frequencies = new HashMap<>();
         //Start reading the file, reading into the buffer and incrementing the frequency of the bytes read.  
         try (InputStream stream = new FileInputStream(input)) {
+            long totalReadBytes = 0;
             int readBytes = stream.read(buffer, 0, BUFFER_SIZE);
             while (readBytes != -1) {
+                totalReadBytes += readBytes;
+                firePropertyChange("progress", null, ((double) totalReadBytes/input.length())*50);
                 for (int i = 0; i < readBytes; i++) {
                     //If the byte is not in the HashMap, add it with a frequency of 1.
                     //If it is, increment the frequency.
@@ -76,37 +77,36 @@ public class Model {
                 readBytes = stream.read(buffer, 0, BUFFER_SIZE);
             }
         } catch (IOException e) { System.out.println(e.getMessage());}
-        return frequencies;
     }
     
-    private double calculateTheoreticalEntropy(HashMap<Byte, Integer> freqs, File input) {
+    public double calculateTheoreticalEntropy(File input) {
         double entropy = 0;
         double size = input.length();
         //Calculate the entropy of the file, summing the entropy of each byte.
-        for(Byte key : freqs.keySet()){
-            double prob = (double) freqs.get(key)/size;
+        for(Byte key : frequencies.keySet()){
+            double prob = (double) frequencies.get(key)/size;
             entropy += prob * (Math.log(prob) /Math.log(2));
         }
         return -entropy;
     }
 
-    private double calculateActualEntropy(HashMap<Byte,Integer> freq, File out){
+    public double calculateActualEntropy(File out){
         double entropy = 0;
         double filesize = out.length();
         //Calculate the entropy of the file, summing the entropy of each byte.
-        for(Byte key : freq.keySet()){
-            double prob = (double) freq.get(key)/filesize;
+        for(Byte key : frequencies.keySet()){
+            double prob = (double) frequencies.get(key)/filesize;
             entropy += prob * (Math.log(prob) /Math.log(2));
         }
         return -entropy;
     }
     
-    private double calculateExpectedSize(HashMap<Byte,Integer> freq){
+    public double calculateExpectedSize(){
         //Calculate the expected size of the file, without the size of the huffman tree and the offset byte,
         // so just the compressed data.
         double expectedSize = 0;
-        for(Byte key : freq.keySet()){
-            expectedSize += freq.get(key) * (huffmanCodes.get(key).length()/(double)BYTE_SIZE);
+        for(Byte key : frequencies.keySet()){
+            expectedSize += frequencies.get(key) * (huffmanCodes.get(key).length()/(double)BYTE_SIZE);
         }
         return expectedSize;
     }
@@ -124,8 +124,11 @@ public class Model {
             //Initiate the buffer that will contain the compressed data of each read buffer.
             String strBuffer = "";
             byte[] bufferOut;
+            long totalReadBytes = 0;
             int readBytes = reader.read(buffer, 0, BUFFER_SIZE);
             while (readBytes != -1) {
+                totalReadBytes += readBytes;
+                firePropertyChange("progress", null, ((double) 50 + totalReadBytes/input.length())*50);
                 //Adding the huffman codes to the String buffer.
                 for (int i = 0; i < readBytes; i++) {
                     strBuffer += huffmanCodes.get(buffer[i]);
@@ -187,14 +190,15 @@ public class Model {
         return bits;
     }
     
-    public void decompress(File input) {
-        File output = new File(input.getPath() + ".dec");
-        aux(input, output);
+    private String getDecompName(String file){
+        String name = file.replace(file.substring(file.lastIndexOf(".")), "");
+        return name.replace(".", "_dec.");
     }
     
-    private void aux(File input, File output){
+    private void readAndDecompressFile(File input, File output){
         //Open the read stream.
-        try (FileInputStream reader = new FileInputStream(input)) {
+        try (FileInputStream reader = new FileInputStream(input);
+                FileOutputStream writer = new FileOutputStream(output);) {
             //Read the first byte, which contains how many zeroes have been
             // padded to the last byte of the file.
             byte extraBits = reader.readNBytes(1)[0];
@@ -202,67 +206,65 @@ public class Model {
             ObjectInputStream oi = new ObjectInputStream(reader);
             Huffman.Node root = (Huffman.Node) oi.readObject();
             //Now the pointer of the file reader is at the start of the compressed data.
-            //Create the path of the decompressed file, adding "_decompressed" to the name of the file.
-            String path = input.getAbsolutePath();
-            path = path.substring(0, path.length() - 5);
-            path = path.replace(path.substring(path.lastIndexOf(".")),
-                    "_decompressed" + path.substring(path.lastIndexOf(".")));
-            //And open the write stream of the decompressed file.
-            OutputStream fo = new FileOutputStream(path);
             String strBuffer = "";
             //Read the compressed data into the byte buffer.
-            int bytesRead = reader.read(buffer);
-            while (bytesRead != -1) {
-                for (int i = 0; i < bytesRead; i++) {
+            long totalReadBytes = 0;
+            int readBytes = reader.read(buffer);
+            while (readBytes != -1) {
+                totalReadBytes += readBytes;
+                firePropertyChange("progress", null, ((double) totalReadBytes/input.length())*100);
+                for (int i = 0; i < readBytes; i++) {
                     //Add the bits of the byte to the String buffer
                     strBuffer += byteToBinaryString(buffer[i]);
                 }
                 // if the number of bytes read if smaller than the buffer size, that means that
                 // we reached EOF
                 // and we have to remove the extra padding bits read at the start from the binary string
-                if (bytesRead < BUFFER_SIZE) {
+                if (readBytes < BUFFER_SIZE) {
                     strBuffer = strBuffer.substring(0, strBuffer.length() - extraBits);
-                    bytesRead = reader.read(buffer, 0, BUFFER_SIZE);
+                    readBytes = reader.read(buffer, 0, BUFFER_SIZE);
                 } else {
                     // We read again, and if EOF is reached, we know that the buffer string
                     // contains the last byte, so we dont have to read again. So we remove
                     // the extra padding bits from the string
-                    bytesRead = reader.read(buffer, 0, BUFFER_SIZE);
-                    if (bytesRead == -1) {
+                    readBytes = reader.read(buffer, 0, BUFFER_SIZE);
+                    if (readBytes == -1) {
                         strBuffer = strBuffer.substring(0, strBuffer.length() - extraBits);
                     }
                 }
-                // traverse the huffman tree with the string of bits
-                //Initiate a string representing the current traversal of the Huffman Tree
-                //This will allow us to keep going with the decoding process between two
-                // different read iterations, because the code of the last byte might be cut and read into
-                //the next buffer. If that happens, when we reach the end of the decoding process, we wont be
-                //at a leaf node, so we will add the current traversal to the String buffer and start
-                //the decoding process again in the next iteration
-                //When a byte is decoded, the traversal of the tree is reset and the current
-                //substring is emptied.
-                String currSubStr = "";
-                Huffman.Node current = root;
-                for (int i = 0; i < strBuffer.length(); i++) {
-                    currSubStr += strBuffer.charAt(i);
-                    if (strBuffer.charAt(i) == '0') {
-                        current = current.getLeft();
-                    } else {
-                        current = current.getRight();
-                    }
-                    if (current.isLeaf()) {
-                        fo.write(current.getValue());
-                        current = root;
-                        currSubStr = "";
-                    }
-                }
-                strBuffer = currSubStr.length() != 0 ? currSubStr : "";
+                strBuffer = parseBuffer(strBuffer, root, writer);
             }
-            fo.flush();
-            fo.close();
-            reader.close();
+            firePropertyChange("progress", null, 100.0);
         } catch (IOException | ClassNotFoundException e) {
             System.out.println(e.getMessage());
         }
+    }
+    
+    private String parseBuffer(String buffer, Huffman.Node root, FileOutputStream writer) throws IOException{
+        // traverse the huffman tree with the string of bits
+        //Initiate a string representing the current traversal of the Huffman Tree
+        //This will allow us to keep going with the decoding process between two
+        // different read iterations, because the code of the last byte might be cut and read into
+        //the next buffer. If that happens, when we reach the end of the decoding process, we wont be
+        //at a leaf node, so we will add the current traversal to the String buffer and start
+        //the decoding process again in the next iteration
+        //When a byte is decoded, the traversal of the tree is reset and the current
+        //substring is emptied.
+        String currSubStr = "";
+        Huffman.Node current = root;
+        for (int i = 0; i < buffer.length(); i++) {
+            currSubStr += buffer.charAt(i);
+            if (buffer.charAt(i) == '0') {
+                current = current.getLeft();
+            } else {
+                current = current.getRight();
+            }
+            if (current.isLeaf()) {
+                writer.write(current.getValue());
+                current = root;
+                currSubStr = "";
+            }
+        }
+        return currSubStr.length() != 0 ? currSubStr : "";
     }
 }

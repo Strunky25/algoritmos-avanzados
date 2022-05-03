@@ -8,6 +8,7 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 
 import model.Model;
@@ -34,6 +35,7 @@ public class Controller {
      */
     public void start() {
         /* Add Listeners */
+        model.addPropertyChangeListener((e) -> modelPropertyChange(e));
         view.addListeners((e) -> actionPerformed(e));
         view.setVisible(true);
     }
@@ -45,10 +47,33 @@ public class Controller {
         File selectedFile = view.getSelectedFile();
         Thread thread = new Thread(() -> {
             switch (evt.getActionCommand()) {
-                case "Compress" -> model.compress(selectedFile);
+                case "Compress" -> {
+                    File compressed = model.compress(selectedFile);
+                    double[] stats = calculateCompressionStats(selectedFile, compressed);
+                    view.showCompressionStats(stats);
+                }
                 case "Decompress" -> model.decompress(selectedFile);
             }
         });
         thread.start();
+    }
+    
+    private double[] calculateCompressionStats(File input, File compressed){
+        double theoryEntropy = model.calculateTheoreticalEntropy(input);
+        double realEntropy  = model.calculateActualEntropy(compressed);
+        double expectedSize = model.calculateExpectedSize();
+//        System.out.println("Theoretical Entropy: " + theoryEntropy);
+//        System.out.println("Actual Entropy: " + realEntropy);
+//        System.out.println("Original size: " + input.length() + " bytes");
+//        System.out.println("Expected size: " + expectedSize + " bytes");
+//        System.out.println("Expected compression ratio: " + expectedSize / input.length());
+//        System.out.println("Actual compression ratio: " + compressed.length() / (double) input.length());
+        return new double[]{theoryEntropy, realEntropy, input.length(), expectedSize, compressed.length()};
+    }
+
+    private void modelPropertyChange(PropertyChangeEvent evt) {
+        switch(evt.getPropertyName()){
+            case "progress" -> view.setProgress((int) (double) evt.getNewValue());
+        }
     }
 }

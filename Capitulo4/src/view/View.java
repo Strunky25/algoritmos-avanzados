@@ -21,6 +21,7 @@ import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -28,6 +29,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
@@ -254,6 +256,28 @@ public class View extends JFrame {
      */
     public void setProgress(int progress){
         progressBar.setValue(progress);
+    }
+
+    public void showCompressionStats(double[] stats) {
+//       double[]{theoryEntropy, realEntropy, input.length(), expectedSize, compressed.length()};
+//        System.out.println("Theoretical Entropy: " + theoryEntropy);
+//        System.out.println("Actual Entropy: " + realEntropy);
+//        System.out.println("Original size: " + input.length() + " bytes");
+//        System.out.println("Expected size: " + expectedSize + " bytes");
+//        System.out.println("Expected compression ratio: " + expectedSize / input.length());
+//        System.out.println("Actual compression ratio: " + compressed.length() / (double) input.length());
+        DecimalFormat df = new DecimalFormat("0.00");
+        String txt = "Compression Completed!\n\n";
+        txt += "Theoretical Entropy: " + df.format(stats[0]) + "\n";
+        txt += "Actual Entropy: " + df.format(stats[1]) + "\n\n";
+        
+        txt += "Original size: " + stats[2] + " bytes" + "\n";
+        txt += "Expected size: " + stats[3] + " bytes" + "\n";
+        txt += "Actual size: " + stats[4] + " bytes" + "\n\n";
+        
+        txt += "Expected compression ratio: " + df.format(stats[3]/stats[2]) +"\n";
+        txt += "Actual compression ratio: " + df.format(stats[4]/(double) stats[2]) +"\n\n";
+        JOptionPane.showMessageDialog(this, txt, "File Compressed", JOptionPane.INFORMATION_MESSAGE);
     }
     
     /**
