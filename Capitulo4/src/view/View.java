@@ -72,7 +72,7 @@ public class View extends JFrame {
         dndPanel.setBorder(BorderFactory.createDashedBorder(
                 Color.blue, 1.5f, 4, 4, false));
         DragDropListener dragListener = new DragDropListener();
-        new DropTarget(dndPanel, dragListener);
+        DropTarget dropTarget = new DropTarget(dndPanel, dragListener);
 
         filePanel = new JPanel();
 
@@ -259,16 +259,7 @@ public class View extends JFrame {
         compressBtn.setEnabled(true);
         decompressBtn.setEnabled(true);
     }
-
-    /**
-     * Method that returns the file selected by the user.
-     * 
-     * @return File current selected file.
-     */
-    public File getSelectedFile() {
-        return selectedFile;
-    }
-
+    
     /**
      * Method that adds a listener to the GUI Buttons.
      * 
@@ -280,6 +271,16 @@ public class View extends JFrame {
     }
 
     /**
+     * Method that returns the file selected by the user.
+     * 
+     * @return File current selected file.
+     */
+    public File getSelectedFile() {
+        return selectedFile;
+    }
+
+
+    /**
      * Method that updates the progress bar value.
      * 
      * @param progress int value to set on progress bar.
@@ -288,6 +289,12 @@ public class View extends JFrame {
         progressBar.setValue(progress);
     }
 
+    /**
+     * Method that creates a JDialog and shows the results of the compression
+     * process.
+     * @param stats Double array contaning compression info values.
+     * @param codes String representation of the Huffman Codes.
+     */
     public void showCompressionInfo(double[] stats, String codes) {
         DecimalFormat df = new DecimalFormat("0.00");
         String txt = "Compression Completed!\n\n";
@@ -300,12 +307,9 @@ public class View extends JFrame {
 
         txt += "Expected compression ratio: " + df.format((stats[2] - stats[3]) / stats[2]) + "\n";
         txt += "Actual compression ratio: " + df.format(((stats[2] - stats[4]) / (double) stats[2])) + "\n\n";
-        // JOptionPane.showMessageDialog(this, txt, "File Compressed",
-        // JOptionPane.INFORMATION_MESSAGE);
 
         JButton codesBtn = new JButton("Show Codes");
         codesBtn.addActionListener((e) -> {
-            // create jdialog with scrollable text area
             JDialog dialog = new JDialog();
             dialog.setTitle("Codes");
             dialog.setSize(300, 400);
@@ -313,17 +317,17 @@ public class View extends JFrame {
             dialog.setModal(true);
             dialog.setResizable(false);
             dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            
             JTextArea textArea = new JTextArea(codes);
             textArea.setLineWrap(true);
             textArea.setWrapStyleWord(true);
             textArea.setEditable(false);
             JScrollPane scrollPane = new JScrollPane(textArea);
+            
             dialog.add(scrollPane);
             dialog.setVisible(true);
-            // JOptionPane.showMessageDialog(null, codes, "Codes",
-            // JOptionPane.INFORMATION_MESSAGE);
         });
-        Object[] options = { codesBtn, "Ok" };
+        Object[] options = {codesBtn, "Ok"};
         JOptionPane.showOptionDialog(this, txt, "File Compressed", JOptionPane.YES_NO_OPTION,
                 JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
     }
