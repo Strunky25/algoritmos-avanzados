@@ -294,12 +294,12 @@ public class View extends JFrame {
         txt += "Theoretical Entropy: " + df.format(stats[0]) + "\n";
         txt += "Actual Entropy: " + df.format(stats[1]) + "\n\n";
 
-        txt += "Original size: " + stats[2] + " bytes" + "\n";
-        txt += "Expected size: " + stats[3] + " bytes" + "\n";
-        txt += "Actual size: " + stats[4] + " bytes" + "\n\n";
+        txt += "Original size: " + df.format(stats[2]) + " bytes" + "\n";
+        txt += "Expected size: " + df.format(stats[3]) + " bytes" + "\n";
+        txt += "Actual size: " + df.format(stats[4]) + " bytes" + "\n\n";
 
-        txt += "Expected compression ratio: " + df.format(stats[3] / stats[2]) + "\n";
-        txt += "Actual compression ratio: " + df.format(stats[4] / (double) stats[2]) + "\n\n";
+        txt += "Expected compression ratio: " + df.format((stats[2] - stats[3]) / stats[2]) + "\n";
+        txt += "Actual compression ratio: " + df.format(((stats[2] - stats[4]) / (double) stats[2])) + "\n\n";
         // JOptionPane.showMessageDialog(this, txt, "File Compressed",
         // JOptionPane.INFORMATION_MESSAGE);
 

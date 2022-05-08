@@ -49,7 +49,7 @@ public class Controller {
             switch (evt.getActionCommand()) {
                 case "Compress" -> {
                     File compressed = model.compress(selectedFile);
-                    double[] stats = calculateCompressionStats(selectedFile, compressed);
+                    double[] stats = calculateCompressionInfo(selectedFile, compressed);
                     view.showCompressionInfo(stats, model.getCodestoString());
                 }
                 case "Decompress" -> model.decompress(selectedFile);
@@ -58,9 +58,9 @@ public class Controller {
         thread.start();
     }
     
-    private double[] calculateCompressionStats(File input, File compressed){
+    private double[] calculateCompressionInfo(File input, File compressed){
         double theoryEntropy = model.calculateEntropy(input);
-        double realEntropy  = model.calculateEntropy(compressed);
+        double realEntropy  = compressed.length()*8/input.length();
         double expectedSize = model.calculateExpectedSize();
         return new double[]{theoryEntropy, realEntropy, input.length(), expectedSize, compressed.length()};
     }
