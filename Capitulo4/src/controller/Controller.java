@@ -60,7 +60,7 @@ public class Controller {
     
     private double[] calculateCompressionInfo(File input, File compressed){
         double theoryEntropy = model.calculateEntropy(input);
-        double realEntropy  = compressed.length()*8/input.length();
+        double realEntropy  = compressed.length()*8/(double) input.length();
         double expectedSize = model.calculateExpectedSize();
         return new double[]{theoryEntropy, realEntropy, input.length(), expectedSize, compressed.length()};
     }

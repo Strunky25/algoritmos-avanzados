@@ -1,8 +1,6 @@
 **/build
 **/dist
 **/nbroject
-*.mp4
-*.class
-*.class
-*.class
-*.properties
+**.mp4
+**.class
+**.properties
