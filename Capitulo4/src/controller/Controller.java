@@ -50,7 +50,7 @@ public class Controller {
                 case "Compress" -> {
                     File compressed = model.compress(selectedFile);
                     double[] stats = calculateCompressionStats(selectedFile, compressed);
-                    view.showCompressionStats(stats);
+                    view.showCompressionInfo(stats, model.getCodestoString());
                 }
                 case "Decompress" -> model.decompress(selectedFile);
             }
@@ -59,15 +59,9 @@ public class Controller {
     }
     
     private double[] calculateCompressionStats(File input, File compressed){
-        double theoryEntropy = model.calculateTheoreticalEntropy(input);
-        double realEntropy  = model.calculateActualEntropy(compressed);
+        double theoryEntropy = model.calculateEntropy(input);
+        double realEntropy  = model.calculateEntropy(compressed);
         double expectedSize = model.calculateExpectedSize();
-//        System.out.println("Theoretical Entropy: " + theoryEntropy);
-//        System.out.println("Actual Entropy: " + realEntropy);
-//        System.out.println("Original size: " + input.length() + " bytes");
-//        System.out.println("Expected size: " + expectedSize + " bytes");
-//        System.out.println("Expected compression ratio: " + expectedSize / input.length());
-//        System.out.println("Actual compression ratio: " + compressed.length() / (double) input.length());
         return new double[]{theoryEntropy, realEntropy, input.length(), expectedSize, compressed.length()};
     }
 

@@ -17,6 +17,10 @@ import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Class that contains the methods that simulate the various complexities.
@@ -79,24 +83,13 @@ public class Model extends AbstractModel{
         } catch (IOException e) { System.out.println(e.getMessage());}
     }
     
-    public double calculateTheoreticalEntropy(File input) {
+    public double calculateEntropy(File file) {
         double entropy = 0;
-        double size = input.length();
+        double size = file.length();
         //Calculate the entropy of the file, summing the entropy of each byte.
         for(Byte key : frequencies.keySet()){
             double prob = (double) frequencies.get(key)/size;
-            entropy += prob * (Math.log(prob) /Math.log(2));
-        }
-        return -entropy;
-    }
-
-    public double calculateActualEntropy(File out){
-        double entropy = 0;
-        double filesize = out.length();
-        //Calculate the entropy of the file, summing the entropy of each byte.
-        for(Byte key : frequencies.keySet()){
-            double prob = (double) frequencies.get(key)/filesize;
-            entropy += prob * (Math.log(prob) /Math.log(2));
+            entropy += prob * (Math.log(prob)/Math.log(2));
         }
         return -entropy;
     }
@@ -266,5 +259,18 @@ public class Model extends AbstractModel{
             }
         }
         return currSubStr.length() != 0 ? currSubStr : "";
+    }
+    
+    public String getCodestoString(){
+        List<Map.Entry<Byte, Integer> > list = new LinkedList< >(frequencies.entrySet());
+        Collections.sort(list, (Map.Entry<Byte, Integer> o1, Map.Entry<Byte, Integer> o2) -> (o1.getValue()).compareTo(o2.getValue()));
+        Collections.reverse(list);
+        HashMap<Byte, Integer> temp = new LinkedHashMap<>();
+        list.forEach(aa -> { temp.put(aa.getKey(), aa.getValue()); });
+        String res = "";
+        for(Byte key : temp.keySet()){
+            res += key + " -> " + huffmanCodes.get(key) + "\n";
+        }
+        return res;
     }
 }
