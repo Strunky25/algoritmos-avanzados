@@ -7,10 +7,11 @@
 */
 package controller;
 
-import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 import model.Model;
+import model.Word;
 import view.View;
 
 /**
@@ -35,12 +36,20 @@ public class Controller {
     public void start(){
         /* Add Listeners */
         //view.setVisible(true);
+        
         Scanner sc = new Scanner(System.in);
         System.out.println("Insert some text:");
         String txt = sc.nextLine();
         String[] words = txt.split("[\\p{Punct}\\s]+");
-        System.out.println(Arrays.toString(words));
-        model.correct(words);
+        
+        ArrayList<Word> results = model.correct(words);
+        results.forEach(result -> {
+            if(!result.isCorrect()){
+                System.out.println(result.getValue() + " not correct " + Arrays.toString(result.getSuggestions().toArray()));
+            } else {
+                System.out.println(result.getValue() + " is correct.");
+            }
+        });
         System.exit(0);
     }
     

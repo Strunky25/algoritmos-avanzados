@@ -19,10 +19,16 @@ import java.util.Arrays;
 public class Model {
     
     /* Constants */
-    public enum Language {
+    private static final int N_DETECT_WORDS = 3;
+    
+    private enum Language {
         ENG,
         SPA,
-        CAT
+        CAT;
+  
+        public String getDicFilename(){
+            return "dics/" + this.name() + ".dic";
+        }
     }
     
     /* Variables */
@@ -37,67 +43,80 @@ public class Model {
     }
     
     
-    public void correct(String[] words){
-        detectLang();
-        readDict();
-        int minDistance = Integer.MAX_VALUE;
-        String bestWord = null;
-        for(String word: words) {
-            System.out.print("Word " + word + " is: ");
+    public ArrayList<Word> correct(String[] wordsValues){
+        detectLang(wordsValues);
+        System.out.println("Detected language: " + lang);
+        dictionary = readDict(this.lang);
+        ArrayList<Word> words = new ArrayList<>();
+        for(String wordValue: wordsValues) {
+            Word word = new Word(wordValue);
+            int minDistance = Integer.MAX_VALUE;
             for(String dicWord: dictionary){
-                int dist = levenshtein(word, dicWord);
+                int dist = levenshtein(wordValue, dicWord);
                 if(dist == 0){
-                    System.out.println("Correct");
-                    bestWord = null;
+                    word.setCorrect(true);
                     break;
                 } else if(dist < minDistance){
-                    bestWord = dicWord;
+                    minDistance = dist;
+                    word.addSuggestion(dicWord);
                 }
             }
-            if(bestWord != null){
-                System.out.println("Incorrecto " + bestWord);
+            words.add(word);
+        }
+        return words;
+    }
+    
+    private void detectLang(String [] words){
+        for(Language language: Language.values()){
+            ArrayList<String> dict = readDict(language);
+            int wordsFound = 0;
+            for(String word: words) {
+                if(dict.contains(word)) wordsFound++;
+                if(wordsFound == N_DETECT_WORDS){
+                    this.lang = language;
+                    return;
+                }
+            }
+            if(wordsFound != 0){
+                this.lang = language; // temp if words length < detect words
             }
         }
     }
     
-    private void detectLang(){
-        this.lang = Language.SPA;
-    }
-    
-    private void readDict(){
-        try (FileReader fr = new FileReader("dics/" + lang.name() + ".dic");
+    private ArrayList<String> readDict(Language language){
+        ArrayList<String> dict = new ArrayList<>();
+        try (FileReader fr = new FileReader(language.getDicFilename());
                 BufferedReader reader = new BufferedReader(fr)){
             String word = reader.readLine();
             while(word != null){
-                this.dictionary.add(word);
+                dict.add(word);
                 word = reader.readLine();
             }
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
+        return dict;
     }
     
-    private static int levenshtein(String x, String y) {
-        int[][] dp = new int[x.length() + 1][y.length() + 1];
-        for (int i = 0; i <= x.length(); i++) {
-            for (int j = 0; j <= y.length(); j++) {
+    private static int levenshtein(String word1, String word2) {
+        int[][] dp = new int[word1.length() + 1][word2.length() + 1];
+        for (int i = 0; i <= word1.length(); i++){
+            for (int j = 0; j <= word2.length(); j++) {
                 if (i == 0) dp[i][j] = j;
                 else if (j == 0) dp[i][j] = i;
                 else {
-                    dp[i][j] = min(dp[i - 1][j - 1] + x.charAt(i - 1) == y.charAt(j - 1) ? 0 : 1, dp[i - 1][j] + 1, dp[i][j - 1] + 1);
-                    //costOfSubstitution(x.charAt(i - 1), y.charAt(j - 1));
+                    dp[i][j] = min(dp[i - 1][j - 1]
+                        + (word1.charAt(i - 1) == word2.charAt(j - 1) ? 0 : 1),
+                        dp[i - 1][j] + 1, // delete
+                        dp[i][j - 1] + 1); // insert
                 }
             }
         }
-        return dp[x.length()][y.length()];
+        return dp[word1.length()][word2.length()];
     }
-    
-    public static int costOfSubstitution(char a, char b) {
-        return a == b ? 0 : 1;
-    }
-    
-    public static int min(int... numbers) {
-        return Arrays.stream(numbers)
-          .min().orElse(Integer.MAX_VALUE);
+ 
+    static int min(int... nums){
+        return Arrays.stream(nums).min().orElse(
+            Integer.MAX_VALUE);
     }
 }
