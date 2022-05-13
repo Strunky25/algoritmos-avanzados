@@ -7,9 +7,8 @@
 */
 package controller;
 
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 import model.Model;
 import model.Word;
 import view.View;
@@ -35,26 +34,20 @@ public class Controller {
      */
     public void start(){
         /* Add Listeners */
-        //view.setVisible(true);
-        
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Insert some text:");
-        String txt = sc.nextLine();
-        String[] words = txt.split("[\\p{Punct}\\s]+");
-        
-        ArrayList<Word> results = model.correct(words);
-        results.forEach(result -> {
-            if(!result.isCorrect()){
-                System.out.println(result.getValue() + " not correct " + Arrays.toString(result.getSuggestions().toArray()));
-            } else {
-                System.out.println(result.getValue() + " is correct.");
-            }
-        });
-        System.exit(0);
+        view.addListeners((e) -> actionPerformed(e));
+        view.setVisible(true);
     }
     
     /**
      * Define Listeners...
      */
-   
+    private void actionPerformed(ActionEvent event){
+        switch(event.getActionCommand()){
+            case "Check" -> {
+                String[] words = view.getText();
+                ArrayList<Word> results = model.correct(words);
+                view.showResults(results);
+            }
+        }
+    }
 }

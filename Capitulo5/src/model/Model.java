@@ -66,7 +66,7 @@ public class Model {
         return words;
     }
     
-    private void detectLang(String [] words){
+    private void detectLang(String[] words){
         for(Language language: Language.values()){
             ArrayList<String> dict = readDict(language);
             int wordsFound = 0;
