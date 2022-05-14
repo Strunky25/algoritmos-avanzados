@@ -9,6 +9,9 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.text.BadLocationException;
 import model.Model;
 import model.Word;
 import view.View;
@@ -46,7 +49,11 @@ public class Controller {
             case "Check" -> {
                 String[] words = view.getText();
                 ArrayList<Word> results = model.correct(words);
-                view.showResults(results);
+                try {
+                    view.showResults(results);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Class that contains the methods that simulate the various complexities.
@@ -19,7 +20,7 @@ import java.util.Arrays;
 public class Model {
     
     /* Constants */
-    private static final int N_DETECT_WORDS = 3;
+    private static final int N_DETECT_WORDS = 5;
     
     private enum Language {
         ENG,
@@ -56,31 +57,37 @@ public class Model {
                 if(dist == 0){
                     word.setCorrect(true);
                     break;
-                } else if(dist < minDistance){
+                } else if(dist == minDistance){
+                    word.addSuggestion(dicWord);
+                } else if(dist < minDistance) {
                     minDistance = dist;
+                    word.removeSuggestions();
                     word.addSuggestion(dicWord);
                 }
             }
-            words.add(word);
+            if(!word.isCorrect()){
+                word.addSuggestion("Ignore");
+            }
+            words.add(word); 
         }
         return words;
     }
     
     private void detectLang(String[] words){
-        for(Language language: Language.values()){
-            ArrayList<String> dict = readDict(language);
-            int wordsFound = 0;
+        Language[] languages = Language.values();
+        int[] wordsFound = new int[languages.length];
+        for(int i = 0; i < languages.length; i++) {
+            ArrayList<String> dict = readDict(languages[i]);
             for(String word: words) {
-                if(dict.contains(word)) wordsFound++;
-                if(wordsFound == N_DETECT_WORDS){
-                    this.lang = language;
-                    return;
-                }
-            }
-            if(wordsFound != 0){
-                this.lang = language; // temp if words length < detect words
+                if(dict.contains(word)) wordsFound[i]++;
             }
         }
+        int max = 0;
+        for(int i = 0; i < wordsFound.length; i++) {
+            //System.out.println("words found in " + languages[i] + ": " + wordsFound[i]);
+            if(wordsFound[i] > wordsFound[max]) max = i;
+        }
+        this.lang = languages[max];
     }
     
     private ArrayList<String> readDict(Language language){

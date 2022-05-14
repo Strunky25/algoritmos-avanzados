@@ -45,4 +45,8 @@ public class Word {
     public void addSuggestion(String suggestion) {
         this.suggestions.add(suggestion);
     }
+    
+    public void removeSuggestions(){
+        this.suggestions.clear();
+    }
 }
