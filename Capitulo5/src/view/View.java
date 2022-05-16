@@ -265,11 +265,8 @@ public class View extends JFrame{
     private void correctWord() {
         String word = wordTxtField.getText();
         String correctedWord = (String) sugList.getSelectedValue();
-        if(correctedWord.equals("Ignore")){
-            // replacto ro correct
-            correctedWord = word;
-        }
-        
+        if(correctedWord == null) return;
+        if(correctedWord.equals("Ignore")){ correctedWord = word;}
         String txt = checkedTxtPane.getText();
         try {
             document.replace(txt.indexOf(word), correctedWord.length(), correctedWord, correct);
