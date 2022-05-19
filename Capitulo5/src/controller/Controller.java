@@ -9,6 +9,7 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
@@ -48,7 +49,7 @@ public class Controller {
         switch(event.getActionCommand()){
             case "Check" -> {
                 String[] words = view.getText();
-                ArrayList<Word> results = model.correct(words);
+                HashMap<String, ArrayList<String>> results = model.correct(words);
                 try {
                     view.showResults(results);
                 } catch (BadLocationException ex) {

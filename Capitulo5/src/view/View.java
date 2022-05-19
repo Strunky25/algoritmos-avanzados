@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +35,6 @@ import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
-import model.Word;
 
 /**
  * Class that contains the Swing GUI for the project.
@@ -47,7 +47,8 @@ public class View extends JFrame{
     private final DefaultStyledDocument document;
     private final StyleContext correctStyle, wrongStyle;
     private final Style correct, wrong;
-    private final ArrayList<Word> wrongWords;
+    private final ArrayList<String> wrongWords;
+    private HashMap<String, ArrayList<String>> results;
     private int wrongIndex;
     
     /* Swing Components */
@@ -108,6 +109,7 @@ public class View extends JFrame{
         txtScrollPanel = new JScrollPane(txtArea);
         
         checkedTxtPane = new JTextPane(document);
+        checkedTxtPane.setEditable(false);
         checkedScrollPanel = new JScrollPane(checkedTxtPane);
         
         sugList = new JList();
@@ -199,18 +201,17 @@ public class View extends JFrame{
         return txtArea.getText().split("[\\p{Punct}\\s]+");
     }
     
-    public void showResults(ArrayList<Word> results) throws BadLocationException{     
+    public void showResults(HashMap<String, ArrayList<String>> results) throws BadLocationException{     
+        this.results = results;
         int lastIndex = 0, thisIndex;
         document.insertString(0, "", correct);
         String txt = txtArea.getText();
-        for(Word result: results) {
-            //System.out.print("word = " + result.getValue());
-            thisIndex = txt.indexOf(result.getValue(), lastIndex) + result.getValue().length();
-            //System.out.print(" [" + lastIndex + ", " + thisIndex + "]");
+        String[] words = getText();
+        for(String word: words){
+            thisIndex = txt.indexOf(word, lastIndex) + word.length();
             String aux = txt.substring(lastIndex, thisIndex);
-            //System.out.println(", aux = " + aux);
-            if(!result.isCorrect()){
-                wrongWords.add(result);
+            if(results.containsKey(word)){
+                wrongWords.add(word);
                 document.insertString(lastIndex, aux, wrong);
             } else {
                 document.insertString(lastIndex, aux, correct);
@@ -220,8 +221,8 @@ public class View extends JFrame{
         document.insertString(lastIndex, txt.substring(lastIndex), correct);
         if(!wrongWords.isEmpty()){
             wrongIndex = 0;
-            wordTxtField.setText(wrongWords.get(wrongIndex).getValue());
-            sugList.setListData(wrongWords.get(wrongIndex).getSuggestions().toArray());
+            wordTxtField.setText(wrongWords.get(wrongIndex));
+            sugList.setListData(results.get(wrongWords.get(wrongIndex)).toArray());
         }
     }
     
@@ -252,14 +253,14 @@ public class View extends JFrame{
         switch(e.getActionCommand()){
             case "Next" -> {
                 wrongIndex = (wrongIndex + 1) > wrongWords.size() - 1 ? 0 : wrongIndex + 1;
-                wordTxtField.setText(wrongWords.get(wrongIndex).getValue());
+                wordTxtField.setText(wrongWords.get(wrongIndex));
             }
             case "Previous" -> {
                 wrongIndex = (wrongIndex - 1) < 0 ? wrongWords.size() - 1 : wrongIndex - 1;
-                wordTxtField.setText(wrongWords.get(wrongIndex).getValue());
+                wordTxtField.setText(wrongWords.get(wrongIndex));
             }
         }
-        sugList.setListData(wrongWords.get(wrongIndex).getSuggestions().toArray());
+        sugList.setListData(results.get(wrongWords.get(wrongIndex)).toArray());
     }
 
     private void correctWord() {
@@ -269,7 +270,7 @@ public class View extends JFrame{
         if(correctedWord.equals("Ignore")){ correctedWord = word;}
         String txt = checkedTxtPane.getText();
         try {
-            document.replace(txt.indexOf(word), correctedWord.length(), correctedWord, correct);
+            document.replace(txt.indexOf(word), word.length(), correctedWord, correct);
         } catch (BadLocationException ex) {
             Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
         }
