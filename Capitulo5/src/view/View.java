@@ -394,7 +394,7 @@ public class View extends JFrame {
     }
 
     private void saveFile() {
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(".");
         chooser.setFileFilter(new FileNameExtensionFilter("Text Files", "txt", "text"));
         if (chooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = chooser.getSelectedFile();
