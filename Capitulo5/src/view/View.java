@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -55,6 +56,7 @@ public class View extends JFrame {
     private String part2;
 
     /* Swing Components */
+    private JLabel inputLbl, outputLbl, sugLbl, wrongLbl;
     private JButton checkBtn, fileBtn, nextBtn, preBtn, correctBtn, saveBtn;
     private JTextField wordTxtField;
     private JTextArea txtArea;
@@ -85,6 +87,11 @@ public class View extends JFrame {
         setTitle("Capitulo 5");
         //setIconImage(new ImageIcon("resources/icon.png").getImage());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        
+        inputLbl = new JLabel("Input Text");
+        outputLbl = new JLabel("Corrected Text");
+        sugLbl = new JLabel("Suggestions");
+        wrongLbl = new JLabel("Wrong Words");
 
         /* Init Components */
         checkBtn = new JButton("Check");
@@ -118,6 +125,7 @@ public class View extends JFrame {
         txtScrollPanel = new JScrollPane(txtArea);
 
         checkedTxtPane = new JTextPane(document);
+        checkedTxtPane.setBackground(Color.white);
         checkedTxtPane.setEditable(false);
         checkedScrollPanel = new JScrollPane(checkedTxtPane);
 
@@ -137,63 +145,84 @@ public class View extends JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(76, 76, 76)
+                .addComponent(fileBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(82, 82, 82)
+                .addComponent(checkBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(211, 211, 211)
+                .addComponent(saveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(203, 203, 203)
+                .addComponent(inputLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(outputLbl)
+                .addGap(183, 183, 183))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(50, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addGroup(layout.createSequentialGroup()
-                                .addGap(76, 76, 76)
-                                .addComponent(fileBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(82, 82, 82)
-                                .addComponent(checkBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(211, 211, 211)
-                                .addComponent(saveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap(50, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                        .addComponent(txtScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(50, 50, 50)
-                                                        .addComponent(checkedScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(50, 50, 50))
-                                                .addGroup(layout.createSequentialGroup()
-                                                        .addComponent(preBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(18, 18, 18)
-                                                        .addComponent(wordTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(18, 18, 18)
-                                                        .addComponent(nextBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(sugScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addGap(104, 104, 104)))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addComponent(correctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(178, 178, 178))))
+                            .addComponent(txtScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(checkedScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(preBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(wordTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(nextBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(correctBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(74, 74, 74))
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(137, 137, 137)
+                                    .addComponent(wrongLbl)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(sugScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(104, 104, 104)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(sugLbl)
+                        .addGap(194, 194, 194))))
         );
         layout.setVerticalGroup(
-                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                                .addGap(50, 50, 50)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(checkedScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                                        .addComponent(txtScrollPanel))
-                                .addGap(20, 20, 20)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(fileBtn)
-                                        .addComponent(checkBtn)
-                                        .addComponent(saveBtn))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addGap(77, 77, 77)
-                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(wordTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(preBtn)
-                                                        .addComponent(nextBtn))
-                                                .addGap(80, 80, 80))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(sugScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                                .addComponent(correctBtn)
-                                .addContainerGap(51, Short.MAX_VALUE))
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(inputLbl)
+                    .addComponent(outputLbl))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(checkedScrollPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(txtScrollPanel))
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(fileBtn)
+                    .addComponent(checkBtn)
+                    .addComponent(saveBtn))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(55, 55, 55)
+                        .addComponent(wrongLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(wordTxtField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(preBtn)
+                            .addComponent(nextBtn)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(sugLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(sugScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(correctBtn)))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         pack();
     }
@@ -212,43 +241,46 @@ public class View extends JFrame {
         return text.split("[\\p{Punct}\\s]+");
     }
 
-    public void showResults(HashMap<String, ArrayList<String>> results) throws BadLocationException {
-        this.results = results;
-        int lastIndex = 0, thisIndex;
-        document.insertString(0, "", correct);
-        String txt = txtArea.getText();
-        String[] words = getText();
-        for (String word : words) {
-            thisIndex = txt.indexOf(word, lastIndex) + word.length();
-            String aux = txt.substring(lastIndex, thisIndex);
-            if (results.containsKey(word)) {
-                wrongWords.add(word);
-                document.insertString(lastIndex, aux, wrong);
-            } else {
-                document.insertString(lastIndex, aux, correct);
+    public void showResults(HashMap<String, ArrayList<String>> results){
+        try {
+            this.results = results;
+            int lastIndex = 0, thisIndex;
+            document.insertString(0, "", correct);
+            String txt = txtArea.getText();
+            String[] words = getText();
+            for (String word : words) {
+                thisIndex = txt.indexOf(word, lastIndex) + word.length();
+                String aux = txt.substring(lastIndex, thisIndex);
+                if (results.containsKey(word)) {
+                    wrongWords.add(word);
+                    document.insertString(lastIndex, aux, wrong);
+                } else {
+                    document.insertString(lastIndex, aux, correct);
+                }
+                lastIndex = thisIndex;
+            }   document.insertString(lastIndex, txt.substring(lastIndex), correct);
+            if (!wrongWords.isEmpty()) {
+                wrongIndex = 0;
+                wordTxtField.setText(wrongWords.get(wrongIndex));
+                sugList.setListData(results.get(wrongWords.get(wrongIndex)).toArray());
+                
+                String wrongWord = wrongWords.get(wrongIndex);
+                String regex = "^" + wrongWord + "| " + wrongWord + "|\\." + wrongWord + "|\\?" + wrongWord + "|[^A-z]" + wrongWord;
+                //System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(txt);
+                int index = txt.length();
+                if (matcher.find()) {
+                    //System.out.println("word found");
+                    index = matcher.start();
+                    this.part1 = txt.substring(0, index);
+                    this.part2 = txt.substring(index);
+                }
+                //System.out.println("part1: " + part1);
+                //System.out.println("part2: " + part2);
             }
-            lastIndex = thisIndex;
-        }
-        document.insertString(lastIndex, txt.substring(lastIndex), correct);
-        if (!wrongWords.isEmpty()) {
-            wrongIndex = 0;
-            wordTxtField.setText(wrongWords.get(wrongIndex));
-            sugList.setListData(results.get(wrongWords.get(wrongIndex)).toArray());
-
-            String wrongWord = wrongWords.get(wrongIndex);
-            String regex = "^" + wrongWord + "| " + wrongWord + "|\\." + wrongWord + "|\\?" + wrongWord + "|[^A-z]" + wrongWord;
-            System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(txt);
-            int index = txt.length();
-            if (matcher.find()) {
-                System.out.println("word found");
-                index = matcher.start();
-                this.part1 = txt.substring(0, index);
-                this.part2 = txt.substring(index);
-            }
-            System.out.println("part1: " + part1);
-            System.out.println("part2: " + part2);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
