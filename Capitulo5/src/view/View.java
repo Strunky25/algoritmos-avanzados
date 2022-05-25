@@ -23,11 +23,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -63,6 +65,7 @@ public class View extends JFrame {
     private JTextPane checkedTxtPane;
     private JList sugList;
     private JScrollPane sugScrollPanel, txtScrollPanel, checkedScrollPanel;
+    private JProgressBar progressBar;
 
     public View() {
         document = new DefaultStyledDocument();
@@ -85,7 +88,7 @@ public class View extends JFrame {
      */
     private void initComponents() {
         setTitle("Capitulo 5");
-        //setIconImage(new ImageIcon("resources/icon.png").getImage());
+        setIconImage(new ImageIcon("resources/icon.png").getImage());
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         
         inputLbl = new JLabel("Input Text");
@@ -131,6 +134,8 @@ public class View extends JFrame {
 
         sugList = new JList();
         sugScrollPanel = new JScrollPane(sugList);
+        
+        progressBar = new JProgressBar();
 
         addComponents();
         setResizable(false);
@@ -142,7 +147,7 @@ public class View extends JFrame {
      */
     private void addComponents() {
         /* Add Layout */
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -189,6 +194,7 @@ public class View extends JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(sugLbl)
                         .addGap(194, 194, 194))))
+            .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -222,7 +228,8 @@ public class View extends JFrame {
                         .addComponent(sugScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(correctBtn)))
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         pack();
     }
@@ -283,6 +290,10 @@ public class View extends JFrame {
             Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void setProgress(int progress){
+        this.progressBar.setValue(progress);
+    }
 
     private void selectFile() {
         JFileChooser chooser = new JFileChooser("./test/");
@@ -317,12 +328,12 @@ public class View extends JFrame {
                     String wrongWord = wrongWords.get(wrongIndex);
                     String text = part1 + part2;
                     String regex = "^" + wrongWord + "| " + wrongWord + "|\\." + wrongWord + "|\\?" + wrongWord + "|[^A-z]" + wrongWord;
-                    System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
+                    //System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
                     Pattern pattern = Pattern.compile(regex);
                     Matcher matcher = pattern.matcher(text);
                     int index = text.length();
                     if (matcher.find()) {
-                        System.out.println("word found");
+                        //System.out.println("word found");
                         index = matcher.start();
                         this.part1 = text.substring(0, index);
                         this.part2 = text.substring(index);
@@ -334,7 +345,7 @@ public class View extends JFrame {
                     String wrongWord = wrongWords.get(wrongIndex);
                     String text = part1 + part2;
                     String regex = "^" + wrongWord + "| " + wrongWord + "|\\." + wrongWord + "|\\?" + wrongWord + "|[^A-z]" + wrongWord;
-                    System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
+                    //System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
                     Pattern pattern = Pattern.compile(regex);
                     Matcher matcher = pattern.matcher(part2.substring(2));
                     if (matcher.find()) {
@@ -344,9 +355,8 @@ public class View extends JFrame {
                         this.part2 = part2.substring(index);
                     }
                 }
-
-                System.out.println("part1: " + part1);
-                System.out.println("part2: " + part2);
+                //System.out.println("part1: " + part1);
+                //System.out.println("part2: " + part2);
             }
             case "Previous" -> {
                 if (wrongIndex - 1 < 0) {
@@ -355,7 +365,7 @@ public class View extends JFrame {
                     String wrongWord = wrongWords.get(wrongIndex);
                     String text = part1 + part2;
                     String regex = "^" + wrongWord + "| " + wrongWord + "|\\." + wrongWord + "|\\?" + wrongWord + "|[^A-z]" + wrongWord;
-                    System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
+                    //System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
                     Pattern pattern = Pattern.compile(regex);
                     Matcher matcher = pattern.matcher(text);
                     int index = text.length();
@@ -381,8 +391,8 @@ public class View extends JFrame {
                     this.part1 = part1.substring(0, index);
                 }
 
-                System.out.println("part1: " + part1);
-                System.out.println("part2: " + part2);
+                //System.out.println("part1: " + part1);
+                //System.out.println("part2: " + part2);
             }
         }
         sugList.setListData(results.get(wrongWords.get(wrongIndex)).toArray());
@@ -391,9 +401,7 @@ public class View extends JFrame {
     private void correctWord() throws BadLocationException {
         String word = wordTxtField.getText();
         String correctedWord = (String) sugList.getSelectedValue();
-        if (correctedWord == null) {
-            return;
-        }
+        if (correctedWord == null) return;
         if (correctedWord.equals("Ignore")) {
             correctedWord = word;
         }
@@ -415,12 +423,6 @@ public class View extends JFrame {
             lastIndex = thisIndex;
         }
         document.insertString(lastIndex, txt.substring(lastIndex), correct);
-
-//        try {
-//            document.;
-//        } catch (BadLocationException ex) {
-//            Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
-//        }
         wrongWords.remove(wrongIndex);
         changeWord(new ActionEvent(nextBtn, 0, "Next"));
     }

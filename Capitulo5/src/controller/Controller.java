@@ -8,11 +8,9 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.text.BadLocationException;
 import model.Model;
 import view.View;
 
@@ -37,6 +35,7 @@ public class Controller implements Runnable {
      */
     public void start() {
         /* Add Listeners */
+        model.addPropertyChangeListener((e) -> modelPropertyChange(e));
         view.addListeners((e) -> actionPerformed(e));
         view.setVisible(true);
     }
@@ -56,5 +55,15 @@ public class Controller implements Runnable {
         String[] words = view.getText();
         HashMap<String, ArrayList<String>> results = model.correct(words);
         view.showResults(results);
+    }
+
+    private void modelPropertyChange(PropertyChangeEvent evt) {
+        switch(evt.getPropertyName()){
+            case "progress" ->  {
+                int progress = (int) (double) evt.getNewValue();
+                //System.out.println(progress);
+                view.setProgress(progress);
+            }
+        }
     }
 }

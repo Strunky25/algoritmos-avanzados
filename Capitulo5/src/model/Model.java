@@ -17,10 +17,7 @@ import java.util.HashMap;
 /**
  * Class that contains the methods that simulate the various complexities.
  */
-public class Model {
-
-    /* Constants */
-    private static final int N_DETECT_WORDS = 5;
+public class Model extends AbstractModel{
 
     private enum Language {
         ENG,
@@ -41,43 +38,42 @@ public class Model {
         dictionary = new ArrayList<>();
     }
 
-    public HashMap<String, ArrayList<String>> correct(String[] wordsValues) {
-        detectLang(wordsValues);
-        //System.out.println("Detected language: " + lang);
+    public HashMap<String, ArrayList<String>> correct(String[] words) {
+        detectLang(words);
         dictionary = readDict(this.lang);
-
-        //ArrayList<String> wrongWords = new ArrayList<>();
         HashMap<String, ArrayList<String>> wrongWords = new HashMap<>();
         ArrayList<String> suggestions;
-        
-        for (String wordValue : wordsValues) {
+        int cnt = 0;
+        for (String word : words) {
             suggestions = new ArrayList<>();
+            firePropertyChange("progress", null, ((double) cnt)/words.length*25 + (100.0*3)/4.0);
             int minDistance = Integer.MAX_VALUE;
             for (String dicWord : dictionary) {
-                int dist = levenshtein(wordValue, dicWord);
+                int dist = levenshtein(word, dicWord);
                 if (dist == 0) {
-                    wrongWords.remove(wordValue);
-                    //word.setCorrect(true);
+                    wrongWords.remove(word);
                     break;
                 } else {
                     if (dist == minDistance) {                
-                        suggestions = wrongWords.get(wordValue);
+                        suggestions = wrongWords.get(word);
                         suggestions.add(dicWord);
-                        wrongWords.put(wordValue, (ArrayList<String>) suggestions.clone());
+                        wrongWords.put(word, (ArrayList<String>) suggestions.clone());
                     } else if (dist < minDistance) {
                         minDistance = dist;  
-                        wrongWords.remove(wordValue);
+                        wrongWords.remove(word);
                         suggestions.clear();
                         suggestions.add(dicWord);
-                        wrongWords.put(wordValue, (ArrayList<String>) suggestions.clone());
+                        wrongWords.put(word, (ArrayList<String>) suggestions.clone());
                     }
                 }
             }
-//            if (!word.isCorrect()) {
-//                word.addSuggestion("Ignore");
-//            }
-//            words.add(word);
+            if(wrongWords.containsKey(word)){
+                suggestions = wrongWords.get(word);
+                suggestions.add(word);
+            }
+            cnt++;
         }
+        firePropertyChange("progress", null, 100.0);
         return wrongWords;
     }
 
@@ -86,19 +82,20 @@ public class Model {
         int[] wordsFound = new int[languages.length];
         for (int i = 0; i < languages.length; i++) {
             ArrayList<String> dict = readDict(languages[i]);
+            int cnt = 0;
             for (String word : words) {
+                firePropertyChange("progress", null, ((double) cnt)/words.length*25 + (100.0*i)/4.0);
                 if (dict.contains(word)) {
                     wordsFound[i]++;
                 }
+                cnt++;
             }
         }
         int max = 0;
         for (int i = 0; i < wordsFound.length; i++) {
-            //System.out.println("words found in " + languages[i] + ": " + wordsFound[i]);
-            if (wordsFound[i] > wordsFound[max]) {
-                max = i;
-            }
+            if (wordsFound[i] > wordsFound[max]) max = i;
         }
+        //System.out.println("Detected Language: " + languages[max]);
         this.lang = languages[max];
     }
 

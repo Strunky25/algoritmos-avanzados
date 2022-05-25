@@ -43,6 +43,7 @@ public class Test extends javax.swing.JFrame {
         outputLbl = new javax.swing.JLabel();
         sugLbl = new javax.swing.JLabel();
         wrongLbl = new javax.swing.JLabel();
+        progressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -128,6 +129,7 @@ public class Test extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(sugLbl)
                         .addGap(194, 194, 194))))
+            .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -161,7 +163,8 @@ public class Test extends javax.swing.JFrame {
                         .addComponent(sugScrollPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(correctBtn)))
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -212,6 +215,7 @@ public class Test extends javax.swing.JFrame {
     private javax.swing.JButton nextBtn;
     private javax.swing.JLabel outputLbl;
     private javax.swing.JButton preBtn;
+    private javax.swing.JProgressBar progressBar;
     private javax.swing.JButton saveBtn;
     private javax.swing.JLabel sugLbl;
     private javax.swing.JList<String> sugList;
