@@ -23,6 +23,7 @@ public class Controller implements Runnable {
     /* MVC Pattern */
     private final Model model;
     private final View view;
+    private Thread thread;
 
     public Controller(Model model, View view) {
         this.model = model;
@@ -36,16 +37,20 @@ public class Controller implements Runnable {
     public void start() {
         /* Add Listeners */
         model.addPropertyChangeListener((e) -> modelPropertyChange(e));
-        view.addListeners((e) -> actionPerformed(e));
+        view.addListeners((e) -> viewActionPerformed(e));
         view.setVisible(true);
     }
 
     /**
      * Define Listeners...
      */
-    private void actionPerformed(ActionEvent event) {
+    private void viewActionPerformed(ActionEvent event) {
         if ("Check".equals(event.getActionCommand())) {
-            Thread thread = new Thread(this);
+            if(thread != null && thread.isAlive()){
+                System.out.println("already running");
+                return;
+            }
+            thread = new Thread(this);
             thread.start();
         }
     }

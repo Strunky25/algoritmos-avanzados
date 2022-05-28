@@ -98,7 +98,6 @@ public class Model extends AbstractModel{
             ArrayList<String> dict =     readDict(languages[i]);
             int cnt = 0;
             for (String word : words) {
-                firePropertyChange("progress", null, 100*((double) cnt)/words.length);
                 if (dict.contains(word)) {
                     wordsFound[i]++;
                 }

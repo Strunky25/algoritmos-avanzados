@@ -244,15 +244,12 @@ public class View extends JFrame {
         return txtArea.getText().split("[\\p{Punct}\\s]+");
     }
 
-    public String[] getTokens(String text) {
-        return text.split("[\\p{Punct}\\s]+");
-    }
-
     public void showResults(HashMap<String, ArrayList<String>> results){
         try {
             this.results = results;
             int lastIndex = 0, thisIndex;
             document.insertString(0, "", correct);
+            checkedTxtPane.setText("");
             String txt = txtArea.getText();
             String[] words = getText();
             for (String word : words) {
@@ -293,6 +290,10 @@ public class View extends JFrame {
     
     public void setProgress(int progress){
         this.progressBar.setValue(progress);
+    }
+    
+    private String[] getTokens(String text) {
+        return text.split("[\\p{Punct}\\s]+");
     }
 
     private void selectFile() {
