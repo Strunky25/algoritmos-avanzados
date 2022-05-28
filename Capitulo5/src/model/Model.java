@@ -47,6 +47,7 @@ public class Model extends AbstractModel{
      * @return Hashmap with wrong words as key, and a list of suggestions as element.
      */
     public HashMap<String, ArrayList<String>> correct(String[] words) {
+        long time = System.currentTimeMillis();
         detectLang(words);
         dictionary = readDict(this.lang);
         HashMap<String, ArrayList<String>> wrongWords = new HashMap<>();
@@ -54,7 +55,6 @@ public class Model extends AbstractModel{
         int cnt = 0;
         for (String word : words) {
             suggestions = new ArrayList<>();
-            firePropertyChange("progress", null, ((double) cnt)/words.length*25 + (100.0*3)/4.0);
             int minDistance = Integer.MAX_VALUE;
             for (String dicWord : dictionary) {
                 int dist = levenshtein(word, dicWord);
@@ -79,8 +79,10 @@ public class Model extends AbstractModel{
                 suggestions = wrongWords.get(word);
                 suggestions.add(word);
             }
-            cnt++;
+            firePropertyChange("progress", null, 100*(double)cnt++/(double)words.length);
         }
+        time = System.currentTimeMillis() - time;
+        System.out.println("Time for "+words.length+" words: " + time);
         firePropertyChange("progress", null, 100.0);
         return wrongWords;
     }
@@ -93,10 +95,10 @@ public class Model extends AbstractModel{
         Language[] languages = Language.values();
         int[] wordsFound = new int[languages.length];
         for (int i = 0; i < languages.length; i++) {
-            ArrayList<String> dict = readDict(languages[i]);
+            ArrayList<String> dict =     readDict(languages[i]);
             int cnt = 0;
             for (String word : words) {
-                firePropertyChange("progress", null, ((double) cnt)/words.length*25 + (100.0*i)/4.0);
+                firePropertyChange("progress", null, 100*((double) cnt)/words.length);
                 if (dict.contains(word)) {
                     wordsFound[i]++;
                 }
@@ -107,7 +109,7 @@ public class Model extends AbstractModel{
         for (int i = 0; i < wordsFound.length; i++) {
             if (wordsFound[i] > wordsFound[max]) max = i;
         }
-        //System.out.println("Detected Language: " + languages[max]);
+        System.out.println("Detected Language: " + languages[max]);
         this.lang = languages[max];
     }
 
