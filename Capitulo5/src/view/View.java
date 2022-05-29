@@ -250,6 +250,7 @@ public class View extends JFrame {
             int lastIndex = 0, thisIndex;
             document.insertString(0, "", correct);
             checkedTxtPane.setText("");
+            
             String txt = txtArea.getText();
             String[] words = getText();
             for (String word : words) {
@@ -262,26 +263,23 @@ public class View extends JFrame {
                     document.insertString(lastIndex, aux, correct);
                 }
                 lastIndex = thisIndex;
-            }   document.insertString(lastIndex, txt.substring(lastIndex), correct);
+            }
+            document.insertString(lastIndex, txt.substring(lastIndex), correct);
+            
             if (!wrongWords.isEmpty()) {
                 wrongIndex = 0;
                 wordTxtField.setText(wrongWords.get(wrongIndex));
                 sugList.setListData(results.get(wrongWords.get(wrongIndex)).toArray());
-                
                 String wrongWord = wrongWords.get(wrongIndex);
                 String regex = "^" + wrongWord + "| " + wrongWord + "|\\." + wrongWord + "|\\?" + wrongWord + "|[^A-z]" + wrongWord;
-                //System.out.println("Word to find: " + wrongWord + " . Regex: " + regex);
                 Pattern pattern = Pattern.compile(regex);
                 Matcher matcher = pattern.matcher(txt);
                 int index = txt.length();
                 if (matcher.find()) {
-                    //System.out.println("word found");
                     index = matcher.start();
                     this.part1 = txt.substring(0, index);
                     this.part2 = txt.substring(index);
                 }
-                //System.out.println("part1: " + part1);
-                //System.out.println("part2: " + part2);
             }
         } catch (BadLocationException ex) {
             Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
@@ -350,7 +348,7 @@ public class View extends JFrame {
                     Pattern pattern = Pattern.compile(regex);
                     Matcher matcher = pattern.matcher(part2.substring(2));
                     if (matcher.find()) {
-                        System.out.println("word found");
+                        //System.out.println("word found");
                         int index = matcher.start() + 2;
                         this.part1 = part1 + part2.substring(0, index);
                         this.part2 = part2.substring(index);

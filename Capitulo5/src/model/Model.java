@@ -82,7 +82,7 @@ public class Model extends AbstractModel{
             firePropertyChange("progress", null, 100*(double)cnt++/(double)words.length);
         }
         time = System.currentTimeMillis() - time;
-        System.out.println("Time for "+words.length+" words: " + time);
+        //System.out.println("Time for "+words.length+" words: " + time);
         firePropertyChange("progress", null, 100.0);
         return wrongWords;
     }
@@ -95,7 +95,7 @@ public class Model extends AbstractModel{
         Language[] languages = Language.values();
         int[] wordsFound = new int[languages.length];
         for (int i = 0; i < languages.length; i++) {
-            ArrayList<String> dict =     readDict(languages[i]);
+            ArrayList<String> dict = readDict(languages[i]);
             int cnt = 0;
             for (String word : words) {
                 if (dict.contains(word)) {
@@ -108,7 +108,7 @@ public class Model extends AbstractModel{
         for (int i = 0; i < wordsFound.length; i++) {
             if (wordsFound[i] > wordsFound[max]) max = i;
         }
-        System.out.println("Detected Language: " + languages[max]);
+        //System.out.println("Detected Language: " + languages[max]);
         this.lang = languages[max];
     }
 

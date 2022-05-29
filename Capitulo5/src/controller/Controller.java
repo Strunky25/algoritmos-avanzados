@@ -47,7 +47,7 @@ public class Controller implements Runnable {
     private void viewActionPerformed(ActionEvent event) {
         if ("Check".equals(event.getActionCommand())) {
             if(thread != null && thread.isAlive()){
-                System.out.println("already running");
+                //System.out.println("already running");
                 return;
             }
             thread = new Thread(this);
@@ -58,6 +58,7 @@ public class Controller implements Runnable {
     @Override
     public void run() {
         String[] words = view.getText();
+        if(words.length == 0) return;
         HashMap<String, ArrayList<String>> results = model.correct(words);
         view.showResults(results);
     }
@@ -66,7 +67,6 @@ public class Controller implements Runnable {
         switch(evt.getPropertyName()){
             case "progress" ->  {
                 int progress = (int) (double) evt.getNewValue();
-                //System.out.println(progress);
                 view.setProgress(progress);
             }
         }
