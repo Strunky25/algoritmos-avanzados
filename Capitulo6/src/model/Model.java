@@ -18,15 +18,18 @@ import java.util.logging.Logger;
 public class Model extends AbstractModel {
 
     /* Constants */
-    private static final int[] DX = { 1, 0, -1, 0 };
-    private static final int[] DY = { 0, -1, 0, 1 };
-    private static final int N = 3;
+    private static final int[] DX = {1, 0, -1, 0};
+    private static final int[] DY = {0, -1, 0, 1};
+    private static int N = 3;
+
+    public static void setN(int N) {
+        Model.N = N;
+    }
 
     /* Variables */
     private Node sol;
 
     /* Methods */
-
     public void solve(int[][] start, int[][] end, int x, int y, Heuristic heuristica) {
         System.out.println(Arrays.deepToString(start));
         PriorityQueue<Node> pq = new PriorityQueue<>();
@@ -48,7 +51,7 @@ public class Model extends AbstractModel {
                     } else {
                         child.cost = heuristic(child.matrix, end, heuristica);
                         pq.add(child);
-                        // System.out.println("Movement: "+DX[i]+" "+DY[i]);
+                        System.out.println("Movement: " + DX[i] + " " + DY[i]);
                         // System.out.println(Arrays.deepToString(child.matrix));
                         // try {
                         // Thread.sleep(300);
@@ -59,7 +62,6 @@ public class Model extends AbstractModel {
                     }
                 }
             }
-            System.out.println("\n");
         }
     }
 
@@ -133,16 +135,20 @@ public class Model extends AbstractModel {
         return count;
     }
 
-    //NO SABEMOS SI FUNCIONA, FIXEAR
+    // NO SABEMOS SI FUNCIONA, FIXEAR
     private int adjacentTileReversal(int[][] start, int[][] end) {
         int count = 0;
-        // take into account the number of direct adjacent tile reversals
+        // Count the number of adjcent tile reversals.
+        // An adjacent tile reversal is when two adjacent tiles are in the position of
+        // the other tile.
+        count = heuristic(start, end, Heuristic.MANHATTAN);
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 if (start[i][j] != end[i][j]) {
                     for (int k = 0; k < DX.length; k++) {
+                        // print boolean variable as string
                         if (isPossible(i + DX[k], j + DY[k])) {
-                            if (start[i + DX[k]][j + DY[k]] == end[i + DX[k]][j + DY[k]]) {
+                            if (start[i][j] == end[i + DX[k]][j + DY[k]] && start[i + DX[k]][j + DY[k]] == end[i][j]) {
                                 count++;
                             }
                         }
@@ -204,7 +210,6 @@ public class Model extends AbstractModel {
             // System.out.println("Swapped:\t"+Arrays.toString(matrix[0]));
             // System.out.println("\t\t"+Arrays.toString(matrix[1]));
             // System.out.println("\t\t"+Arrays.toString(matrix[2])+"\n\n");
-
             this.x = xpos;
             this.y = ypos;
             this.cost = Integer.MAX_VALUE;

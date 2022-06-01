@@ -22,9 +22,8 @@ import view.View;
  */
 public class Controller implements Runnable {
     /* Constants */
-    private static final int[][] GOAL = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};
-    private static final int[][] INITIAL = {{1, 8, 2}, {0, 4, 3}, {7, 6, 5}};
-    
+    private static int[][] GOAL;
+    private static Model.Heuristic heuristica;
     /* MVC Pattern */
     private final Model model;
     private final View view;
@@ -35,7 +34,26 @@ public class Controller implements Runnable {
     public Controller(Model model, View view){
         this.model = model;
         this.view = view;
+        this.GOAL = new int[][] {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}};  
+        this.heuristica = Model.Heuristic.INCORRECT_POSITIONS;
     }
+    
+     public static void setN(int N) {
+        Model.setN(N);
+        GOAL = new int[N][N];
+         for (int i = 0; i < GOAL.length; i++) {
+             int[] aux = new int[N];
+             for (int j = 0; j < GOAL.length; j++) {
+                 aux[j]=N*i + j; 
+             }
+             GOAL[i] = aux;
+         }
+    }
+
+    public static void setHeuristica(Model.Heuristic heuristica) {
+        Controller.heuristica = heuristica;
+    }
+
     
     /**
      * Method that configures  Listeners for the view, and sets it to visible
@@ -71,7 +89,7 @@ public class Controller implements Runnable {
     public void run() {
         int[][] order = view.getOrder();
         int[] pos = view.getPos();
-        model.solve(order, GOAL, pos[1], pos[0], Model.Heuristic.OUT_OF_ROW_OUT_OF_COLUMN);
+        model.solve(order, GOAL, pos[1], pos[0], heuristica);
         Node sol = model.getSolution();
         ArrayList<Node> animacion = new ArrayList<>();
         while(sol!=null){
