@@ -8,7 +8,7 @@
 package controller;
 
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
+import java.beans.PropertyChangeEvent;
 import model.Model;
 import view.View;
 
@@ -39,6 +39,7 @@ public class Controller implements Runnable {
      */
     public void start(){
         /* Add Listeners */
+        model.addPropertyChangeListener((e) -> modelPropertyChange(e));
         view.addListeners((e) -> viewActionPerformed(e));
         view.setVisible(true);
     }
@@ -46,6 +47,13 @@ public class Controller implements Runnable {
     /**
      * Define Listeners...
      */
+    private void modelPropertyChange(PropertyChangeEvent evt) {
+        if("Update".equals(evt.getPropertyName())){
+            int[][] mat = (int[][]) evt.getNewValue();
+            view.showResults(mat);
+        }
+    }
+    
     private void viewActionPerformed(ActionEvent evt){
         if("Solve".equals(evt.getActionCommand())){
             if(thread != null && thread.isAlive()) return;
@@ -53,19 +61,15 @@ public class Controller implements Runnable {
             thread.start();
         }
     }
+    
 
     @Override
     public void run() {
         int[][] order = view.getOrder();
         int[] pos = view.getPos();
-        //if(model.isSolvable(order)){
-            System.out.println(Arrays.toString(pos));
-            //model.solve(INITIAL, GOAL, 1, 0);
-            model.solve(order, GOAL, pos[0], pos[1]);
-            int[][] sol = model.getSolution();
-            view.showResults(sol);
-//        } else {
-//            System.out.println("The given initial is impossible to solve");
-//        }
+        
+        model.solve(order, GOAL, pos[1], pos[0]);
+        int[][] sol = model.getSolution();
+        view.showResults(sol);
     }
 }
