@@ -71,7 +71,7 @@ public class Controller implements Runnable {
     public void run() {
         int[][] order = view.getOrder();
         int[] pos = view.getPos();
-        model.solve(order, GOAL, pos[1], pos[0]);
+        model.solve(order, GOAL, pos[1], pos[0], Model.Heuristic.OUT_OF_ROW_OUT_OF_COLUMN);
         Node sol = model.getSolution();
         ArrayList<Node> animacion = new ArrayList<>();
         while(sol!=null){
