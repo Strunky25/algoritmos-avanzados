@@ -9,7 +9,11 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import model.Model;
+import model.Model.Node;
 import view.View;
 
 /**
@@ -67,9 +71,20 @@ public class Controller implements Runnable {
     public void run() {
         int[][] order = view.getOrder();
         int[] pos = view.getPos();
-        
         model.solve(order, GOAL, pos[1], pos[0]);
-        int[][] sol = model.getSolution();
-        view.showResults(sol);
+        Node sol = model.getSolution();
+        ArrayList<Node> animacion = new ArrayList<>();
+        while(sol!=null){
+            animacion.add(sol);
+            sol = sol.getParent();
+        }
+        for(int i = animacion.size()-1; i>=0; i--){
+            view.showResults(animacion.get(i).getMatrix());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

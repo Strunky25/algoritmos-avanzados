@@ -39,6 +39,7 @@ public class Model extends AbstractModel {
     }
 
     public void solve(int[][] start, int[][] end, int x, int y) {
+        System.out.println(Arrays.deepToString(start));
         PriorityQueue<Node> pq = new PriorityQueue<>();
         Node root = new Node(start, x, y, x, y, 0, null);
         root.cost = heuristic(start, end);
@@ -53,14 +54,20 @@ public class Model extends AbstractModel {
             for (int i = 0; i < DX.length; i++) {
                 if (isPossible(min.x + DX[i], min.y + DY[i])) {
                     Node child = new Node(min.matrix, min.x, min.y, min.x + DX[i], min.y + DY[i], min.level + 1, min);
-                    child.cost = heuristic(child.matrix, end);
-                    try {
-                        Thread.sleep(1000);
-                        firePropertyChange("Update", null, child.matrix);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+                    if(pq.contains(child)){
+                        continue;
+                    } else{
+                        child.cost = heuristic(child.matrix, end);
+                        pq.add(child);
+                        // System.out.println("Movement: "+DX[i]+" "+DY[i]);
+                        // System.out.println(Arrays.deepToString(child.matrix));
+                        // try {
+                        //     Thread.sleep(10000);
+                        //     firePropertyChange("Update", null, child.getMatrix());
+                        // } catch (InterruptedException ex) {
+                        //     Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+                        // }    
                     }
-                    pq.add(child);
                 }
             }
             System.out.println("\n");
@@ -174,8 +181,8 @@ public class Model extends AbstractModel {
         return count;
     }
 
-    public int[][] getSolution() {
-        return this.sol.matrix;
+    public Node getSolution() {
+        return this.sol;
     }
 
     private boolean isPossible(int x, int y) {
@@ -194,10 +201,19 @@ public class Model extends AbstractModel {
             for (int i = 0; i < mat.length; i++) {
                 this.matrix[i] = mat[i].clone();
             }
+            
+            
+            int temp = matrix[y][x];
+            matrix[y][x] = matrix[ypos][xpos];
+            matrix[ypos][xpos] = temp;
 
-            int temp = matrix[x][y];
-            matrix[x][y] = matrix[xpos][ypos];
-            matrix[xpos][ypos] = temp;
+            // System.out.println("Original:\t"+Arrays.toString(mat[0]));
+            // System.out.println("\t\t"+Arrays.toString(mat[1]));
+            // System.out.println("\t\t"+Arrays.toString(mat[2]));
+            // System.out.println("Should swap x:" + x + " y:" + y + " with x:" + xpos + " y:" + ypos);
+            // System.out.println("Swapped:\t"+Arrays.toString(matrix[0]));
+            // System.out.println("\t\t"+Arrays.toString(matrix[1]));
+            // System.out.println("\t\t"+Arrays.toString(matrix[2])+"\n\n");
 
             this.x = xpos;
             this.y = ypos;
@@ -208,6 +224,18 @@ public class Model extends AbstractModel {
         @Override
         public int compareTo(Node node) {
             return (this.cost + this.level) - (node.cost + node.level);
+        }
+        @Override
+        public boolean equals(Object node){
+            Node other = (Node) node;
+            for(int i = 0; i < N; i++){
+                for(int j = 0; j < N; j++){
+                    if(this.matrix[i][j] != other.matrix[i][j]){
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         public int[][] getMatrix() {
