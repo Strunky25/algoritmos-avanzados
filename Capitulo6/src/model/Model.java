@@ -4,17 +4,14 @@
         Jonathan Salisbury Vega
         Joan Sansó Pericàs
         Joan Vilella Candia
+        Julián Wallis Medina
  */
 package model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.PriorityQueue;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- * Class that contains the methods that simulate the various complexities.
- */
 public class Model extends AbstractModel {
 
     /* Constants */
@@ -22,19 +19,26 @@ public class Model extends AbstractModel {
     private static final int[] DY = {0, -1, 0, 1};
     private static int N = 3;
 
-    public static void setN(int N) {
-        Model.N = N;
-    }
-
     /* Variables */
     private Node sol;
+    private static int[][] GOAL = {{ 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 }};
 
     /* Methods */
-    public void solve(int[][] start, int[][] end, int x, int y, Heuristic heuristica) {
+    public static void setN(int N) {
+        Model.N = N;
+        Model.GOAL = new int[N][N];
+        for (int i = 0; i < GOAL.length; i++) {
+            for (int j = 0; j < GOAL[0].length; j++) {
+                GOAL[i][j] = i * N + j;
+            }
+        }
+    }
+    
+    public void solve(int[][] start, int x, int y, Heuristica heuristica) {
         System.out.println(Arrays.deepToString(start));
         PriorityQueue<Node> pq = new PriorityQueue<>();
         Node root = new Node(start, x, y, x, y, 0, null);
-        root.cost = heuristic(start, end, heuristica);
+        root.cost = Heuristica.heuristic(start, GOAL,heuristica);
         pq.add(root);
         while (!pq.isEmpty()) {
             Node min = pq.poll();
@@ -49,139 +53,26 @@ public class Model extends AbstractModel {
                     if (pq.contains(child)) {
                         continue;
                     } else {
-                        child.cost = heuristic(child.matrix, end, heuristica);
+                        child.cost = Heuristica.heuristic(child.matrix, GOAL, heuristica);
                         pq.add(child);
                         System.out.println("Movement: " + DX[i] + " " + DY[i]);
-                        // System.out.println(Arrays.deepToString(child.matrix));
-                        // try {
-                        // Thread.sleep(300);
-                        // firePropertyChange("Update", null, child.getMatrix());
-                        // } catch (InterruptedException ex) {
-                        // Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
-                        // }
                     }
                 }
             }
         }
     }
 
-    public static enum Heuristic {
-        INCORRECT_POSITIONS,
-        MANHATTAN,
-        EUCLIDEAN,
-        ADJACENT_TILE_REVERSAL,
-        OUT_OF_ROW_OUT_OF_COLUMN
-    }
 
-    private int heuristic(int[][] start, int[][] end, Heuristic heuristica) {
-        switch (heuristica) {
-            case INCORRECT_POSITIONS:
-                return incorrectPositions(start, end);
-            case MANHATTAN:
-                return manhattan(start, end);
-            case EUCLIDEAN:
-                return euclidean(start, end);
-            case ADJACENT_TILE_REVERSAL:
-                return adjacentTileReversal(start, end);
-            case OUT_OF_ROW_OUT_OF_COLUMN:
-                return outOfRowOutOfColumn(start, end);
-            default:
-                return incorrectPositions(start, end);
+    public ArrayList<Node> getSolution() {
+        ArrayList<Node> moves = new ArrayList<>();
+        while (sol != null) {
+            moves.add(sol);
+            sol = sol.getParent();
         }
+        return moves;
     }
 
-    private int incorrectPositions(int[][] start, int[][] end) {
-        int count = 0;
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (start[i][j] != end[i][j]) {
-                    count++;
-                }
-            }
-        }
-        // System.out.println(count);
-        return count;
-    }
-
-    private int manhattan(int[][] start, int[][] end) {
-        int count = 0;
-        // sum of the distances of each tile from its goal position (manhattan distance)
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (start[i][j] != end[i][j]) {
-                    int x = (start[i][j] - 1) / N;
-                    int y = (start[i][j] - 1) % N;
-                    count += Math.abs(i - x) + Math.abs(j - y);
-                }
-            }
-        }
-        // System.out.println(count);
-        return count;
-    }
-
-    private int euclidean(int[][] start, int[][] end) {
-        int count = 0;
-        // sum of the distances of each tile from its goal position (euclidean distance)
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (start[i][j] != end[i][j]) {
-                    int x = (start[i][j] - 1) / N;
-                    int y = (start[i][j] - 1) % N;
-                    count += Math.sqrt(Math.pow(i - x, 2) + Math.pow(j - y, 2));
-                }
-            }
-        }
-        // System.out.println(count);
-        return count;
-    }
-
-    // NO SABEMOS SI FUNCIONA, FIXEAR
-    private int adjacentTileReversal(int[][] start, int[][] end) {
-        int count = 0;
-        // Count the number of adjcent tile reversals.
-        // An adjacent tile reversal is when two adjacent tiles are in the position of
-        // the other tile.
-        count = heuristic(start, end, Heuristic.MANHATTAN);
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (start[i][j] != end[i][j]) {
-                    for (int k = 0; k < DX.length; k++) {
-                        // print boolean variable as string
-                        if (isPossible(i + DX[k], j + DY[k])) {
-                            if (start[i][j] == end[i + DX[k]][j + DY[k]] && start[i + DX[k]][j + DY[k]] == end[i][j]) {
-                                count++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-    private int outOfRowOutOfColumn(int[][] start, int[][] end) {
-        int count = 0;
-        // Number of tiles out of row + Number of tiles out of column
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++) {
-                if (start[i][j] != end[i][j]) {
-                    if (i != start[i][j] / N) {
-                        count++;
-                    }
-                    if (j != start[i][j] % N) {
-                        count++;
-                    }
-                }
-            }
-        }
-        return count;
-    }
-
-    public Node getSolution() {
-        return this.sol;
-    }
-
-    private boolean isPossible(int x, int y) {
+    public static boolean isPossible(int x, int y) {
         return (x >= 0 && x < N && y >= 0 && y < N);
     }
 
@@ -202,14 +93,6 @@ public class Model extends AbstractModel {
             matrix[y][x] = matrix[ypos][xpos];
             matrix[ypos][xpos] = temp;
 
-            // System.out.println("Original:\t"+Arrays.toString(mat[0]));
-            // System.out.println("\t\t"+Arrays.toString(mat[1]));
-            // System.out.println("\t\t"+Arrays.toString(mat[2]));
-            // System.out.println("Should swap x:" + x + " y:" + y + " with x:" + xpos + "
-            // y:" + ypos);
-            // System.out.println("Swapped:\t"+Arrays.toString(matrix[0]));
-            // System.out.println("\t\t"+Arrays.toString(matrix[1]));
-            // System.out.println("\t\t"+Arrays.toString(matrix[2])+"\n\n");
             this.x = xpos;
             this.y = ypos;
             this.cost = Integer.MAX_VALUE;
