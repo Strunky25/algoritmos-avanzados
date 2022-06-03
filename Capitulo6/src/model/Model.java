@@ -9,19 +9,18 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.PriorityQueue;
 
 public class Model extends AbstractModel {
 
     /* Constants */
-    private static final int[] DX = {1, 0, -1, 0};
-    private static final int[] DY = {0, -1, 0, 1};
-    private static int N = 3;
+    public static int[][] GOAL = {{ 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 }};
+    public static final int[] DX = {1, 0, -1, 0};
+    public static final int[] DY = {0, -1, 0, 1};
+    public static int N = 3;
 
     /* Variables */
     private Node sol;
-    private static int[][] GOAL = {{ 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 }};
 
     /* Methods */
     public static void setN(int N) {
@@ -34,34 +33,30 @@ public class Model extends AbstractModel {
         }
     }
     
-    public void solve(int[][] start, int x, int y, Heuristica heuristica) {
-        System.out.println(Arrays.deepToString(start));
+    public void solve(int[][] start, int x, int y, Heuristic heuristic) {
         PriorityQueue<Node> pq = new PriorityQueue<>();
         Node root = new Node(start, x, y, x, y, 0, null);
-        root.cost = Heuristica.heuristic(start, GOAL,heuristica);
+        root.cost = heuristic.calculate(start);
         pq.add(root);
         while (!pq.isEmpty()) {
             Node min = pq.poll();
             if (min.cost == 0) {
-                System.out.println(Arrays.deepToString(min.matrix));
                 sol = min;
                 return;
             }
             for (int i = 0; i < DX.length; i++) {
                 if (isPossible(min.x + DX[i], min.y + DY[i])) {
                     Node child = new Node(min.matrix, min.x, min.y, min.x + DX[i], min.y + DY[i], min.level + 1, min);
-                    if (pq.contains(child)) {
+                    if (pq.contains(child)) { // negar if?
                         continue;
                     } else {
-                        child.cost = Heuristica.heuristic(child.matrix, GOAL, heuristica);
+                        child.cost = heuristic.calculate(child.matrix);
                         pq.add(child);
-                        System.out.println("Movement: " + DX[i] + " " + DY[i]);
                     }
                 }
             }
         }
     }
-
 
     public ArrayList<Node> getSolution() {
         ArrayList<Node> moves = new ArrayList<>();

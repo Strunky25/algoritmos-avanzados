@@ -5,15 +5,14 @@
         Joan Sansó Pericàs
         Joan Vilella Candia
         Julián Wallis Medina
-*/
+ */
 package controller;
 
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
-import model.Heuristica;
 import model.Model;
 import model.Model.Node;
 import view.View;
@@ -23,8 +22,10 @@ import view.View;
  * user input.
  */
 public class Controller implements Runnable {
+
     /* Constants */
-    private Heuristica heuristica;
+    private static final int SLEEP_TIME = 600;
+    
     /* MVC Pattern */
     private final Model model;
     private final View view;
@@ -60,15 +61,11 @@ public class Controller implements Runnable {
 
     private void viewActionPerformed(ActionEvent evt) {
         switch (evt.getActionCommand()) {
-            case "Solve":
-                if (thread != null && thread.isAlive())
-                    return;
+            case "Solve" -> {
+                if (thread != null && thread.isAlive()) return;
                 thread = new Thread(this);
                 thread.start();
-            case "ChangeHeuristic":
-                this.heuristica = view.getHeuristica();
-            case "ChangeSize":
-                // setN(view.getSelectedSize());
+            }
         }
     }
 
@@ -77,15 +74,24 @@ public class Controller implements Runnable {
         Model.setN(view.getN());
         int[][] order = view.getOrder();
         int[] pos = view.getPos();
-        model.solve(order, pos[1], pos[0], heuristica);
+        model.solve(order, pos[1], pos[0], view.getHeuristic());
         ArrayList<Node> moves = model.getSolution();
-        for (int i = moves.size() - 1; i >= 0; i--) {
-            view.showResults(moves.get(i).getMatrix());
+        animateSolution(moves);
+    }
+
+    private void animateSolution(ArrayList<Node> moves) {
+        Collections.reverse(moves);
+        int cnt = 0;
+        for (Node move : moves) {
+            view.showResults(move.getMatrix());
+            view.setProgress((int) ((int) cnt/(double)moves.size()*100));
             try {
-                Thread.sleep(1000);
+                Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
+            cnt++;
         }
+        view.setProgress(100);
     }
 }
