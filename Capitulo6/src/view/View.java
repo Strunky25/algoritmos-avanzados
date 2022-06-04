@@ -108,20 +108,20 @@ public class View extends JFrame {
         ((DefaultEditor) spinnerSize.getEditor()).getTextField().setEditable(false);
         spinnerSize.addChangeListener((e) -> changeSize());
 
-        comboBoxHeuristic = new JComboBox<>(new String[]{"Incorrect tiles", "Manhattan Distance",
-            "Euclidean Distance", "Adjacent reversal tiles", "Wrong Row, Wrong Column"});
+        comboBoxHeuristic = new JComboBox<>(new String[] { "Incorrect tiles", "Manhattan Distance",
+                "Euclidean Distance", "Adjacent reversal tiles", "Wrong Row, Wrong Column" });
         comboBoxHeuristic.setActionCommand("ChangeHeuristic");
 
         labelHeuristic = new JLabel("Choose a heuristic:");
         labelSize = new JLabel("Choose size:");
-        
+
         progressBar = new JProgressBar();
 
         addComponents();
         setResizable(false);
     }
-    
-    private void initImagePanel(){
+
+    private void initImagePanel() {
         order = new int[N * N];
         icon = new BufferedImage[N * N];
         label = new JLabel[N * N];
@@ -144,55 +144,81 @@ public class View extends JFrame {
      * Method that creates the frame layout with all its components.
      */
     private void addComponents() {
-       javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(imgBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(59, 59, 59)
-                                .addComponent(shuffleBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(solveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(imgPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(50, 50, 50))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelHeuristic)
-                            .addComponent(comboBoxHeuristic, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(206, 206, 206)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(labelSize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(spinnerSize))
-                        .addGap(65, 65, 65))))
-            .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(50, 50, 50)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                false)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(imgBtn,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 108,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(59, 59, 59)
+                                                                .addComponent(shuffleBtn,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 79,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(
+                                                                        javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                                                        javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                        Short.MAX_VALUE)
+                                                                .addComponent(solveBtn,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 67,
+                                                                        javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(imgPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(50, 50, 50))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout
+                                                .createSequentialGroup()
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(labelHeuristic)
+                                                        .addComponent(comboBoxHeuristic,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE, 107,
+                                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(206, 206, 206)
+                                                .addGroup(layout
+                                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING,
+                                                                false)
+                                                        .addComponent(labelSize, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(spinnerSize))
+                                                .addGap(65, 65, 65))))
+                        .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelHeuristic)
-                    .addComponent(labelSize))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(comboBoxHeuristic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spinnerSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(imgPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(imgBtn)
-                    .addComponent(shuffleBtn)
-                    .addComponent(solveBtn))
-                .addGap(38, 38, 38)
-                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(22, 22, 22)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(labelHeuristic)
+                                        .addComponent(labelSize))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(comboBoxHeuristic, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(spinnerSize, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
+                                .addComponent(imgPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38,
+                                        Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(imgBtn)
+                                        .addComponent(shuffleBtn)
+                                        .addComponent(solveBtn))
+                                .addGap(38, 38, 38)
+                                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)));
         pack();
     }
 
@@ -214,7 +240,7 @@ public class View extends JFrame {
     }
 
     public int[] getPos() {
-        return new int[]{x / N, x % N};
+        return new int[] { x / N, x % N };
     }
 
     public void showResults(int[][] result) {
@@ -246,7 +272,7 @@ public class View extends JFrame {
                 Image tmp = img2.getScaledInstance(400, 400, Image.SCALE_SMOOTH);
                 Graphics2D g = img.createGraphics();
                 g.drawImage(tmp, 0, 0, null);
-                g.dispose();        
+                g.dispose();
                 updateImgPanel();
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
@@ -279,16 +305,20 @@ public class View extends JFrame {
     public int getN() {
         return N;
     }
-    
-    public void setProgress(int progress){
+
+    public void setProgress(int progress) {
         progressBar.setValue(progress);
     }
 
-    private void changeSize() {
-        N = (int) spinnerSize.getValue();
+    public void setN(int n) {
+        N = n;
         imgPanel.removeAll();
         initImagePanel();
         updateImgPanel();
+    }
+
+    private void changeSize() {
+        setN((int) spinnerSize.getValue());
     }
 
     private void swapTiles(MouseEvent evt) {
@@ -312,11 +342,11 @@ public class View extends JFrame {
         }
     }
 
-    private void shuffle() {
+    public void shuffle() {
         Random random = new Random();
         final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
         int previousMovement = -1;
-        int numMovimientos = 10; // 10 + N * N * N;
+        int numMovimientos = 10 + N * N * N;
 
         for (int i = 0; i < numMovimientos; i++) {
             int move = random.nextInt(4);
@@ -357,8 +387,8 @@ public class View extends JFrame {
         }
         updateImgIcons();
     }
-    
-    private void updateImgIcons(){
+
+    private void updateImgIcons() {
         for (int i = 0; i < N * N; i++) {
             if (icon[order[i]] == null) {
                 label[i].setIcon(null);

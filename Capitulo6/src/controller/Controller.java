@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import model.Model;
+import model.PerformanceTests;
 import model.Model.Node;
 import view.View;
 
@@ -25,7 +26,7 @@ public class Controller implements Runnable {
 
     /* Constants */
     private static final int SLEEP_TIME = 600;
-    
+
     /* MVC Pattern */
     private final Model model;
     private final View view;
@@ -62,7 +63,8 @@ public class Controller implements Runnable {
     private void viewActionPerformed(ActionEvent evt) {
         switch (evt.getActionCommand()) {
             case "Solve" -> {
-                if (thread != null && thread.isAlive()) return;
+                if (thread != null && thread.isAlive())
+                    return;
                 thread = new Thread(this);
                 thread.start();
             }
@@ -77,6 +79,10 @@ public class Controller implements Runnable {
         model.solve(order, pos[1], pos[0], view.getHeuristic());
         ArrayList<Node> moves = model.getSolution();
         animateSolution(moves);
+
+        // PerformanceTests tests = new PerformanceTests(model, view);
+        // tests.start();
+
     }
 
     private void animateSolution(ArrayList<Node> moves) {
@@ -84,7 +90,7 @@ public class Controller implements Runnable {
         int cnt = 0;
         for (Node move : moves) {
             view.showResults(move.getMatrix());
-            view.setProgress((int) ((int) cnt/(double)moves.size()*100));
+            view.setProgress((int) ((int) cnt / (double) moves.size() * 100));
             try {
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
