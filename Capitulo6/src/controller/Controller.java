@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import model.Model;
-import model.PerformanceTests;
 import model.Model.Node;
 import view.View;
 
@@ -54,17 +53,22 @@ public class Controller implements Runnable {
      * Define Listeners...
      */
     private void modelPropertyChange(PropertyChangeEvent evt) {
-        if ("Update".equals(evt.getPropertyName())) {
-            int[][] mat = (int[][]) evt.getNewValue();
-            view.showResults(mat);
+        switch (evt.getPropertyName()) {
+            case "Calculating" -> {
+                boolean value = (boolean) evt.getNewValue();
+                view.setIndeterminate(value);
+            }
+            case "Update" -> {
+                int[][] mat = (int[][]) evt.getNewValue();
+                view.showResults(mat);
+            }
         }
     }
 
     private void viewActionPerformed(ActionEvent evt) {
         switch (evt.getActionCommand()) {
             case "Solve" -> {
-                if (thread != null && thread.isAlive())
-                    return;
+                if (thread != null && thread.isAlive()) return;
                 thread = new Thread(this);
                 thread.start();
             }

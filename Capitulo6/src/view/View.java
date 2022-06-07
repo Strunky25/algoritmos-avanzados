@@ -309,6 +309,10 @@ public class View extends JFrame {
     public void setProgress(int progress) {
         progressBar.setValue(progress);
     }
+    
+    public void setIndeterminate(boolean value){
+        progressBar.setIndeterminate(value);
+    }
 
     public void setN(int n) {
         N = n;
@@ -346,8 +350,7 @@ public class View extends JFrame {
         Random random = new Random();
         final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
         int previousMovement = -1;
-        int numMovimientos = 10 + N * N * N;
-
+        int numMovimientos = 10 + N * N;
         for (int i = 0; i < numMovimientos; i++) {
             int move = random.nextInt(4);
             switch (move) {

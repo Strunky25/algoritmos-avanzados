@@ -38,10 +38,12 @@ public class Model extends AbstractModel {
         Node root = new Node(start, x, y, x, y, 0, null);
         root.cost = heuristic.calculate(start);
         pq.add(root);
+        firePropertyChange("Calculating", GOAL, true);
         while (!pq.isEmpty()) {
             Node min = pq.poll();
             if (min.cost == 0) {
                 sol = min;
+                firePropertyChange("Calculating", GOAL, false);
                 return;
             }
             for (int i = 0; i < DX.length; i++) {
