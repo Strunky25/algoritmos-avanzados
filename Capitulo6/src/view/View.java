@@ -104,7 +104,7 @@ public class View extends JFrame {
         });
         imgPanel.setBackground(Color.lightGray);
 
-        spinnerSize = new JSpinner(new SpinnerNumberModel(3, 3, 9, 1));
+        spinnerSize = new JSpinner(new SpinnerNumberModel(3, 3, 6, 1));
         ((DefaultEditor) spinnerSize.getEditor()).getTextField().setEditable(false);
         spinnerSize.addChangeListener((e) -> changeSize());
 
