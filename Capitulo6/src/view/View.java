@@ -122,25 +122,6 @@ public class View extends JFrame {
         setResizable(false);
     }
 
-    private void initImagePanel() {
-        order = new int[N * N];
-        icon = new BufferedImage[N * N];
-        label = new JLabel[N * N];
-        for (int i = 0; i < N * N; i++) {
-            order[i] = i;
-            label[i] = new JLabel();
-            label[i].setBorder(BorderFactory.createLineBorder(Color.black));
-        }
-        x = N * N - 1;
-
-        /* Add Layout */
-        GridLayout grid = new GridLayout(N, N);
-        imgPanel.setLayout(grid);
-        for (JLabel lab : label) {
-            imgPanel.add(lab);
-        }
-    }
-
     /**
      * Method that creates the frame layout with all its components.
      */
@@ -223,6 +204,25 @@ public class View extends JFrame {
         pack();
     }
 
+    private void initImagePanel() {
+        order = new int[N * N];
+        icon = new BufferedImage[N * N];
+        label = new JLabel[N * N];
+        for (int i = 0; i < N * N; i++) {
+            order[i] = i;
+            label[i] = new JLabel();
+            label[i].setBorder(BorderFactory.createLineBorder(Color.black));
+        }
+        x = N * N - 1;
+
+        /* Add Layout */
+        GridLayout grid = new GridLayout(N, N);
+        imgPanel.setLayout(grid);
+        for (JLabel lab : label) {
+            imgPanel.add(lab);
+        }
+    }
+    
     /* METHODS */
     // Add Listeners
     public void addListeners(ActionListener listener) {
@@ -274,6 +274,9 @@ public class View extends JFrame {
                 Graphics2D g = img.createGraphics();
                 g.drawImage(tmp, 0, 0, null);
                 g.dispose();
+                //updateImgPanel();
+                imgPanel.removeAll();
+                initImagePanel();
                 updateImgPanel();
             } catch (IOException ex) {
                 System.out.println(ex.getMessage());
