@@ -4,6 +4,7 @@
         Jonathan Salisbury Vega
         Joan Sansó Pericàs
         Joan Vilella Candia
+        Julián Wallis Medina
  */
 package view;
 
@@ -98,7 +99,7 @@ public class View extends JFrame {
         imgPanel = new JPanel();
         imgPanel.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 swapTiles(e);
             }
         });
@@ -306,14 +307,34 @@ public class View extends JFrame {
         return N;
     }
 
+    /**
+     * Method that sets progress in the progress bar.
+     *
+     * @param progress
+     */
     public void setProgress(int progress) {
         progressBar.setValue(progress);
     }
-    
-    public void setIndeterminate(boolean value){
+
+    /**
+     * Method that sets the progress bar to indeterminate.
+     */
+    public void setIndeterminate(boolean value) {
         progressBar.setIndeterminate(value);
     }
 
+    /**
+     * Method that sets the new N value
+     */
+    private void changeSize() {
+        setN((int) spinnerSize.getValue());
+    }
+
+    /**
+     * Method that updates the image panel with the new size value
+     *
+     * @param n
+     */
     public void setN(int n) {
         N = n;
         imgPanel.removeAll();
@@ -321,10 +342,11 @@ public class View extends JFrame {
         updateImgPanel();
     }
 
-    private void changeSize() {
-        setN((int) spinnerSize.getValue());
-    }
-
+    /**
+     * Method that allows us to manually shuffle the board
+     *
+     * @param evt
+     */
     private void swapTiles(MouseEvent evt) {
         int size = img.getWidth() / N;
         int i = evt.getY() / size;
@@ -346,6 +368,9 @@ public class View extends JFrame {
         }
     }
 
+    /**
+     * Method that performs 10 + N*N swaps in order to shuffle the tiles.
+     */
     public void shuffle() {
         Random random = new Random();
         final int UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3;
@@ -391,6 +416,18 @@ public class View extends JFrame {
         updateImgIcons();
     }
 
+    /**
+     * Method that swaps the empty tile with the tile in the given direction.
+     *
+     * @param movement
+     */
+    private void swap(int movement) {
+        int temp = order[x];
+        order[x] = order[x + movement];
+        order[x + movement] = temp;
+        x += movement;
+    }
+
     private void updateImgIcons() {
         for (int i = 0; i < N * N; i++) {
             if (icon[order[i]] == null) {
@@ -400,12 +437,5 @@ public class View extends JFrame {
             }
             label[i].repaint();
         }
-    }
-
-    private void swap(int movement) {
-        int temp = order[x];
-        order[x] = order[x + movement];
-        order[x + movement] = temp;
-        x += movement;
     }
 }
