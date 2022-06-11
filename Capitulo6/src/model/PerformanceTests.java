@@ -8,8 +8,8 @@ import view.View;
 
 public class PerformanceTests {
 
-    private int NTESTS = 30;
-    private int MAX_SIZE = 3;
+    private int NTESTS = 96;
+    private int MAX_SIZE = 4;
     private Model m;
     private View v;
 
@@ -34,6 +34,8 @@ public class PerformanceTests {
                     FileWriter fw = new FileWriter("performanceTests/" + i + h.toString() + ".csv");
                     BufferedWriter bw = new BufferedWriter(fw);
                     m.setN(i);
+                    if(i==3) NTESTS = 70;
+                    if(i==4) NTESTS = 20;
                     for (int j = 0; j < NTESTS; j++) {
                         System.out.println("Test " + j+"/"+NTESTS);
                         v.setN(i);
