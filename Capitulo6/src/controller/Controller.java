@@ -78,15 +78,15 @@ public class Controller implements Runnable {
 
     @Override
     public void run() {
-        // Model.setN(view.getN());
-        // int[][] order = view.getOrder();
-        // int[] pos = view.getPos();
-        // model.solve(order, pos[1], pos[0], view.getHeuristic());
-        // ArrayList<Node> moves = model.getSolution();
-        // animateSolution(moves);
+        Model.setN(view.getN());
+        int[][] order = view.getOrder();
+        int[] pos = view.getPos();
+        model.solve(order, pos[1], pos[0], view.getHeuristic());
+        ArrayList<Node> moves = model.getSolution();
+        animateSolution(moves);
 
-        PerformanceTests tests = new PerformanceTests(model, view);
-        tests.start();
+        // PerformanceTests tests = new PerformanceTests(model, view);
+        // tests.start();
 
     }
 

@@ -49,9 +49,7 @@ public class Model extends AbstractModel {
             for (int i = 0; i < DX.length; i++) {
                 if (isPossible(min.x + DX[i], min.y + DY[i])) {
                     Node child = new Node(min.matrix, min.x, min.y, min.x + DX[i], min.y + DY[i], min.level + 1, min);
-                    if (pq.contains(child)) { // negar if?
-                        continue;
-                    } else {
+                    if (!pq.contains(child)) {                   
                         child.cost = heuristic.calculate(child.matrix);
                         pq.add(child);
                     }
