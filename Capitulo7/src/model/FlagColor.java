@@ -51,8 +51,8 @@ public enum FlagColor {
         float[] hsb2 = new float[3];
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
         double dh, ds, db;
-        for (int i = 0; i < values.size(); i++) {
-            Color.RGBtoHSB(values.get(i).getRed(), values.get(i).getGreen(), values.get(i).getBlue(), hsb2);
+        for (Color val: values) {
+            Color.RGBtoHSB(val.getRed(), val.getGreen(), val.getBlue(), hsb2);
             dh = hsb[0] - hsb2[0];
             ds = hsb[1] - hsb2[1];
             db = hsb[2] - hsb2[2];
@@ -60,5 +60,10 @@ public enum FlagColor {
             if (res < min) min = res;
         }
         return min;
+    }
+    
+    @Override
+    public String toString(){
+        return this.name().toLowerCase();
     }
 }

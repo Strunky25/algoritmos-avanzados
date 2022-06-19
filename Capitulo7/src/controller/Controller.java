@@ -7,9 +7,8 @@
 */
 package controller;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
-import java.util.Locale;
-import java.util.Random;
 import model.Model;
 import view.View;
 
@@ -38,24 +37,40 @@ public class Controller {
      */
     public void start(){
         /* Add Listeners */
+        view.addListeners((e) -> viewActionPerformed(e));
         view.setVisible(true);
         
-        model.loadDatabase(DIR, N_TESTS);
-        File[] files = DIR.listFiles();
-        Random rand = new Random();
-        File flagFile = files[rand.nextInt(files.length)];
-
-        model.loadFlag(flagFile);
-        double[] perc = model.getColorPercentages(N_TESTS);
-        String guess = model.findCountry(perc);
-        
-        Locale loc = new Locale("", flagFile.getName().replace(".png", ""));
-        String country = loc.getDisplayCountry();
-        System.out.println("Real Country: " + country);
-        System.out.println("Guess: " + guess);
+//        model.loadDatabase(DIR, N_TESTS);
+//        File[] files = DIR.listFiles();
+//        Random rand = new Random();
+//        File flagFile = files[rand.nextInt(files.length)];
+//
+//        model.loadFlag(flagFile);
+//        double[] perc = model.getColorPercentages(N_TESTS);
+//        String guess = model.findCountry(perc);
+//        
+//        Locale loc = new Locale("", flagFile.getName().replace(".png", ""));
+//        String country = loc.getDisplayCountry();
+//        System.out.println("Real Country: " + country);
+//        System.out.println("Guess: " + guess);
     }
     
     /**
      * Define Listeners...
      */
+    private void viewActionPerformed(ActionEvent evt) {
+        switch(evt.getActionCommand()){
+            case "Random Flag" -> {
+                File Flag = model.getRandomFlag(DIR);
+                model.loadFlag(Flag);
+                view.setFlagImage(model.getFlagImage(), model.getCountryName());
+            }
+            case "Guess Country" -> {
+                model.loadDatabase(DIR, N_TESTS);
+                double[] percentages = model.getColorPercentages(N_TESTS);
+                String country = model.findCountry(percentages);
+                view.setGuessImage(model.getFlagImage(country), country, percentages);
+            }
+        }
+    }
 }

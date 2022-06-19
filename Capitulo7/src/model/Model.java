@@ -18,6 +18,7 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -33,6 +34,7 @@ public class Model {
     
     /* Variables */
     private BufferedImage flag;
+    private String country;
     private HashMap<String, double[]> database;
     
     /* Methods */
@@ -55,7 +57,7 @@ public class Model {
                 loadFlag(file);
                 double[] perc = getColorPercentages(N_TESTS);
                 Locale loc = new Locale("", file.getName().replace(".png", ""));
-                String country = loc.getDisplayCountry();
+                country = loc.getDisplayCountry();
                 database.put(country, perc);
             }
             // guardar
@@ -71,6 +73,8 @@ public class Model {
     public void loadFlag(File flagFile){
         try {
             flag = ImageIO.read(flagFile);
+            Locale loc = new Locale("", flagFile.getName().replace(".png", ""));
+            country = loc.getDisplayCountry();
         } catch (IOException ex) {
             Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -95,7 +99,7 @@ public class Model {
     }
     
     public String findCountry(double[] percentages){
-        String country = null;
+        country = null;
         double min = Double.MAX_VALUE, dist;
         for (Map.Entry<String, double[]> entry : database.entrySet()) {
             double[] countryPerc = entry.getValue();
@@ -106,6 +110,37 @@ public class Model {
             }
         }
         return country;
+    }
+    
+    public File getRandomFlag(File dir){
+        File[] files = dir.listFiles();
+        Random rand = new Random();
+        File flagFile = files[rand.nextInt(files.length)];
+        return flagFile;
+    }
+    
+    public BufferedImage getFlagImage(){
+        return this.flag;
+    }
+    
+    public String getCountryName(){
+        return this.country;
+    }
+    
+    public BufferedImage getFlagImage(String countryName){
+        Map<String, String> countries = new HashMap<>();
+        for (String iso : Locale.getISOCountries()) {
+            Locale l = new Locale("", iso);
+            countries.put(l.getDisplayCountry(), iso);
+        }
+        BufferedImage img = null;
+        try {
+            String fileName = "resources/flags/" + countries.get(countryName) + ".png";
+            img = ImageIO.read(new File(fileName));
+        } catch (IOException ex) {
+            System.err.println(ex.getMessage());
+        }
+        return img;
     }
     
     private int getClosestColorIndex(java.awt.Color color){
