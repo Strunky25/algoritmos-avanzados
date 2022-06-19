@@ -1,12 +1,11 @@
 /*
-    Algoritmes Avançats - Capitulo 6
+    Algoritmes Avançats - Capitulo 7
     Autors:
         Jonathan Salisbury Vega
         Joan Sansó Pericàs
-        Julián Wallis Medina
         Joan Vilella Candia
 */
-package capitulo6;
+package capitulo7;
 
 import controller.Controller;
 import view.View;
@@ -17,7 +16,7 @@ import javax.swing.SwingUtilities;
 /**
  * Main Class that starts the program
  */
-public class Capitulo6 implements Runnable{
+public class Capitulo7 implements Runnable{
 
     /* MVC Pattern */
     private Model model;
@@ -39,7 +38,7 @@ public class Capitulo6 implements Runnable{
      */
     public static void main(String[] args) {
         FlatLightLaf.setup();
-        Capitulo6 prog = new Capitulo6();
+        Capitulo7 prog = new Capitulo7();
         SwingUtilities.invokeLater(prog); 
     }
 }
