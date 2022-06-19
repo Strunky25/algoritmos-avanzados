@@ -55,7 +55,7 @@ public class Model {
             File[] files = dir.listFiles();
             for(File file: files){
                 loadFlag(file);
-                double[] perc = getColorPercentages(N_TESTS);
+                double[] perc = getRealPercentages();
                 Locale loc = new Locale("", file.getName().replace(".png", ""));
                 country = loc.getDisplayCountry();
                 database.put(country, perc);
@@ -166,5 +166,21 @@ public class Model {
             sum += diff[i];
         }
         return Math.sqrt(sum);
+    }
+    
+    private double[] getRealPercentages() {
+        int[] colorCount = new int[COLORS.length];
+        for (int i = 0; i < flag.getWidth(); i++) {
+            for (int j = 0; j < flag.getHeight(); j++) {
+                Color color = new Color(flag.getRGB(i, j));
+                int pos = getClosestColorIndex(color);
+                colorCount[pos]++;
+            }
+        }
+        double[] percentages = new double[COLORS.length];
+        for (int i = 0; i < colorCount.length; i++) {
+            percentages[i] = (double) colorCount[i]/(flag.getWidth()*flag.getHeight());
+        }
+        return percentages;
     }
 }
