@@ -135,7 +135,9 @@ public class Model {
         }
         BufferedImage img = null;
         try {
-            String fileName = "resources/flags/" + countries.get(countryName) + ".png";
+            String name = countries.get(countryName);
+            System.out.println("Country: "+name);
+            String fileName = "resources/flags/" + name + ".png";
             img = ImageIO.read(new File(fileName));
         } catch (IOException ex) {
             System.err.println(ex.getMessage());
