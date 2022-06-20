@@ -56,7 +56,7 @@ public class Model {
             for(File file: files){
                 loadFlag(file);
                 double[] perc = getRealPercentages();
-                Locale loc = new Locale("", file.getName().replace(".png", ""));
+                Locale loc = new Locale("en", file.getName().replace(".png", ""));
                 country = loc.getDisplayCountry();
                 database.put(country, perc);
             }
@@ -73,7 +73,7 @@ public class Model {
     public void loadFlag(File flagFile){
         try {
             flag = ImageIO.read(flagFile);
-            Locale loc = new Locale("", flagFile.getName().replace(".png", ""));
+            Locale loc = new Locale("en", flagFile.getName().replace(".png", ""));
             country = loc.getDisplayCountry();
         } catch (IOException ex) {
             Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
@@ -130,7 +130,7 @@ public class Model {
     public BufferedImage getFlagImage(String countryName){
         Map<String, String> countries = new HashMap<>();
         for (String iso : Locale.getISOCountries()) {
-            Locale l = new Locale("", iso);
+            Locale l = new Locale("en", iso);
             countries.put(l.getDisplayCountry(), iso);
         }
         BufferedImage img = null;
