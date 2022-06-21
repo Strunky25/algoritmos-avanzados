@@ -9,6 +9,8 @@ package model;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -33,16 +35,22 @@ public class Model {
     private static final FlagColor[] COLORS = FlagColor.values();
     
     /* Variables */
+    private PropertyChangeSupport propertyChangeSupport;
     private BufferedImage flag;
     private String country;
     private HashMap<String, double[]> database;
+    
+    public Model(){
+        propertyChangeSupport = new PropertyChangeSupport(this);
+    }
     
     /* Methods */
     public void loadDatabase(File dir, final int N_TESTS){
         if(database != null) return;
         if(BD_FILE.exists()){
             // leer
-            //System.out.println("Reading DB...");
+            firePropertyChange("creating DB", null, false);
+            System.out.println("Reading DB...");
              try(ObjectInputStream reader = new ObjectInputStream(new FileInputStream(BD_FILE))){
                  database = (HashMap<String, double[]>) reader.readObject();
              } catch(IOException | ClassNotFoundException ex) {
@@ -50,10 +58,12 @@ public class Model {
              }
        } else {
             // crear
-            //System.out.println("Creating DB...");
+            System.out.println("Creating DB...");
+            firePropertyChange("creating DB", null, true);
             database = new HashMap<>();
             File[] files = dir.listFiles();
             for(File file: files){
+                System.out.println(file.getName());
                 loadFlag(file);
                 double[] perc = getRealPercentages();
                 Locale loc = new Locale("en", file.getName().replace(".png", ""));
@@ -61,7 +71,7 @@ public class Model {
                 database.put(country, perc);
             }
             // guardar
-            //System.out.println("Writing DB...");
+            System.out.println("Writing DB...");
             try(ObjectOutputStream writer = new ObjectOutputStream(new FileOutputStream(BD_FILE))){
                 writer.writeObject(database);
             } catch(IOException ex) {
@@ -184,5 +194,17 @@ public class Model {
             percentages[i] = (double) colorCount[i]/(flag.getWidth()*flag.getHeight());
         }
         return percentages;
+    }
+    
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+        propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
     }
 }

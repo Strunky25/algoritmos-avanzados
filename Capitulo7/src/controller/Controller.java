@@ -8,6 +8,7 @@
 package controller;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import model.Model;
 import view.View;
@@ -37,6 +38,7 @@ public class Controller {
      */
     public void start(){
         /* Add Listeners */
+        model.addPropertyChangeListener((e) -> modelPropertyChanged(e));
         view.addListeners((e) -> viewActionPerformed(e));
         view.setVisible(true);
         
@@ -58,6 +60,17 @@ public class Controller {
     /**
      * Define Listeners...
      */
+    private void modelPropertyChanged(PropertyChangeEvent evt){
+        switch(evt.getPropertyName()){
+            case "creating DB" -> {
+                boolean val = (boolean) evt.getNewValue();
+                if(val == true){
+                    // pop up creating database
+                }
+            }
+        }
+    }
+    
     private void viewActionPerformed(ActionEvent evt) {
         switch(evt.getActionCommand()){
             case "Random Flag" -> {
