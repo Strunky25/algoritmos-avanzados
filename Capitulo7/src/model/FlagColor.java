@@ -53,7 +53,7 @@ public enum FlagColor {
         double dh, ds, db;
         for (Color val: values) {
             Color.RGBtoHSB(val.getRed(), val.getGreen(), val.getBlue(), hsb2);
-            dh = Math.min(Math.abs(hsb2[0] - hsb[0]), 360 - Math.abs(hsb2[0] - hsb[0])) / 100.0;
+            dh = Math.min(Math.abs(hsb2[0] - hsb[0]), 360 - Math.abs(hsb2[0] - hsb[0])) / 180.0;
             ds = Math.abs(hsb2[1] - hsb[1]);
             db = Math.abs(hsb2[2] - hsb[2]) / 255.0;
             res = Math.sqrt(dh*dh + ds*ds + db*db);
