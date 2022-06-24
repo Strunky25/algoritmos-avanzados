@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import model.Model;
-import model.PerformanceTests;
 import model.Model.Node;
 import view.View;
 
