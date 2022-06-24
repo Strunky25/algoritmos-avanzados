@@ -172,7 +172,8 @@ public class View extends JFrame{
         countryLbl.setText("Country: " + countryName);
     }
     
-    public void setGuessImage(BufferedImage flagImage, String countryName, double[] percentages){
+    public int setGuessImage(BufferedImage flagImage, String countryName, double[] percentages){
+        int ret = 0;
         float ratio = (float) flagImage.getWidth()/flagImage.getHeight();
         Image tmp = flagImage.getScaledInstance(70, (int) (70/ratio), Image.SCALE_SMOOTH);
         if(tmp.getHeight(null) > (PANEL_HEIGHT/10 + 25)){
@@ -184,13 +185,16 @@ public class View extends JFrame{
         guessCountryLbl.setFont(new Font("Courier", Font.BOLD, 12));
         if(countryLbl.getText().contains(countryName)){
             guessCountryLbl.setForeground(Color.green);
+            ret = 1;
         } else {
             guessCountryLbl.setForeground(Color.red);
+            ret = 0;
         }
-        if(percentages.length != COLORS.length) return;
+        if(percentages.length != COLORS.length) return ret;
         for (int i = 0; i < percentages.length; i++) {
             colorPb[i].setValue((int) (percentages[i]*100));
         }
+        return ret;
     }
     
     // Add Listeners
