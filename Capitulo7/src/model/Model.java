@@ -147,7 +147,6 @@ public class Model {
         try {
             System.out.println("countryName: "+countryName);
             String name = countries.get(countryName);
-            System.out.println(countries.toString());
             System.out.println("Country: "+name);
             String fileName = "resources/flags/" + name + ".png";
             img = ImageIO.read(new File(fileName));
