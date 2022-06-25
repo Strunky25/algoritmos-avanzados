@@ -96,7 +96,7 @@ public class Controller implements Runnable {
         // TESTS
         long time = System.currentTimeMillis();
         int N_TESTS = 1000;
-        int[] Ns = new int[]{50, 100, 150, 200, 250, 500, 750, 1000, 2000, 3000, 5000, 8000, 10000, 15000,
+        int[] Ns = new int[]{10,20,30,40,50, 100, 150, 200, 250, 500, 750, 1000, 2000, 3000, 5000, 8000, 10000, 15000,
             20000, 25000, 30000, 35000, 40000, 45000, 50000};
 
         try (FileWriter fw = new FileWriter("results.csv")) {

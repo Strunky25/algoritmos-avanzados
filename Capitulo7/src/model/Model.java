@@ -33,6 +33,22 @@ public class Model {
     /* Constants */
     private static final File BD_FILE = new File("data/bd.dat");
     private static final FlagColor[] COLORS = FlagColor.values();
+    private final int BLACK = 0;
+    private final int WHITE = 1;
+    private final int RED = 2;
+    private final int RED_ORANGE = 3;
+    private final int ORANGE = 4;
+    private final int YELLOW_ORANGE = 5;
+    private final int YELLOW = 6;
+    private final int YELLOW_GREEN = 7;
+    private final int GREEN = 8;
+    private final int BLUE_GREEN = 9;
+    private final int BLUE = 10;
+    private final int BLUE_VIOLET = 11;
+    private final int VIOLET = 12;
+    private final int VIOLET_RED = 13;
+
+    private final int N_COLORS = 14;
 
     /* Variables */
     private final PropertyChangeSupport propertyChangeSupport;
@@ -96,13 +112,13 @@ public class Model {
             return null;
         }
         double x, y;
-        int[] colorCount = new int[COLORS.length];
+        int[] colorCount = new int[N_COLORS];
         for (int i = 0; i < N_TESTS; i++) {
             x = Math.random() * flag.getWidth();
             y = Math.random() * flag.getHeight();
             Color color = new Color(flag.getRGB((int) x, (int) y));
             //System.out.println(color);
-            int pos = getClosestColorIndex(color);
+            int pos = getClosestColorIndex2(color);
             //System.out.println(COLORS[pos]);
             colorCount[pos]++;
         }
@@ -159,19 +175,33 @@ public class Model {
         return img;
     }
 
-    private int getClosestColorIndex(Color color) {
-        double min = Double.MAX_VALUE, dist;
-        int pos = -1;
-        for (int i = 0; i < COLORS.length; i++) {
-            dist = COLORS[i].distanceToColor(color);
-            //System.out.println(COLORS[i] + ": " + dist);
-            if (dist < min) {
-                min = dist;
-                pos = i;
-            }
+    //Devolvemos el indice
+    private int getClosestColorIndex2(Color color){
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
+        hsb[0] = hsb[0]*12; //Asi tenemos Hue en 0-12, Saturacion entre 0-1 y Brillo entre 0-1
+        if(hsb[2] <= 0.1){
+            return BLACK; //return black
+        } else if(hsb[2] > 0.9 && hsb[1] <= 0.1){
+            return WHITE; //return white
+        } else{
+            return 2+(int)hsb[0]; //return color
         }
-        return pos;
     }
+
+    // private int getClosestColorIndex(Color color) {
+    //     double min = Double.MAX_VALUE, dist;
+    //     int pos = -1;
+    //     for (int i = 0; i < COLORS.length; i++) {
+    //         dist = COLORS[i].distanceToColor(color);
+    //         //System.out.println(COLORS[i] + ": " + dist);
+    //         if (dist < min) {
+    //             min = dist;
+    //             pos = i;
+    //         }
+    //     }
+    //     return pos;
+    // }
 
     private Double distanceBetweenColorPercentages(double[] flag, double[] country) {
         if (flag.length != country.length) {
@@ -192,7 +222,7 @@ public class Model {
         for (int i = 0; i < flag.getWidth(); i++) {
             for (int j = 0; j < flag.getHeight(); j++) {
                 Color color = new Color(flag.getRGB(i, j));
-                int pos = getClosestColorIndex(color);
+                int pos = getClosestColorIndex2(color);
                 colorCount[pos]++;
             }
         }
