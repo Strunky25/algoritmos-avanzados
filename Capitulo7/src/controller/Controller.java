@@ -26,13 +26,14 @@ public class Controller implements Runnable {
 
     /* Constants */
     private static final File DIR = new File("resources/flags");
-    private static int N_PIXELS = 100000;
+    private static int N_PIXELS = 50000;
 
     /* MVC Pattern */
     private final Model model;
     private final View view;
     private DBDialog dbDialog;
     private Thread thread;
+    private File flagFile;
 
     private final boolean TESTING_MODE = false;
 
@@ -77,8 +78,8 @@ public class Controller implements Runnable {
     private void viewActionPerformed(ActionEvent evt) {
         switch (evt.getActionCommand()) {
             case "Random Flag" -> {
-                File Flag = model.getRandomFlag(DIR);
-                model.loadFlag(Flag);
+                flagFile = model.getRandomFlag(DIR);
+                model.loadFlag(flagFile);
                 view.setFlagImage(model.getFlagImage(), model.getCountryName());
             }
             case "Guess Country" -> {
@@ -137,6 +138,7 @@ public class Controller implements Runnable {
     public void run() {
         if (!TESTING_MODE) {
             model.loadDatabase(DIR, N_PIXELS);
+            model.loadFlag(flagFile);
             double[] percentages = model.getColorPercentages(N_PIXELS);
             String country = model.findCountry(percentages);
             view.setGuessImage(model.getFlagImage(country), country, percentages);

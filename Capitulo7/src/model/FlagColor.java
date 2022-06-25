@@ -5,8 +5,6 @@
 package model;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  *
@@ -14,31 +12,57 @@ import java.util.Arrays;
  */
 public enum FlagColor {
 
-        BLACK, WHITE, RED, RED_ORANGE, ORANGE, YELLOW_ORANGE, YELLOW, YELLOW_GREEN, GREEN, BLUE_GREEN, BLUE, BLUE_VIOLET, VIOLET, VIOLET_RED;
+    BLACK,
+    WHITE,
+    RED(346, 15),
+    ORANGE(16, 45),
+    YELLOW(46, 75),
+    YELLOW_GREEN(76, 105),
+    LIGHT_GREEN(106, 135),
+    GREEN(136, 165),
+    CYAN(166, 195),
+    BLUE(196, 225),
+    DARK_BLUE(226, 255),
+    VIOLET(256, 285),
+    MAGENTA(286, 315),
+    FUCSIA(316, 345);
 
+    private int min, max;
 
-        // public double distanceToColor(Color color) { // https://stackoverflow.com/questions/35113979/calculate-distance-between-colors-in-hsv-space
-        //         double res;
-        //         double min = Double.MAX_VALUE;
-        //         float[] hsb = new float[3];
-        //         float[] hsb2 = new float[3];
-        //         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
-        //         // System.out.println(Arrays.toString(hsb));
-        //         double dh, ds, db;
-        //         for (Color val : values) {
-        //                 Color.RGBtoHSB(val.getRed(), val.getGreen(), val.getBlue(), hsb2);
-        //                 dh = Math.min(Math.abs(hsb2[0] - hsb[0]), 360 - Math.abs(hsb2[0] - hsb[0]));
-        //                 ds = Math.abs(hsb2[1] - hsb[1]);
-        //                 db = Math.abs(hsb2[2] - hsb[2]);
-        //                 res = Math.sqrt(dh * dh + ds * ds + db * db);
-        //                 if (res < min)
-        //                         min = res;
-        //         }
-        //         return min;
-        // }
+    private FlagColor() {
+    }
 
-        @Override
-        public String toString() {
-                return this.name().toLowerCase();
+    private FlagColor(int min, int max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    public static int getColor(Color color) {
+        int res = -1;
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
+        if(hsb[2] <= 0.1){
+            return 0; //return black
+        } else if(hsb[2] > 0.9 && hsb[1] <= 0.1){
+            return 1; //return white
         }
+        FlagColor[] values = FlagColor.values();
+        hsb[0] *= 360;
+        int hue = Math.round(hsb[0]);
+        for(int i = 0; i < values.length; i++) {
+            if(values[i].equals(WHITE) || values[i].equals(BLACK)) continue;
+            if((values[i].min > values[i].max) && (hue <= values[i].max || hue >= values[i].min))res = i;
+            else if(hue >= values[i].min && hue <= values[i].max) res = i;
+        }
+        if(res == -1){
+            System.out.println(hue);
+        }
+        return res;
+    }
+
+    @Override
+    public String toString() {
+        String lower = this.name().toLowerCase();
+        return lower.replace("_", " ");
+    }
 }

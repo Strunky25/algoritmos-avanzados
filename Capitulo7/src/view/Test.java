@@ -30,7 +30,7 @@ public class Test extends javax.swing.JFrame {
         imgPanel = new javax.swing.JPanel();
         flagImgLbl = new javax.swing.JLabel();
         rndFlagBtn = new javax.swing.JButton();
-        guessCountryBtn = new javax.swing.JButton();
+        guessBtn = new javax.swing.JButton();
         countryLbl = new javax.swing.JLabel();
         guessPanel = new javax.swing.JPanel();
 
@@ -53,7 +53,7 @@ public class Test extends javax.swing.JFrame {
 
         rndFlagBtn.setText("Random Flag");
 
-        guessCountryBtn.setText("Guess Country");
+        guessBtn.setText("Guess Country");
 
         countryLbl.setText("Country:");
 
@@ -81,7 +81,7 @@ public class Test extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(rndFlagBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(guessCountryBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(guessBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(137, 137, 137)
                         .addComponent(countryLbl)))
@@ -98,14 +98,14 @@ public class Test extends javax.swing.JFrame {
                         .addComponent(countryLbl)
                         .addGap(18, 18, 18)
                         .addComponent(imgPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, Short.MAX_VALUE))
+                        .addGap(18, 87, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(guessPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(rndFlagBtn)
-                    .addComponent(guessCountryBtn))
+                    .addComponent(guessBtn))
                 .addGap(16, 16, 16))
         );
 
@@ -150,7 +150,7 @@ public class Test extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel countryLbl;
     private javax.swing.JLabel flagImgLbl;
-    private javax.swing.JButton guessCountryBtn;
+    private javax.swing.JButton guessBtn;
     private javax.swing.JPanel guessPanel;
     private javax.swing.JPanel imgPanel;
     private javax.swing.JCheckBox jCheckBox1;

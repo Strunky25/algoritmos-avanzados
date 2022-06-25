@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -117,9 +118,7 @@ public class Model {
             x = Math.random() * flag.getWidth();
             y = Math.random() * flag.getHeight();
             Color color = new Color(flag.getRGB((int) x, (int) y));
-            //System.out.println(color);
-            int pos = getClosestColorIndex2(color);
-            //System.out.println(COLORS[pos]);
+            int pos = FlagColor.getColor(color);
             colorCount[pos]++;
         }
         double[] percentages = new double[COLORS.length];
@@ -175,34 +174,6 @@ public class Model {
         return img;
     }
 
-    //Devolvemos el indice
-    private int getClosestColorIndex2(Color color){
-        float[] hsb = new float[3];
-        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
-        hsb[0] = hsb[0]*12; //Asi tenemos Hue en 0-12, Saturacion entre 0-1 y Brillo entre 0-1
-        if(hsb[2] <= 0.1){
-            return BLACK; //return black
-        } else if(hsb[2] > 0.9 && hsb[1] <= 0.1){
-            return WHITE; //return white
-        } else{
-            return 2+(int)hsb[0]; //return color
-        }
-    }
-
-    // private int getClosestColorIndex(Color color) {
-    //     double min = Double.MAX_VALUE, dist;
-    //     int pos = -1;
-    //     for (int i = 0; i < COLORS.length; i++) {
-    //         dist = COLORS[i].distanceToColor(color);
-    //         //System.out.println(COLORS[i] + ": " + dist);
-    //         if (dist < min) {
-    //             min = dist;
-    //             pos = i;
-    //         }
-    //     }
-    //     return pos;
-    // }
-
     private Double distanceBetweenColorPercentages(double[] flag, double[] country) {
         if (flag.length != country.length) {
             return null;
@@ -222,7 +193,7 @@ public class Model {
         for (int i = 0; i < flag.getWidth(); i++) {
             for (int j = 0; j < flag.getHeight(); j++) {
                 Color color = new Color(flag.getRGB(i, j));
-                int pos = getClosestColorIndex2(color);
+                int pos = FlagColor.getColor(color);
                 colorCount[pos]++;
             }
         }
