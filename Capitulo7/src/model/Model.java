@@ -101,7 +101,9 @@ public class Model {
             x = Math.random() * flag.getWidth();
             y = Math.random() * flag.getHeight();
             Color color = new Color(flag.getRGB((int) x, (int) y));
+            //System.out.println(color);
             int pos = getClosestColorIndex(color);
+            //System.out.println(COLORS[pos]);
             colorCount[pos]++;
         }
         double[] percentages = new double[COLORS.length];
@@ -157,11 +159,12 @@ public class Model {
         return img;
     }
 
-    private int getClosestColorIndex(java.awt.Color color) {
+    private int getClosestColorIndex(Color color) {
         double min = Double.MAX_VALUE, dist;
         int pos = -1;
         for (int i = 0; i < COLORS.length; i++) {
             dist = COLORS[i].distanceToColor(color);
+            //System.out.println(COLORS[i] + ": " + dist);
             if (dist < min) {
                 min = dist;
                 pos = i;

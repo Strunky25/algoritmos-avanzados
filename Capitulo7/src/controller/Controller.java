@@ -26,7 +26,7 @@ public class Controller implements Runnable {
 
     /* Constants */
     private static final File DIR = new File("resources/flags");
-    private static int N_PIXELS = 30000;
+    private static int N_PIXELS = 100000;
 
     /* MVC Pattern */
     private final Model model;

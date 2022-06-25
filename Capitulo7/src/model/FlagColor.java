@@ -6,6 +6,7 @@ package model;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -50,12 +51,13 @@ public enum FlagColor {
         float[] hsb = new float[3];
         float[] hsb2 = new float[3];
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
+        //System.out.println(Arrays.toString(hsb));
         double dh, ds, db;
         for (Color val: values) {
             Color.RGBtoHSB(val.getRed(), val.getGreen(), val.getBlue(), hsb2);
-            dh = Math.min(Math.abs(hsb2[0] - hsb[0]), 360 - Math.abs(hsb2[0] - hsb[0])) / 180.0;
+            dh = Math.min(Math.abs(hsb2[0] - hsb[0]), 360 - Math.abs(hsb2[0] - hsb[0]));
             ds = Math.abs(hsb2[1] - hsb[1]);
-            db = Math.abs(hsb2[2] - hsb[2]) / 255.0;
+            db = Math.abs(hsb2[2] - hsb[2]);
             res = Math.sqrt(dh*dh + ds*ds + db*db);
             if (res < min) min = res;
         }
