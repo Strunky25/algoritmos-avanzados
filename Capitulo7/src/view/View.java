@@ -173,7 +173,7 @@ public class View extends JFrame{
     }
     
     public int setGuessImage(BufferedImage flagImage, String countryName, double[] percentages){
-        int ret = 0;
+        int ret;
         float ratio = (float) flagImage.getWidth()/flagImage.getHeight();
         Image tmp = flagImage.getScaledInstance(70, (int) (70/ratio), Image.SCALE_SMOOTH);
         if(tmp.getHeight(null) > (PANEL_HEIGHT/10 + 25)){

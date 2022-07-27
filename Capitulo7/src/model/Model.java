@@ -17,7 +17,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -34,22 +33,6 @@ public class Model {
     /* Constants */
     private static final File BD_FILE = new File("data/bd.dat");
     private static final FlagColor[] COLORS = FlagColor.values();
-    private final int BLACK = 0;
-    private final int WHITE = 1;
-    private final int RED = 2;
-    private final int RED_ORANGE = 3;
-    private final int ORANGE = 4;
-    private final int YELLOW_ORANGE = 5;
-    private final int YELLOW = 6;
-    private final int YELLOW_GREEN = 7;
-    private final int GREEN = 8;
-    private final int BLUE_GREEN = 9;
-    private final int BLUE = 10;
-    private final int BLUE_VIOLET = 11;
-    private final int VIOLET = 12;
-    private final int VIOLET_RED = 13;
-
-    private final int N_COLORS = 14;
 
     /* Variables */
     private final PropertyChangeSupport propertyChangeSupport;
@@ -62,7 +45,7 @@ public class Model {
     }
 
     /* Methods */
-    public void loadDatabase(File dir, final int N_TESTS) {
+    public void loadDatabase(File dir) {
         if (database != null) {
             return;
         }
@@ -113,7 +96,7 @@ public class Model {
             return null;
         }
         double x, y;
-        int[] colorCount = new int[N_COLORS];
+        int[] colorCount = new int[COLORS.length];
         for (int i = 0; i < N_TESTS; i++) {
             x = Math.random() * flag.getWidth();
             y = Math.random() * flag.getHeight();

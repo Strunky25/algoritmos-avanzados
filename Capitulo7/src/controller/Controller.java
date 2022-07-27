@@ -100,9 +100,7 @@ public class Controller implements Runnable {
         int[] Ns = new int[]{10,20,30,40,50, 100, 150, 200, 250, 500, 750, 1000, 2000, 3000, 5000, 8000, 10000, 15000,
             20000, 25000, 30000, 35000, 40000, 45000, 50000};
 
-        try (FileWriter fw = new FileWriter("results.csv")) {
-            BufferedWriter bw = new BufferedWriter(fw);
-
+        try (FileWriter fw = new FileWriter("results.csv"); BufferedWriter bw = new BufferedWriter(fw)) {
             for (int N : Ns) {
                 N_PIXELS = N;
                 System.out.println("N: " + N);
@@ -113,7 +111,7 @@ public class Controller implements Runnable {
                     model.loadFlag(Flag);
                     view.setFlagImage(model.getFlagImage(), model.getCountryName());
 
-                    model.loadDatabase(DIR, N_PIXELS);
+                    model.loadDatabase(DIR);
                     double[] percentages = model.getColorPercentages(N_PIXELS);
                     String country = model.findCountry(percentages);
                     try {
@@ -127,7 +125,6 @@ public class Controller implements Runnable {
                 bw.write(N + "," + score + "\n");
             }
             bw.flush();
-            bw.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
@@ -137,7 +134,7 @@ public class Controller implements Runnable {
     @Override
     public void run() {
         if (!TESTING_MODE) {
-            model.loadDatabase(DIR, N_PIXELS);
+            model.loadDatabase(DIR);
             model.loadFlag(flagFile);
             double[] percentages = model.getColorPercentages(N_PIXELS);
             String country = model.findCountry(percentages);

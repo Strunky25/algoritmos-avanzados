@@ -11,7 +11,6 @@ import java.awt.Color;
  * @author elsho
  */
 public enum FlagColor {
-
     BLACK,
     WHITE,
     RED(346, 15),
